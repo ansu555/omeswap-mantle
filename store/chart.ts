@@ -7,6 +7,8 @@ import type { IndicatorInstance, IndicatorParamValues } from "@/lib/indicators/t
 
 export type ChartInterval = "1m" | "5m" | "15m" | "1h" | "4h" | "1d";
 
+export type DexPricePoint = { time: number; value: number };
+
 export const CHART_INTERVALS: { label: string; value: ChartInterval }[] = [
   { label: "1m", value: "1m" },
   { label: "5m", value: "5m" },
@@ -49,6 +51,7 @@ type ChartState = {
   reserves: PoolReserves | null;
   indicators: IndicatorInstance[];
   hoveredCandleIndex: number | null;
+  dexPricePoints: DexPricePoint[];
 
   setInterval: (i: ChartInterval) => void;
   setCandles: (candles: OHLCVCandle[]) => void;
@@ -61,10 +64,14 @@ type ChartState = {
   removeIndicator: (instanceId: string) => void;
   updateIndicatorParams: (instanceId: string, params: IndicatorParamValues) => void;
   setHoveredCandleIndex: (i: number | null) => void;
+  pushDexPrice: (point: DexPricePoint) => void;
+  clearDexPrice: () => void;
   reset: () => void;
 };
 
 const MAX_TRADES = 200;
+
+const MAX_DEX_PRICE_POINTS = 500;
 
 export const useChartStore = create<ChartState>((set) => ({
   interval: "1h",
@@ -75,6 +82,7 @@ export const useChartStore = create<ChartState>((set) => ({
   reserves: null,
   indicators: [],
   hoveredCandleIndex: null,
+  dexPricePoints: [],
 
   setInterval: (interval) => set({ interval }),
   setCandles: (candles) => set({ candles }),
@@ -99,6 +107,18 @@ export const useChartStore = create<ChartState>((set) => ({
       return { trades: next };
     }),
   setReserves: (reserves) => set({ reserves }),
+  pushDexPrice: (point) =>
+    set((s) => {
+      const pts = s.dexPricePoints;
+      // Same second as last point (same block) → update in place
+      if (pts.length > 0 && pts[pts.length - 1].time === point.time) {
+        return { dexPricePoints: [...pts.slice(0, -1), point] };
+      }
+      const next = [...pts, point];
+      if (next.length > MAX_DEX_PRICE_POINTS) next.splice(0, next.length - MAX_DEX_PRICE_POINTS);
+      return { dexPricePoints: next };
+    }),
+  clearDexPrice: () => set({ dexPricePoints: [] }),
   addIndicator: (instance) =>
     set((s) => ({ indicators: [...s.indicators, instance] })),
   removeIndicator: (instanceId) =>
@@ -118,5 +138,6 @@ export const useChartStore = create<ChartState>((set) => ({
       hoveredCandleIndex: null,
       liveStatus: "idle",
       liveError: null,
+      dexPricePoints: [],
     }),
 }));

@@ -99,6 +99,8 @@ export function useRealtimeTerminalFeed(
   const [status, setStatus] = useState<ConnectionStatus>("idle");
   const pushTrade = useChartStore((s) => s.pushTrade);
   const setReserves = useChartStore((s) => s.setReserves);
+  const pushDexPrice = useChartStore((s) => s.pushDexPrice);
+  const clearDexPrice = useChartStore((s) => s.clearDexPrice);
 
   useEffect(() => {
     if (!enabled || !symbolOrPair) return;
@@ -124,6 +126,9 @@ export function useRealtimeTerminalFeed(
 
       if (msg.type === "trade" && msg.trade.pair === pair) {
         pushTrade(toLiveTrade(msg.trade));
+        if (msg.trade.priceUsd > 0) {
+          pushDexPrice({ time: Math.floor(msg.trade.timestamp / 1000), value: msg.trade.priceUsd });
+        }
       } else if (msg.type === "pool" && msg.pool.pair === pair) {
         setReserves(toReserves(msg.pool));
       } else if (msg.type === "snapshot") {
@@ -138,8 +143,9 @@ export function useRealtimeTerminalFeed(
     return () => {
       offMsg();
       offStatus();
+      clearDexPrice();
     };
-  }, [symbolOrPair, enabled, pushTrade, setReserves]);
+  }, [symbolOrPair, enabled, pushTrade, setReserves, pushDexPrice, clearDexPrice]);
 
   return status;
 }
