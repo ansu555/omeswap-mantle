@@ -1,0 +1,85 @@
+/**
+ * REST layer (node:http, no framework). Serves first-paint / SSR reads and the
+ * swap-route endpoint:
+ *   GET /health                                  liveness + pool/client counts
+ *   GET /price[?symbol=WMNT]                      USD prices (all, or one)
+ *   GET /pools                                    current pool snapshot
+ *   GET /route?tokenIn=&tokenOut=&amountIn=       best in-memory route estimate
+ */
+
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { ALLOWED_ORIGINS } from "./config.js";
+import { allPools } from "./price-state.js";
+import { computeUsdPrices } from "./price-engine.js";
+import { quoteRoute } from "./router.js";
+import { clientCount, pricesObject, toWirePool } from "./ws-server.js";
+
+const startedAt = Date.now();
+
+function send(res: ServerResponse, status: number, body: unknown): void {
+  const data = JSON.stringify(body);
+  res.writeHead(status, {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": ALLOWED_ORIGINS,
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  });
+  res.end(data);
+}
+
+function handle(req: IncomingMessage, res: ServerResponse): void {
+  if (req.method === "OPTIONS") return send(res, 204, {});
+  const url = new URL(req.url ?? "/", "http://localhost");
+
+  switch (url.pathname) {
+    case "/health":
+      return send(res, 200, {
+        status: "ok",
+        pools: allPools().length,
+        clients: clientCount(),
+        uptimeMs: Date.now() - startedAt,
+      });
+
+    case "/price": {
+      const prices = pricesObject(computeUsdPrices());
+      const symbol = url.searchParams.get("symbol");
+      if (symbol) {
+        const price = prices[symbol];
+        if (price === undefined) return send(res, 404, { error: `unknown symbol ${symbol}` });
+        return send(res, 200, { symbol, price, updatedAt: Date.now() });
+      }
+      return send(res, 200, { prices, updatedAt: Date.now() });
+    }
+
+    case "/pools":
+      return send(res, 200, { pools: allPools().map(toWirePool) });
+
+    case "/route": {
+      const tokenIn = url.searchParams.get("tokenIn");
+      const tokenOut = url.searchParams.get("tokenOut");
+      const amountIn = Number(url.searchParams.get("amountIn"));
+      if (!tokenIn || !tokenOut || !(amountIn > 0)) {
+        return send(res, 400, { error: "tokenIn, tokenOut and positive amountIn required" });
+      }
+      const route = quoteRoute(tokenIn, tokenOut, amountIn);
+      if (!route) return send(res, 404, { error: "no route found" });
+      return send(res, 200, route);
+    }
+
+    default:
+      return send(res, 404, { error: "not found" });
+  }
+}
+
+let server: ReturnType<typeof createServer> | null = null;
+
+export function startRestServer(port: number): void {
+  server = createServer(handle);
+  server.listen(port, () => console.log(`[rest] listening on http://0.0.0.0:${port}`));
+  server.on("error", (err) => console.error("[rest] error:", err.message));
+}
+
+export function stopRestServer(): void {
+  server?.close();
+  server = null;
+}

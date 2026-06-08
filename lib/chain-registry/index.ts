@@ -17,11 +17,13 @@
 
 import type { ChainConfig, DexRouter, TokenInfo } from './types'
 import { zeroGConfig } from './chains/zerog'
+import { mantleConfig } from './chains/mantle'
 
 // ── Registry ─────────────────────────────────────────────────────────────────
 
 const REGISTRY: Record<number, ChainConfig> = {
   [zeroGConfig.chain.id]: zeroGConfig,
+  [mantleConfig.chain.id]: mantleConfig,
 }
 
 export const DEFAULT_CHAIN_ID: number = zeroGConfig.chain.id

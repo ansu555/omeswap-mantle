@@ -45,3 +45,8 @@ changes: added Jaine/Omega tabs to PoolComparisonPanel; Omega tab now reflects s
 user: ansu555
 branch: main
 changes: made chain layer agnostic — terminal store/TradePanel/InfoTile now read from chain registry; migrated callers off Avalanche* aliases; deleted dead avalanche.ts/ethereum.ts configs + shim files; cleaned AVAX UI copy
+
+[2026-06-08 14:55]
+user: ansu555
+branch: main
+changes: built realtime-service/ (Node+viem+ws) for true real-time Mantle data — multi-factory V3 pool discovery, eth_subscribe Swap listener, USD price engine, own WS broadcast + REST /price//pools//route, Dockerfile/resync; added mantle.ts chain config, lib/realtime/client.ts, use-realtime-feed hook (wired into terminal), /api/realtime/price; validated on Mantle mainnet, build green
