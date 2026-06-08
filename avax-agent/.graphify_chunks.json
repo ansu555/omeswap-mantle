@@ -1,0 +1,37 @@
+{
+  "chunks": [
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/README.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/graphify-out/GRAPH_REPORT.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/GRAPH_REPORT.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_101343_path_from_layout_to_trade_page.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "/home/anik2003/Documents/omeswap/avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md"
+    ],
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/public/file.svg"
+    ],
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/public/globe.svg"
+    ],
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/public/next.svg"
+    ],
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/public/vercel.svg"
+    ],
+    [
+      "/home/anik2003/Documents/omeswap/avax-agent/public/window.svg"
+    ]
+  ],
+  "uncached_total": 17,
+  "uncached_non_code": 17,
+  "estimated_agents": 1,
+  "estimated_seconds": 45
+}

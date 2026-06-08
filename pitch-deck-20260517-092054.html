@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omeswap — Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* === DESIGN SYSTEM — Dark Premium (Black + 0G Cyan) === */
+    :root {
+      --c-bg: #0a0a0a;
+      --c-bg-alt: #0f0f0f;
+      --c-bg-card: #161616;
+      --c-surface: #1c1c1c;
+      --c-border: rgba(255,255,255,0.08);
+      --c-border-strong: rgba(255,255,255,0.14);
+
+      --c-primary: #00bcd4;
+      --c-primary-dim: rgba(0,188,212,0.12);
+      --c-accent: #00e5ff;
+      --c-accent-dim: rgba(0,229,255,0.10);
+      --c-danger: #ef4444;
+      --c-warning: #f59e0b;
+
+      --c-text: #ffffff;
+      --c-text-secondary: rgba(255,255,255,0.68);
+      --c-text-muted: rgba(255,255,255,0.40);
+
+      --f-hero: 96px;
+      --f-h1: 64px;
+      --f-h2: 48px;
+      --f-h3: 32px;
+      --f-body: 24px;
+      --f-small: 20px;
+      --f-caption: 14px;
+
+      --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+
+      --s-xs: 8px;
+      --s-sm: 16px;
+      --s-md: 32px;
+      --s-lg: 48px;
+      --s-xl: 64px;
+      --s-2xl: 96px;
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-enter: 0.6s;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: var(--c-bg); color: var(--c-text); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+
+    .deck { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 100px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.5s var(--ease-out);
+      background: var(--c-bg);
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .slide.active .animate-in { animation: slideUp var(--duration-enter) var(--ease-out) both; }
+    .slide.active .animate-in:nth-child(1) { animation-delay: 0s; }
+    .slide.active .animate-in:nth-child(2) { animation-delay: 0.08s; }
+    .slide.active .animate-in:nth-child(3) { animation-delay: 0.16s; }
+    .slide.active .animate-in:nth-child(4) { animation-delay: 0.24s; }
+    .slide.active .animate-in:nth-child(5) { animation-delay: 0.32s; }
+    .slide.active .animate-in:nth-child(6) { animation-delay: 0.40s; }
+    .slide.active .animate-in:nth-child(7) { animation-delay: 0.48s; }
+    .slide.active .animate-in:nth-child(8) { animation-delay: 0.56s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero { font-size: var(--f-hero); font-weight: 900; letter-spacing: -3px; line-height: 1.02; }
+    .h1 { font-size: var(--f-h1); font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
+    .h2 { font-size: var(--f-h2); font-weight: 700; letter-spacing: -1px; line-height: 1.15; }
+    .h3 { font-size: var(--f-h3); font-weight: 600; line-height: 1.3; letter-spacing: -0.5px; }
+    .body { font-size: var(--f-body); font-weight: 400; line-height: 1.5; color: var(--c-text-secondary); }
+    .small { font-size: var(--f-small); font-weight: 400; line-height: 1.55; color: var(--c-text-secondary); }
+    .caption { font-size: var(--f-caption); font-weight: 600; color: var(--c-primary); letter-spacing: 3px; text-transform: uppercase; }
+    .mono { font-family: var(--font-mono); }
+
+    .text-primary { color: var(--c-primary); }
+    .text-accent { color: var(--c-accent); }
+    .text-muted { color: var(--c-text-muted); }
+    .text-secondary { color: var(--c-text-secondary); }
+    .text-danger { color: var(--c-danger); }
+    .text-emphasis { color: var(--c-primary); font-weight: 800; }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .items-end { align-items: flex-end; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-xs { gap: var(--s-xs); }
+    .gap-sm { gap: var(--s-sm); }
+    .gap-md { gap: var(--s-md); }
+    .gap-lg { gap: var(--s-lg); }
+    .gap-xl { gap: var(--s-xl); }
+    .flex-1 { flex: 1; }
+    .w-full { width: 100%; }
+    .text-center { text-align: center; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-lg); }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-md); }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-md); }
+
+    .card {
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: 16px;
+      padding: var(--s-lg);
+    }
+    .card-glow {
+      background: var(--c-bg-card);
+      border: 1px solid rgba(0,188,212,0.28);
+      border-radius: 16px;
+      padding: var(--s-lg);
+      box-shadow: 0 0 60px rgba(0,188,212,0.08);
+    }
+    .card-danger {
+      background: var(--c-bg-card);
+      border: 1px solid rgba(239,68,68,0.20);
+      border-radius: 16px;
+      padding: var(--s-lg);
+    }
+
+    .metric-card { text-align: left; padding: var(--s-md) 0; }
+    .metric-value {
+      font-size: 72px; font-weight: 900;
+      color: var(--c-accent); letter-spacing: -2px; line-height: 1;
+      font-family: var(--font-mono);
+    }
+    .metric-label {
+      font-size: var(--f-caption); color: var(--c-text-muted);
+      margin-top: 12px; font-weight: 500;
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: var(--f-caption);
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .badge-primary { background: var(--c-primary-dim); color: var(--c-primary); border: 1px solid rgba(0,188,212,0.22); }
+    .badge-accent { background: var(--c-accent-dim); color: var(--c-accent); border: 1px solid rgba(0,229,255,0.22); }
+    .badge-outline { border: 1px solid var(--c-border-strong); color: var(--c-text-secondary); }
+
+    .divider {
+      width: 56px; height: 3px; border-radius: 2px;
+      background: var(--c-primary);
+      margin: var(--s-md) 0;
+    }
+
+    .progress-bar {
+      width: 100%; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 3px;
+      background: var(--c-primary);
+    }
+
+    .bullet-list { list-style: none; }
+    .bullet-list li {
+      padding: var(--s-sm) 0 var(--s-sm) var(--s-md);
+      position: relative;
+      font-size: var(--f-body);
+      color: var(--c-text-secondary);
+      border-bottom: 1px solid var(--c-border);
+      line-height: 1.45;
+    }
+    .bullet-list li:last-child { border-bottom: none; }
+    .bullet-list li::before {
+      content: '';
+      position: absolute; left: 0; top: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c-primary);
+      transform: translateY(-50%);
+    }
+
+    .comparison-table { width: 100%; border-collapse: collapse; }
+    .comparison-table th {
+      text-align: left; padding: var(--s-sm) var(--s-md);
+      font-size: var(--f-small); color: var(--c-text-muted);
+      border-bottom: 1px solid var(--c-border-strong);
+      font-weight: 600;
+    }
+    .comparison-table th.you {
+      color: var(--c-accent);
+      border-bottom-color: var(--c-accent);
+    }
+    .comparison-table td {
+      padding: var(--s-sm) var(--s-md);
+      font-size: var(--f-body);
+      border-bottom: 1px solid var(--c-border);
+      color: var(--c-text-secondary);
+    }
+    .comparison-table td.you-col {
+      background: rgba(0,188,212,0.06);
+      color: var(--c-text);
+      font-weight: 600;
+    }
+    .comparison-table tr.highlight td {
+      color: var(--c-text);
+      background: var(--c-primary-dim);
+      font-weight: 700;
+    }
+    .comparison-table tr.highlight td.you-col {
+      background: rgba(0,188,212,0.18);
+    }
+    .check { color: var(--c-accent); font-weight: 700; font-size: 22px; }
+    .cross { color: var(--c-text-muted); font-size: 22px; }
+
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 40px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+      z-index: 100;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .deck:hover .nav-bar { opacity: 1; }
+    .nav-counter {
+      font-size: 14px; color: var(--c-text-muted);
+      font-family: var(--font-mono); letter-spacing: 1px;
+    }
+    .nav-progress {
+      flex: 1; max-width: 220px; height: 2px; border-radius: 2px;
+      background: rgba(255,255,255,0.08); margin: 0 24px;
+    }
+    .nav-progress-fill {
+      height: 100%; border-radius: 2px;
+      background: var(--c-primary);
+      transition: width 0.3s var(--ease-out);
+    }
+    .nav-btn {
+      background: none; border: 1px solid var(--c-border-strong); color: var(--c-text-secondary);
+      padding: 8px 18px; border-radius: 6px; cursor: pointer; font-size: 13px;
+      font-family: var(--font-display); font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { border-color: var(--c-primary); color: var(--c-text); }
+
+    .notes {
+      display: none;
+      position: fixed; bottom: 60px; left: 40px; right: 40px;
+      background: rgba(0,0,0,0.95); border: 1px solid var(--c-primary-dim);
+      border-radius: 12px; padding: 20px 24px;
+      font-size: 15px; color: var(--c-text-secondary); line-height: 1.65;
+      z-index: 200; max-height: 220px; overflow-y: auto;
+      font-family: var(--font-display);
+    }
+    .notes.visible { display: block; }
+    .notes-label {
+      font-size: 11px; color: var(--c-primary); text-transform: uppercase;
+      letter-spacing: 2px; margin-bottom: 8px; font-weight: 700;
+    }
+
+    /* Mini terminal-style header — Bloomberg vibe */
+    .term-header {
+      position: absolute; top: 32px; left: 100px; right: 100px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--c-text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .term-header .dot {
+      display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--c-accent);
+      box-shadow: 0 0 8px var(--c-accent);
+      margin-right: 8px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Builder canvas illustration (slide 5) */
+    .canvas-illustration {
+      background: #0a0a0a;
+      border: 1px solid var(--c-border);
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+      min-height: 380px;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .node {
+      position: absolute;
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border-strong);
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-text);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      min-width: 130px;
+    }
+    .node.data { border-color: rgba(0,188,212,0.4); }
+    .node.logic { border-color: rgba(245,158,11,0.4); }
+    .node.action { border-color: rgba(0,229,255,0.5); background: rgba(0,229,255,0.05); }
+    .node-type {
+      display: block;
+      font-size: 9px; font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--c-text-muted);
+      margin-bottom: 4px;
+    }
+    .node.data .node-type { color: var(--c-primary); }
+    .node.logic .node-type { color: var(--c-warning); }
+    .node.action .node-type { color: var(--c-accent); }
+    .node-line {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, var(--c-primary), var(--c-accent));
+      opacity: 0.4;
+    }
+
+    /* Stack diagram for 0G slide */
+    .stack-layer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+    .stack-layer.zerog {
+      border-color: rgba(0,188,212,0.35);
+      background: rgba(0,188,212,0.04);
+    }
+    .stack-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--c-primary);
+      font-weight: 700;
+    }
+
+    @media print {
+      .deck { overflow: visible; }
+      .slide {
+        position: relative; opacity: 1; pointer-events: auto;
+        page-break-after: always; height: 100vh;
+        break-inside: avoid;
+      }
+      .nav-bar, .notes { display: none !important; }
+      .animate-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- ============================================ -->
+    <!-- SLIDE 1: TITLE -->
+    <!-- ============================================ -->
+    <div class="slide" style="justify-content: center; align-items: center; text-align: center;">
+      <div class="term-header">
+        <span><span class="dot"></span>OMESWAP / TERMINAL / V0.1</span>
+        <span>0G NEWTON · CHAIN 16602</span>
+      </div>
+
+      <span class="caption animate-in" style="margin-bottom: 24px;">No-code agent platform on 0G</span>
+
+      <h1 class="hero animate-in">
+        Omeswap<span class="text-accent">.</span>
+      </h1>
+
+      <p class="h3 animate-in text-secondary" style="margin-top: 28px; max-width: 800px; font-weight: 400;">
+        Drag-and-drop AI trading agents.<br>
+        Onchain. Non-custodial. Live on 0G.
+      </p>
+
+      <div class="animate-in" style="margin-top: 56px; display: flex; gap: 12px;">
+        <span class="badge badge-primary">Built on 0G</span>
+        <span class="badge badge-accent">Live on Testnet</span>
+        <span class="badge badge-outline">Hackathon Entry</span>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes — 30s opener</div>
+        "If 3Commas, Zapier, and 0G had a kid — that's Omeswap. We let any human build a verifiable, non-custodial AI trading agent in 60 seconds. No code. No API keys. No CEX. Live on 0G testnet today." Hold for one beat. Click to next slide.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 2: PROBLEM -->
+    <!-- ============================================ -->
+    <div class="slide bg-alt">
+      <div class="term-header">
+        <span><span class="dot"></span>02 / PROBLEM</span>
+        <span>RETAIL ¬ AUTOMATION</span>
+      </div>
+
+      <span class="caption animate-in">The Problem</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 1000px;">
+        65% of crypto trades are <span class="text-emphasis">automated</span>.<br>
+        Retail is the other 35% — and they're losing.
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card">
+          <span class="caption" style="color: var(--c-danger); letter-spacing: 2px;">Custodial</span>
+          <p class="h3" style="margin-top: 12px;">3Commas, Cryptohopper</p>
+          <p class="small" style="margin-top: 12px;">API keys to CEXes. Off-chain. Single regulator can kill the platform overnight.</p>
+        </div>
+        <div class="card">
+          <span class="caption" style="color: var(--c-danger); letter-spacing: 2px;">Code-only</span>
+          <p class="h3" style="margin-top: 12px;">Hummingbot, Almanak, Giza</p>
+          <p class="small" style="margin-top: 12px;">SDKs and frameworks for devs. 99% of crypto users can't write a strategy file.</p>
+        </div>
+        <div class="card">
+          <span class="caption" style="color: var(--c-danger); letter-spacing: 2px;">Black-box AI</span>
+          <p class="h3" style="margin-top: 12px;">Closed agent platforms</p>
+          <p class="small" style="margin-top: 12px;">"Trust us, the AI made the trade." No way to verify the model, prompt, or output.</p>
+        </div>
+      </div>
+
+      <p class="body animate-in" style="margin-top: 40px; max-width: 900px; color: var(--c-text-muted); font-size: 18px;">
+        I built this because I kept missing the move at 3am. Bots would have caught it — but every tool I tried wanted my exchange keys or my engineering time.
+      </p>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        Land the pain in 3 buckets: custodial (3Commas etc), code-only (Hummingbot, Almanak), black-box AI (no provability). End with the founder line — make it human. The audience must nod at "I missed the move at 3am." Don't rush. Let it sit. <br><br>
+        <strong>If asked:</strong> "65% automation" stat is from the Business Research Insights 2026 crypto trading bot market report.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 3: WHY NOW -->
+    <!-- ============================================ -->
+    <div class="slide">
+      <div class="term-header">
+        <span><span class="dot"></span>03 / TIMING</span>
+        <span>2026 · CONVERGENCE</span>
+      </div>
+
+      <span class="caption animate-in">Why Now</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 1000px;">
+        Three curves crossed this year.<br>
+        Omeswap couldn't exist in 2024.
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card">
+          <span class="caption" style="color: var(--c-primary);">Market</span>
+          <p class="h2 text-accent mono" style="margin-top: 16px; font-size: 56px;">$54B</p>
+          <p class="h3" style="margin-top: 4px;">Bot market in 2026</p>
+          <p class="small" style="margin-top: 12px;">14% CAGR through 2035. 65% of crypto volume is already automated — but retail is locked out.</p>
+        </div>
+        <div class="card card-glow">
+          <span class="caption" style="color: var(--c-primary);">Tech</span>
+          <p class="h2 text-accent mono" style="margin-top: 16px; font-size: 56px;">0G</p>
+          <p class="h3" style="margin-top: 4px;">Primitives shipped</p>
+          <p class="small" style="margin-top: 12px;">Storage, Compute, DA — first time verifiable AI agent state is buildable on a single chain.</p>
+        </div>
+        <div class="card">
+          <span class="caption" style="color: var(--c-primary);">Behavior</span>
+          <p class="h2 text-accent mono" style="margin-top: 16px; font-size: 56px;">LLMs</p>
+          <p class="h3" style="margin-top: 4px;">Cheap + capable</p>
+          <p class="small" style="margin-top: 12px;">Frontier models hit cost-per-inference levels that make 24/7 autonomous trading economically viable.</p>
+        </div>
+      </div>
+
+      <p class="body animate-in text-muted" style="margin-top: 40px; max-width: 900px; font-size: 18px;">
+        A consumer DeAI app needed all three. 0G is the first place all three exist together.
+      </p>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        This is the Sequoia "why now" slide. Three converging curves = unique window. Drive the convergence point: 0G is the only chain where verifiable compute + decentralized storage + EVM execution co-exist.<br><br>
+        <strong>Source:</strong> $54B bot market = Business Research Insights 2026. 0G has raised $325M and the Foundation has $88.88M for builders.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 4: SOLUTION -->
+    <!-- ============================================ -->
+    <div class="slide bg-alt">
+      <div class="term-header">
+        <span><span class="dot"></span>04 / SOLUTION</span>
+        <span>NO-CODE · ONCHAIN · VERIFIABLE</span>
+      </div>
+
+      <span class="caption animate-in">The Solution</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 1000px;">
+        Drag. Drop. Deploy.<br>
+        <span class="text-emphasis">Bots that live onchain.</span>
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <div class="grid-3 animate-in" style="margin-top: 32px;">
+        <div class="card">
+          <span class="caption" style="color: var(--c-accent); letter-spacing: 2px;">01 · Visual Builder</span>
+          <p class="h3" style="margin-top: 16px;">Drag nodes,<br>not code.</p>
+          <p class="small" style="margin-top: 16px;">15+ nodes: price feeds, conditions, moving averages, swaps, limit orders, alerts. Wire them on a canvas. Backtest before you ship.</p>
+        </div>
+        <div class="card card-glow">
+          <span class="caption" style="color: var(--c-accent); letter-spacing: 2px;">02 · Verifiable AI</span>
+          <p class="h3" style="margin-top: 16px;">0G Compute<br>signs every decision.</p>
+          <p class="small" style="margin-top: 16px;">When a bot fires a trade based on a model, 0G Compute (sealed ZK inference) proves which model ran on which inputs. No black box.</p>
+        </div>
+        <div class="card">
+          <span class="caption" style="color: var(--c-accent); letter-spacing: 2px;">03 · Strategy Marketplace</span>
+          <p class="h3" style="margin-top: 16px;">Creators publish.<br>Users subscribe.</p>
+          <p class="small" style="margin-top: 16px;">A creator economy for strategies and indicators. Quant builds it, retail rents it, fees split onchain.</p>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        Three pillars, one breath each. Visual builder = the wedge (no-code). Verifiable AI = the moat (only 0G can do this). Marketplace = the flywheel (creators bring users). Don't drill in — that's slides 5 and 6.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 5: PRODUCT / DEMO -->
+    <!-- ============================================ -->
+    <div class="slide" style="padding: 60px 80px;">
+      <div class="term-header">
+        <span><span class="dot"></span>05 / PRODUCT</span>
+        <span>LIVE · 0G NEWTON TESTNET</span>
+      </div>
+
+      <div class="flex gap-xl items-center" style="height: 100%; margin-top: 40px;">
+        <!-- Left: Canvas illustration -->
+        <div class="flex-1 animate-in">
+          <div class="canvas-illustration">
+            <!-- Nodes -->
+            <div class="node data" style="top: 50px; left: 20px;">
+              <span class="node-type">Data</span>
+              ETH/USDC Price
+            </div>
+            <div class="node logic" style="top: 50px; left: 220px;">
+              <span class="node-type">Logic</span>
+              MA(20) Cross
+            </div>
+            <div class="node logic" style="top: 180px; left: 220px;">
+              <span class="node-type">Logic</span>
+              If price &lt; MA
+            </div>
+            <div class="node action" style="top: 115px; left: 420px;">
+              <span class="node-type">Action</span>
+              Swap 0.1 ETH → USDC
+            </div>
+            <div class="node data" style="top: 270px; left: 20px;">
+              <span class="node-type">Data</span>
+              Wallet Balance
+            </div>
+            <div class="node action" style="top: 305px; left: 420px;">
+              <span class="node-type">Action</span>
+              Notify on Telegram
+            </div>
+
+            <!-- Connection lines -->
+            <div class="node-line" style="top: 78px; left: 158px; width: 60px;"></div>
+            <div class="node-line" style="top: 208px; left: 158px; width: 60px; transform: rotate(-12deg);"></div>
+            <div class="node-line" style="top: 78px; left: 358px; width: 60px; transform: rotate(15deg);"></div>
+            <div class="node-line" style="top: 208px; left: 358px; width: 60px; transform: rotate(-15deg);"></div>
+
+            <!-- Status indicator -->
+            <div style="position: absolute; bottom: 20px; right: 24px; font-family: var(--font-mono); font-size: 11px; color: var(--c-accent); letter-spacing: 1.5px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--c-accent); margin-right: 6px; vertical-align: middle;"></span>
+              RUNNING · 23 EXECUTIONS
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Callouts -->
+        <div class="flex-1 flex flex-col gap-md animate-in">
+          <span class="caption">The Product</span>
+          <h2 class="h2">Build a bot<br>in 60 seconds.</h2>
+          <div class="divider"></div>
+
+          <div class="flex flex-col gap-sm" style="margin-top: 8px;">
+            <div class="flex items-start gap-sm">
+              <span class="check">→</span>
+              <div>
+                <p class="body" style="color: var(--c-text); font-weight: 600;">Drag, drop, connect.</p>
+                <p class="small">15+ pre-built nodes for prices, logic, swaps, alerts.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-sm">
+              <span class="check">→</span>
+              <div>
+                <p class="body" style="color: var(--c-text); font-weight: 600;">Backtest before deploy.</p>
+                <p class="small">Replay OHLCV candles through your bot. See the P&amp;L before risking gas.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-sm">
+              <span class="check">→</span>
+              <div>
+                <p class="body" style="color: var(--c-text); font-weight: 600;">Memory survives anything.</p>
+                <p class="small">Agent state on 0G Storage. We could disappear — your bot keeps running.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes — LIVE DEMO</div>
+        <strong>Switch to the live testnet here.</strong> Walk through: (1) open builder, (2) drag price feed + condition + swap nodes, (3) hit Backtest, (4) hit Deploy. Total elapsed time on stage: under 90 seconds.<br><br>
+        Backup: if testnet is flaky, show a pre-recorded 60-second screen capture. Do NOT use a static screenshot — judges have seen 50 of those today.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 6: WHY 0G — NECESSITY TEST -->
+    <!-- ============================================ -->
+    <div class="slide bg-alt">
+      <div class="term-header">
+        <span><span class="dot"></span>06 / WHY 0G</span>
+        <span>NECESSITY TEST</span>
+      </div>
+
+      <span class="caption animate-in">Why 0G</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px;">
+        Strip 0G out — <span class="text-danger">the product dies</span>.<br>
+        Strip the agents out — <span class="text-danger">it's a worse DEX</span>.
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <div class="grid-2 animate-in" style="margin-top: 32px;">
+        <!-- Without -->
+        <div class="card-danger">
+          <span class="caption" style="color: var(--c-danger); letter-spacing: 2px;">Without 0G</span>
+          <ul class="bullet-list" style="margin-top: 16px;">
+            <li>Agent memory lives on our server — we can be subpoena'd, hacked, or rugged</li>
+            <li>AI inference is unverifiable — "trust us, the model said sell"</li>
+            <li>Custodial keys to CEXes — regulatory bullseye</li>
+            <li>No composability — other apps can't read your agent's state</li>
+          </ul>
+        </div>
+
+        <!-- With -->
+        <div class="card-glow">
+          <span class="caption" style="color: var(--c-accent); letter-spacing: 2px;">With 0G</span>
+          <div style="margin-top: 16px;">
+            <div class="stack-layer zerog">
+              <div>
+                <span class="stack-tag">0G STORAGE</span>
+                <p class="body" style="color: var(--c-text); margin-top: 2px;">Decentralized agent memory</p>
+              </div>
+              <span class="mono small text-muted">saveAgentMemory()</span>
+            </div>
+            <div class="stack-layer zerog">
+              <div>
+                <span class="stack-tag">0G COMPUTE</span>
+                <p class="body" style="color: var(--c-text); margin-top: 2px;">Sealed ZK inference</p>
+              </div>
+              <span class="mono small text-muted">sealed: true</span>
+            </div>
+            <div class="stack-layer zerog">
+              <div>
+                <span class="stack-tag">0G DA</span>
+                <p class="body" style="color: var(--c-text); margin-top: 2px;">High-throughput agent logs</p>
+              </div>
+              <span class="mono small text-muted">submitToDA()</span>
+            </div>
+            <div class="stack-layer zerog">
+              <div>
+                <span class="stack-tag">0G CHAIN</span>
+                <p class="body" style="color: var(--c-text); margin-top: 2px;">Non-custodial DEX execution</p>
+              </div>
+              <span class="mono small text-muted">chainId 16602</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        <strong>This is the crypto necessity slide — judges score hard on this.</strong> Hit each layer: Storage = memory survives us. Compute = AI is provable. DA = swarm-scale logs. Chain = non-custodial. <br><br>
+        If asked "why not Ethereum + Filecoin + EigenDA?": "We'd be stitching 3 protocols, 3 fee tokens, 3 latency budgets. 0G is the only place where the agent's brain, memory, and wallet share a state root."
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 7: COMPETITION -->
+    <!-- ============================================ -->
+    <div class="slide">
+      <div class="term-header">
+        <span><span class="dot"></span>07 / LANDSCAPE</span>
+        <span>POSITIONING</span>
+      </div>
+
+      <span class="caption animate-in">Competition</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 1000px;">
+        The space is crowded.<br>
+        No one sits where <span class="text-emphasis">we sit</span>.
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <table class="comparison-table animate-in" style="margin-top: 32px;">
+        <thead>
+          <tr>
+            <th style="width: 280px;">&nbsp;</th>
+            <th>3Commas</th>
+            <th>Hummingbot</th>
+            <th>Almanak</th>
+            <th class="you">Omeswap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Non-custodial</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="you-col"><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>No-code visual builder</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="you-col"><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td>Onchain strategy marketplace</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="you-col"><span class="check">✓</span></td>
+          </tr>
+          <tr class="highlight">
+            <td>Verifiable AI inference</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="you-col"><span class="check">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="body animate-in text-muted" style="margin-top: 32px; max-width: 900px; font-size: 18px;">
+        Our real competitor is the human at the screen at 3am. 35% of crypto volume is still manual — that's the wedge.
+      </p>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        Walk left to right. 3Commas = retail but custodial. Hummingbot = onchain but dev-only. Almanak = onchain agents but vibe-coding (still code). We're the only "no-code + onchain + verifiable" cell.<br><br>
+        End with Peter Thiel framing: the real competitor is the status quo (manual trading). Don't be defensive about competitors — show range awareness.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 8: TRACTION / WHAT SHIPPED -->
+    <!-- ============================================ -->
+    <div class="slide bg-alt">
+      <div class="term-header">
+        <span><span class="dot"></span>08 / SHIPPED</span>
+        <span>0G NEWTON · LIVE</span>
+      </div>
+
+      <span class="caption animate-in">What Shipped</span>
+
+      <h1 class="h1 animate-in" style="margin-top: 16px; max-width: 1100px;">
+        <span class="text-emphasis">Built, not bullshitted.</span><br>
+        Working product on 0G testnet today.
+      </h1>
+
+      <div class="divider animate-in"></div>
+
+      <div class="grid-4 animate-in" style="margin-top: 40px;">
+        <div class="metric-card">
+          <div class="metric-value">15+</div>
+          <div class="metric-label">Agent nodes shipped</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">4</div>
+          <div class="metric-label">0G primitives wired</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">100%</div>
+          <div class="metric-label">Non-custodial flow</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">1</div>
+          <div class="metric-label">Hackathon cycle</div>
+        </div>
+      </div>
+
+      <div class="grid-2 animate-in" style="margin-top: 48px;">
+        <div>
+          <p class="caption" style="color: var(--c-accent);">DEX Stack</p>
+          <ul class="bullet-list" style="margin-top: 12px;">
+            <li>Uniswap-style swap + liquidity primitives</li>
+            <li>Multi-hop routing &amp; DEX aggregator</li>
+            <li>Limit orders + on-chain receipts</li>
+          </ul>
+        </div>
+        <div>
+          <p class="caption" style="color: var(--c-accent);">Agent Stack</p>
+          <ul class="bullet-list" style="margin-top: 12px;">
+            <li>DAG executor + topological scheduler</li>
+            <li>OHLCV backtest engine</li>
+            <li>Creator marketplace (strategies + indicators)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        Hackathon judges value shipped &gt; promised. Lead with "built, not bullshitted." Hit the four numbers fast. Then drop the two-column build inventory.<br><br>
+        <strong>Honest framing:</strong> we don't have DAU yet — we have a complete MVP shipped in one hackathon cycle. Don't fake user numbers.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 9: ASK -->
+    <!-- ============================================ -->
+    <div class="slide" style="justify-content: center;">
+      <div class="term-header">
+        <span><span class="dot"></span>09 / ASK</span>
+        <span>0G HACKATHON · GRAND PRIZE</span>
+      </div>
+
+      <span class="caption animate-in text-center">The Ask</span>
+
+      <h1 class="hero animate-in text-center" style="margin-top: 16px;">
+        Pick <span class="text-accent">Omeswap</span>.
+      </h1>
+
+      <p class="h3 animate-in text-secondary text-center" style="margin-top: 16px; font-weight: 400; max-width: 800px; margin-left: auto; margin-right: auto;">
+        Grand Prize · DeFi Track · 0G Foundation Grant
+      </p>
+
+      <div class="divider animate-in" style="margin: 40px auto;"></div>
+
+      <div class="animate-in" style="max-width: 760px; margin: 0 auto;">
+        <p class="caption text-center" style="margin-bottom: 24px;">90-day plan after winning</p>
+        <div class="flex flex-col gap-md w-full">
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 8px;">
+              <span class="body" style="color: var(--c-text);">Mainnet launch + audit</span>
+              <span class="small mono text-accent">50%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div>
+            <p class="small text-muted" style="margin-top: 6px; font-size: 14px;">Ship to 0G mainnet, third-party security review, bug bounty.</p>
+          </div>
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 8px;">
+              <span class="body" style="color: var(--c-text);">Creator program</span>
+              <span class="small mono text-accent">25%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+            <p class="small text-muted" style="margin-top: 6px; font-size: 14px;">Onboard 25 quant creators publishing strategies + indicators.</p>
+          </div>
+          <div>
+            <div class="flex justify-between" style="margin-bottom: 8px;">
+              <span class="body" style="color: var(--c-text);">Growth + 0G ecosystem</span>
+              <span class="small mono text-accent">25%</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width: 25%;"></div></div>
+            <p class="small text-muted" style="margin-top: 6px; font-size: 14px;">1,000 active agents on mainnet in 90 days. Integrations with 0G partner apps.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes</div>
+        Be specific about the ask: not "we want to win," but "Grand Prize, DeFi track, and a follow-on 0G Foundation grant." Then drop the 90-day plan — show you've thought past hackathon day.<br><br>
+        Target: 1,000 active agents on mainnet in 90 days is the headline KPI. Mention it twice.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SLIDE 10: CONTACT / CLOSING -->
+    <!-- ============================================ -->
+    <div class="slide bg-alt" style="justify-content: center; align-items: center; text-align: center;">
+      <div class="term-header">
+        <span><span class="dot"></span>10 / END</span>
+        <span>OMESWAP / V0.1 / 0G</span>
+      </div>
+
+      <h1 class="hero animate-in">Omeswap<span class="text-accent">.</span></h1>
+
+      <p class="h3 animate-in text-secondary" style="margin-top: 20px; max-width: 700px; font-weight: 400;">
+        Drag-and-drop AI trading agents on 0G.
+      </p>
+
+      <div class="divider animate-in" style="margin: 48px auto;"></div>
+
+      <div class="animate-in" style="display: flex; flex-direction: column; gap: 14px; align-items: center;">
+        <p class="body mono" style="color: var(--c-text);">akash chakraborty · founder</p>
+        <p class="body mono text-primary">ansupc1234@gmail.com</p>
+        <p class="small mono text-muted" style="margin-top: 16px;">github.com/omeswap · 0g newton testnet · chain 16602</p>
+      </div>
+
+      <div class="animate-in" style="margin-top: 56px;">
+        <span class="badge badge-primary">Live demo: type /omeswap on stage</span>
+      </div>
+
+      <div class="notes">
+        <div class="notes-label">Speaker Notes — Closing</div>
+        Don't summarize. The deck is the summary. Just leave contact info up while you answer questions. Hold eye contact with the judges for 3 seconds before you say "thank you — questions?"
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION -->
+    <!-- ============================================ -->
+    <div class="nav-bar">
+      <button class="nav-btn" onclick="prev()">← Prev</button>
+      <span class="nav-counter"><span id="current">1</span> / <span id="total"></span></span>
+      <div class="nav-progress"><div class="nav-progress-fill" id="progress"></div></div>
+      <button class="nav-btn" onclick="next()">Next →</button>
+    </div>
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let notesVisible = false;
+
+    document.getElementById('total').textContent = total;
+
+    function show(i) {
+      slides.forEach(s => s.classList.remove('active'));
+      current = Math.max(0, Math.min(i, total - 1));
+      slides[current].classList.add('active');
+      document.getElementById('current').textContent = current + 1;
+      document.getElementById('progress').style.width = ((current + 1) / total * 100) + '%';
+
+      document.querySelectorAll('.notes').forEach(n => n.classList.remove('visible'));
+      const note = slides[current].querySelector('.notes');
+      if (note && notesVisible) note.classList.add('visible');
+    }
+
+    function next() { show(current + 1); }
+    function prev() { show(current - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      if (e.key === 'n' || e.key === 'N') {
+        notesVisible = !notesVisible;
+        document.querySelectorAll('.notes').forEach(n => {
+          n.classList.toggle('visible', notesVisible && n.closest('.slide').classList.contains('active'));
+        });
+      }
+      if (e.key === 'Home') { show(0); }
+      if (e.key === 'End') { show(total - 1); }
+    });
+
+    document.getElementById('deck').addEventListener('click', (e) => {
+      if (e.target.closest('.nav-bar') || e.target.closest('.nav-btn')) return;
+      if (e.clientX > window.innerWidth / 2) next(); else prev();
+    });
+
+    show(0);
+  </script>
+</body>
+</html>

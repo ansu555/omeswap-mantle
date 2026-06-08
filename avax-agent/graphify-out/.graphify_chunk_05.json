@@ -1,0 +1,98 @@
+{
+  "nodes": [
+    {
+      "id": "vercel_svg_asset",
+      "label": "Vercel SVG Logo",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "svg",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_svg_triangle_path",
+      "label": "Triangle Path Shape",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "path[d]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_svg_white_fill",
+      "label": "White Fill Color (#fff)",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "path[fill]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_svg_viewbox_1155_1000",
+      "label": "ViewBox 1155x1000",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "svg[viewBox]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "vercel_svg_asset",
+      "target": "vercel_svg_triangle_path",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "svg->path",
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_svg_triangle_path",
+      "target": "vercel_svg_white_fill",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "path[fill]",
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_svg_asset",
+      "target": "vercel_svg_viewbox_1155_1000",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "svg[viewBox]",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "vercel_logo_rendering_group",
+      "label": "Vercel Logo Rendering Components",
+      "nodes": [
+        "vercel_svg_asset",
+        "vercel_svg_triangle_path",
+        "vercel_svg_white_fill",
+        "vercel_svg_viewbox_1155_1000"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

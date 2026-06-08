@@ -1,0 +1,17 @@
+{
+  "name": "omeswap-contracts",
+  "version": "1.0.0",
+  "description": "OmeSwap AMM contracts for 0G mainnet",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js --network zerog",
+    "add-liquidity": "npx hardhat run scripts/addLiquidity.js --network zerog"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0"
+  }
+}

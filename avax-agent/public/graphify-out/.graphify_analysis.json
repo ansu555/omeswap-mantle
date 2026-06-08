@@ -1,0 +1,105 @@
+{
+  "communities": {
+    "0": [
+      "globe_clip_rect_def",
+      "globe_file",
+      "globe_g_clipped",
+      "globe_icon_semantics",
+      "globe_path_grid",
+      "globe_svg_root"
+    ],
+    "1": [
+      "next_path_primary",
+      "next_path_secondary",
+      "next_svg_file",
+      "next_svg_root",
+      "nextjs_brand_semantics"
+    ],
+    "2": [
+      "window_file",
+      "window_icon_semantics",
+      "window_path_frame",
+      "window_path_titlebar_dots",
+      "window_svg_root"
+    ],
+    "3": [
+      "file_document_icon_semantics",
+      "file_file",
+      "file_path_document_glyph",
+      "file_svg_root"
+    ],
+    "4": [
+      "vercel_logo_semantics",
+      "vercel_svg_file",
+      "vercel_svg_root",
+      "vercel_triangle_path"
+    ]
+  },
+  "cohesion": {
+    "0": 0.53,
+    "1": 0.7,
+    "2": 0.7,
+    "3": 0.67,
+    "4": 0.67
+  },
+  "gods": [
+    {
+      "id": "globe_svg_root",
+      "label": "SVG root (viewBox 0 0 16 16, fill none)",
+      "degree": 3
+    },
+    {
+      "id": "globe_g_clipped",
+      "label": "Group with clip-path url(#a)",
+      "degree": 3
+    },
+    {
+      "id": "globe_path_grid",
+      "label": "Globe meridian grid path (fill #666, fill-rule evenodd)",
+      "degree": 3
+    },
+    {
+      "id": "globe_clip_rect_def",
+      "label": "ClipPath id a: 16x16 rectangular mask (white fill)",
+      "degree": 3
+    },
+    {
+      "id": "next_svg_root",
+      "label": "SVG root (viewBox 0 0 394 80, fill none, xmlns SVG 1.1)",
+      "degree": 3
+    },
+    {
+      "id": "next_path_primary",
+      "label": "Primary path: large Next.js wordmark geometry (fill #000)",
+      "degree": 3
+    },
+    {
+      "id": "next_path_secondary",
+      "label": "Secondary path: small Next.js mark / sub-wordmark detail (fill #000)",
+      "degree": 3
+    },
+    {
+      "id": "nextjs_brand_semantics",
+      "label": "Next.js framework default logo asset (public static SVG)",
+      "degree": 3
+    },
+    {
+      "id": "window_svg_root",
+      "label": "SVG root (viewBox 0 0 16 16, fill none)",
+      "degree": 3
+    },
+    {
+      "id": "window_path_frame",
+      "label": "Window outer frame path (rounded rectangle, fill #666)",
+      "degree": 3
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "no_signal",
+      "question": null,
+      "why": "Not enough signal to generate questions. This usually means the corpus has no AMBIGUOUS edges, no bridge nodes, no INFERRED relationships, and all communities are tightly cohesive. Add more files or run with --mode deep to extract richer edges."
+    }
+  ]
+}

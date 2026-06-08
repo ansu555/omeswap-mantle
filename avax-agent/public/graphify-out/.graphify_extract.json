@@ -1,0 +1,658 @@
+{
+  "nodes": [
+    {
+      "id": "file_file",
+      "label": "file.svg",
+      "file_type": "image",
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "file_svg_root",
+      "label": "SVG root (viewBox 0 0 16 16, fill none, W3C SVG namespace)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": "svg[viewBox], svg[fill], xmlns",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "file_path_document_glyph",
+      "label": "Single compound path: folded sheet, corner fold triangle, horizontal rule lines (fill #666, evenodd)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": "path[d], path[fill], path[fill-rule], path[clip-rule]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "file_document_icon_semantics",
+      "label": "Generic document or file attachment icon (page with folded corner and text lines)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_file",
+      "label": "globe.svg",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_svg_root",
+      "label": "SVG root (viewBox 0 0 16 16, fill none)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "svg[viewBox], svg[fill], svg[xmlns]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_g_clipped",
+      "label": "Group with clip-path url(#a)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "g[clip-path]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_path_grid",
+      "label": "Globe meridian grid path (fill #666, fill-rule evenodd)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "g > path[d], path[fill-rule], path[clip-rule]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_clip_rect_def",
+      "label": "ClipPath id a: 16x16 rectangular mask (white fill)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "defs > clipPath#a > path[d M0 0h16v16H0z]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "globe_icon_semantics",
+      "label": "World or internet globe UI glyph (16px)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "next_svg_file",
+      "label": "next.svg",
+      "file_type": "image",
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "next_svg_root",
+      "label": "SVG root (viewBox 0 0 394 80, fill none, xmlns SVG 1.1)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "svg[viewBox], svg[fill], svg[xmlns]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "next_path_primary",
+      "label": "Primary path: large Next.js wordmark geometry (fill #000)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "path[fill=\"#000\"]:first-of-type",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "next_path_secondary",
+      "label": "Secondary path: small Next.js mark / sub-wordmark detail (fill #000)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "path[fill=\"#000\"]:last-of-type",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "nextjs_brand_semantics",
+      "label": "Next.js framework default logo asset (public static SVG)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_svg_file",
+      "label": "vercel.svg",
+      "file_type": "image",
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_svg_root",
+      "label": "SVG root (viewBox 0 0 1155 1000, fill none, SVG namespace)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": "svg[viewBox], svg[xmlns], svg[fill]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_triangle_path",
+      "label": "Single path triangle (d m577.3 0 577.4 1000H0z, fill #fff)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": "path[d], path[fill]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "vercel_logo_semantics",
+      "label": "Vercel-style upward triangle mark (brand-associated raster/vector glyph)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_file",
+      "label": "window.svg",
+      "file_type": "image",
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_svg_root",
+      "label": "SVG root (viewBox 0 0 16 16, fill none)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "svg[viewBox], svg[fill]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_path_frame",
+      "label": "Window outer frame path (rounded rectangle, fill #666)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "path[d] frame subpath (M1.5 2.5\u2026)",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_path_titlebar_dots",
+      "label": "Title bar control dots (three .75-radius circles, fill #666)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "path[d] three-circle subpath (zm3.75\u2026)",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "window_icon_semantics",
+      "label": "Browser or OS window chrome icon (frame + traffic-light dots)",
+      "file_type": "image",
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "file_file",
+      "target": "file_svg_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "file_svg_root",
+      "target": "file_path_document_glyph",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": "svg > path (single child)",
+      "weight": 1.0
+    },
+    {
+      "source": "file_document_icon_semantics",
+      "target": "file_path_document_glyph",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.74,
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "file_file",
+      "target": "file_document_icon_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.69,
+      "source_file": "avax-agent/public/file.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "globe_file",
+      "target": "globe_svg_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "globe_svg_root",
+      "target": "globe_g_clipped",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "svg > g",
+      "weight": 1.0
+    },
+    {
+      "source": "globe_g_clipped",
+      "target": "globe_path_grid",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "g > path (single child)",
+      "weight": 1.0
+    },
+    {
+      "source": "globe_svg_root",
+      "target": "globe_clip_rect_def",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "svg > defs",
+      "weight": 1.0
+    },
+    {
+      "source": "globe_g_clipped",
+      "target": "globe_clip_rect_def",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "g clip-path=\"url(#a)\" binds to clipPath#a",
+      "weight": 1.0
+    },
+    {
+      "source": "globe_path_grid",
+      "target": "globe_clip_rect_def",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": "clipped rendering region 16x16",
+      "weight": 1.0
+    },
+    {
+      "source": "globe_icon_semantics",
+      "target": "globe_path_grid",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "globe_file",
+      "target": "globe_icon_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "avax-agent/public/globe.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "next_svg_file",
+      "target": "next_svg_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "next_svg_root",
+      "target": "next_path_primary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "svg > path:nth-of-type(1)",
+      "weight": 1.0
+    },
+    {
+      "source": "next_svg_root",
+      "target": "next_path_secondary",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "svg > path:nth-of-type(2)",
+      "weight": 1.0
+    },
+    {
+      "source": "next_path_primary",
+      "target": "next_path_secondary",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "adjacent sibling paths, same fill",
+      "weight": 1.0
+    },
+    {
+      "source": "next_path_primary",
+      "target": "next_path_secondary",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": "fill=\"#000\" on both paths",
+      "weight": 1.0
+    },
+    {
+      "source": "nextjs_brand_semantics",
+      "target": "next_path_primary",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "nextjs_brand_semantics",
+      "target": "next_path_secondary",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "next_svg_file",
+      "target": "nextjs_brand_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "avax-agent/public/next.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_svg_file",
+      "target": "vercel_svg_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_svg_root",
+      "target": "vercel_triangle_path",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": "svg > path (single child)",
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_svg_file",
+      "target": "vercel_logo_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": "filename vercel.svg",
+      "weight": 1.0
+    },
+    {
+      "source": "vercel_triangle_path",
+      "target": "vercel_logo_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "avax-agent/public/vercel.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "window_file",
+      "target": "window_svg_root",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "window_svg_root",
+      "target": "window_path_frame",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "svg > path (single element)",
+      "weight": 1.0
+    },
+    {
+      "source": "window_svg_root",
+      "target": "window_path_titlebar_dots",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "svg > path (single element)",
+      "weight": 1.0
+    },
+    {
+      "source": "window_path_frame",
+      "target": "window_path_titlebar_dots",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "same path[d], adjacent subpaths",
+      "weight": 1.0
+    },
+    {
+      "source": "window_path_frame",
+      "target": "window_path_titlebar_dots",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": "fill=\"#666\"",
+      "weight": 1.0
+    },
+    {
+      "source": "window_icon_semantics",
+      "target": "window_path_frame",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "window_icon_semantics",
+      "target": "window_path_titlebar_dots",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.72,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "window_file",
+      "target": "window_icon_semantics",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.68,
+      "source_file": "avax-agent/public/window.svg",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "file_document_icon_composition",
+      "label": "16px document glyph: one SVG root and one filled path (folded page plus rules)",
+      "nodes": [
+        "file_svg_root",
+        "file_path_document_glyph"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/file.svg"
+    },
+    {
+      "id": "globe_16px_clipped_globe_glyph",
+      "label": "Clipped 16px globe grid icon (defs clipPath plus single path)",
+      "nodes": [
+        "globe_svg_root",
+        "globe_g_clipped",
+        "globe_path_grid",
+        "globe_clip_rect_def"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/globe.svg"
+    },
+    {
+      "id": "nextjs_logo_two_path_composition",
+      "label": "Next.js horizontal logo: transparent canvas with two black path layers",
+      "nodes": [
+        "next_svg_root",
+        "next_path_primary",
+        "next_path_secondary"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/next.svg"
+    },
+    {
+      "id": "vercel_triangle_logo_asset",
+      "label": "Minimal one-path triangle logo asset (transparent SVG, white fill)",
+      "nodes": [
+        "vercel_svg_root",
+        "vercel_triangle_path"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/vercel.svg"
+    },
+    {
+      "id": "window_chrome_icon_composition",
+      "label": "Single-path 16px window chrome glyph (frame plus three dots)",
+      "nodes": [
+        "window_svg_root",
+        "window_path_frame",
+        "window_path_titlebar_dots"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/window.svg"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,729 @@
+{
+  "nodes": [
+    {
+      "id": "main_route_entrypoints_layouts",
+      "label": "Main Route Entrypoints and Layouts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "layout_rootlayout",
+      "label": "RootLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "layout_applayout",
+      "label": "AppLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "layout_builderlayout",
+      "label": "BuilderLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "layout_landinglayout",
+      "label": "LandingLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "api_crypto_route_ts",
+      "label": "app/api/crypto/route.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "get_handler",
+      "label": "GET()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "api_agent_chat_route_ts",
+      "label": "app/api/agent-builder/chat/route.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "post_handler",
+      "label": "POST()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_nextjs_starter_project",
+      "label": "Next.js Starter Project",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_local_development_server",
+      "label": "Local Development Server",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null
+    },
+    {
+      "id": "readme_vercel_deployment",
+      "label": "Vercel Deployment",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null
+    },
+    {
+      "id": "app_page_tsx",
+      "label": "app/page.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "home_component",
+      "label": "Home()",
+      "file_type": "document",
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "flowcanvas_tsx",
+      "label": "FlowCanvas.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "visual_workflow_canvas",
+      "label": "Visual Workflow Canvas",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "canvas_page",
+      "label": "CanvasPage",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "topbar_tsx",
+      "label": "TopBar.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "node_palette",
+      "label": "NodePalette",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "config_panel",
+      "label": "ConfigPanel",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "handle_run",
+      "label": "handleRun()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "schedule_trigger_node",
+      "label": "ScheduleTriggerNode",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "execute_once",
+      "label": "executeOnce()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "run_bot",
+      "label": "runBot()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "botrunner_ts",
+      "label": "BotRunner.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "backtestrunner_ts",
+      "label": "BacktestRunner.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "handle_backtest",
+      "label": "handleBacktest()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null
+    },
+    {
+      "id": "run_backtest",
+      "label": "runBacktest()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null
+    },
+    {
+      "id": "node_registry_ts",
+      "label": "registry.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null
+    },
+    {
+      "id": "create_node_instance",
+      "label": "createNodeInstance()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null
+    },
+    {
+      "id": "swap_node",
+      "label": "SwapNode",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null
+    },
+    {
+      "id": "wallet_analysis_panel",
+      "label": "WalletAnalysisPanel.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null
+    },
+    {
+      "id": "hooks_index_ts",
+      "label": "hooks/index.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null
+    },
+    {
+      "id": "use_wallet_analysis",
+      "label": "useWalletAnalysis()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null
+    },
+    {
+      "id": "use_wallet_analysis_query",
+      "label": "useWalletAnalysisQuery()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null
+    },
+    {
+      "id": "analyze_wallet",
+      "label": "analyzeWallet()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null
+    },
+    {
+      "id": "portfolio_page",
+      "label": "app/(app)/portfolio/page.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null
+    },
+    {
+      "id": "generate_chart_data",
+      "label": "generateChartData()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null
+    },
+    {
+      "id": "fetch_prices",
+      "label": "fetchPrices()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_rootlayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_applayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_builderlayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_landinglayout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "api_crypto_route_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_crypto_route_ts",
+      "target": "get_handler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "main_route_entrypoints_layouts",
+      "target": "api_agent_chat_route_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "api_agent_chat_route_ts",
+      "target": "post_handler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_nextjs_starter_project",
+      "target": "readme_local_development_server",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "readme_nextjs_starter_project",
+      "target": "readme_vercel_deployment",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "app_page_tsx",
+      "target": "home_component",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "app_page_tsx",
+      "target": "readme_nextjs_starter_project",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "flowcanvas_tsx",
+      "target": "visual_workflow_canvas",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "visual_workflow_canvas",
+      "target": "topbar_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "topbar_tsx",
+      "target": "execute_once",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "execute_once",
+      "target": "run_bot",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "run_bot",
+      "target": "botrunner_ts",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handle_run",
+      "target": "schedule_trigger_node",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handle_run",
+      "target": "execute_once",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "canvas_page",
+      "target": "topbar_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "canvas_page",
+      "target": "flowcanvas_tsx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "canvas_page",
+      "target": "node_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "canvas_page",
+      "target": "config_panel",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "flowcanvas_tsx",
+      "target": "botrunner_ts",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "backtestrunner_ts",
+      "target": "run_backtest",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "handle_backtest",
+      "target": "run_backtest",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "run_backtest",
+      "target": "run_bot",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "node_registry_ts",
+      "target": "swap_node",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "node_registry_ts",
+      "target": "create_node_instance",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "create_node_instance",
+      "target": "swap_node",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "wallet_analysis_panel",
+      "target": "hooks_index_ts",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hooks_index_ts",
+      "target": "use_wallet_analysis",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hooks_index_ts",
+      "target": "use_wallet_analysis_query",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "use_wallet_analysis",
+      "target": "analyze_wallet",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "use_wallet_analysis_query",
+      "target": "analyze_wallet",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_page",
+      "target": "generate_chart_data",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_page",
+      "target": "fetch_prices",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "route_and_layout_entrypoints",
+      "label": "Route and Layout Entrypoints",
+      "nodes": [
+        "main_route_entrypoints_layouts",
+        "layout_rootlayout",
+        "layout_applayout",
+        "layout_builderlayout",
+        "layout_landinglayout",
+        "api_crypto_route_ts",
+        "api_agent_chat_route_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md"
+    },
+    {
+      "id": "live_execution_flow",
+      "label": "Live Execution Flow",
+      "nodes": [
+        "canvas_page",
+        "topbar_tsx",
+        "handle_run",
+        "schedule_trigger_node",
+        "execute_once",
+        "run_bot",
+        "botrunner_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md"
+    },
+    {
+      "id": "backtest_execution_flow",
+      "label": "Backtest Execution Flow",
+      "nodes": [
+        "handle_backtest",
+        "run_backtest",
+        "run_bot",
+        "backtestrunner_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md"
+    },
+    {
+      "id": "wallet_analysis_pipeline",
+      "label": "Wallet Analysis Pipeline",
+      "nodes": [
+        "wallet_analysis_panel",
+        "hooks_index_ts",
+        "use_wallet_analysis",
+        "use_wallet_analysis_query",
+        "analyze_wallet"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md"
+    },
+    {
+      "id": "portfolio_page_local_pipeline",
+      "label": "Portfolio Page Local Data Pipeline",
+      "nodes": [
+        "portfolio_page",
+        "generate_chart_data",
+        "fetch_prices"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,3874 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "route_and_layout_entrypoints",
+        "label": "Route and Layout Entrypoints",
+        "nodes": [
+          "main_route_entrypoints_layouts",
+          "layout_rootlayout",
+          "layout_applayout",
+          "layout_builderlayout",
+          "layout_landinglayout",
+          "api_crypto_route_ts",
+          "api_agent_chat_route_ts"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md"
+      },
+      {
+        "id": "live_execution_flow",
+        "label": "Live Execution Flow",
+        "nodes": [
+          "canvas_page",
+          "topbar_tsx",
+          "handle_run",
+          "schedule_trigger_node",
+          "execute_once",
+          "run_bot",
+          "botrunner_ts"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.88,
+        "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md"
+      },
+      {
+        "id": "backtest_execution_flow",
+        "label": "Backtest Execution Flow",
+        "nodes": [
+          "handle_backtest",
+          "run_backtest",
+          "run_bot",
+          "backtestrunner_ts"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md"
+      },
+      {
+        "id": "wallet_analysis_pipeline",
+        "label": "Wallet Analysis Pipeline",
+        "nodes": [
+          "wallet_analysis_panel",
+          "hooks_index_ts",
+          "use_wallet_analysis",
+          "use_wallet_analysis_query",
+          "analyze_wallet"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md"
+      },
+      {
+        "id": "portfolio_page_local_pipeline",
+        "label": "Portfolio Page Local Data Pipeline",
+        "nodes": [
+          "portfolio_page",
+          "generate_chart_data",
+          "fetch_prices"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md"
+      },
+      {
+        "id": "file_svg_text_content_group",
+        "label": "Text Content Group",
+        "nodes": [
+          "file_svg_text_line_top",
+          "file_svg_text_line_middle",
+          "file_svg_text_line_bottom"
+        ],
+        "relation": "form",
+        "confidence": "INFERRED",
+        "confidence_score": 0.84,
+        "source_file": "public/file.svg"
+      },
+      {
+        "id": "globe_icon_render_group",
+        "label": "Globe Icon Render Group",
+        "nodes": [
+          "globe_icon",
+          "main_path_shape",
+          "clip_path_a"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "public/globe.svg"
+      },
+      {
+        "id": "next_svg_wordmark_shape_set",
+        "label": "Next.js wordmark shape set",
+        "nodes": [
+          "next_svg_path_1",
+          "next_svg_path_2",
+          "next_svg_root"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "public/next.svg"
+      },
+      {
+        "id": "vercel_logo_rendering_group",
+        "label": "Vercel Logo Rendering Components",
+        "nodes": [
+          "vercel_svg_asset",
+          "vercel_svg_triangle_path",
+          "vercel_svg_white_fill",
+          "vercel_svg_viewbox_1155_1000"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1.0,
+        "source_file": "public/vercel.svg"
+      },
+      {
+        "id": "window_svg_window_ui_structure",
+        "label": "Window UI Structure",
+        "nodes": [
+          "window_svg_window_icon",
+          "window_svg_window_frame",
+          "window_svg_window_controls"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 1,
+        "source_file": "public/window.svg"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "next.config.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/next.config.ts",
+      "source_location": "L1",
+      "id": "avax_agent_next_config_ts",
+      "community": 39,
+      "norm_label": "next.config.ts"
+    },
+    {
+      "label": "postcss.config.mjs",
+      "file_type": "code",
+      "source_file": "avax-agent/postcss.config.mjs",
+      "source_location": "L1",
+      "id": "avax_agent_postcss_config_mjs",
+      "community": 40,
+      "norm_label": "postcss.config.mjs"
+    },
+    {
+      "label": "layout.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/app/layout.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_app_layout_tsx",
+      "community": 4,
+      "norm_label": "layout.tsx"
+    },
+    {
+      "label": "RootLayout()",
+      "file_type": "code",
+      "source_file": "avax-agent/app/layout.tsx",
+      "source_location": "L20",
+      "id": "layout_rootlayout",
+      "community": 4,
+      "norm_label": "rootlayout()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/app/page.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_app_page_tsx",
+      "community": 36,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "Home()",
+      "file_type": "code",
+      "source_file": "avax-agent/app/page.tsx",
+      "source_location": "L3",
+      "id": "page_home",
+      "community": 36,
+      "norm_label": "home()"
+    },
+    {
+      "label": "route.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/app/api/agent/route.ts",
+      "source_location": "L1",
+      "id": "avax_agent_app_api_agent_route_ts",
+      "community": 9,
+      "norm_label": "route.ts"
+    },
+    {
+      "label": "POST()",
+      "file_type": "code",
+      "source_file": "avax-agent/app/api/agent/route.ts",
+      "source_location": "L7",
+      "id": "route_post",
+      "community": 9,
+      "norm_label": "post()"
+    },
+    {
+      "label": "page.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/app/canvas/page.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_app_canvas_page_tsx",
+      "community": 37,
+      "norm_label": "page.tsx"
+    },
+    {
+      "label": "CanvasPage()",
+      "file_type": "code",
+      "source_file": "avax-agent/app/canvas/page.tsx",
+      "source_location": "L12",
+      "id": "page_canvaspage",
+      "community": 37,
+      "norm_label": "canvaspage()"
+    },
+    {
+      "label": "AgentSidebar.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_agentsidebar_tsx",
+      "community": 13,
+      "norm_label": "agentsidebar.tsx"
+    },
+    {
+      "label": "renderMarkdown()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L44",
+      "id": "agentsidebar_rendermarkdown",
+      "community": 13,
+      "norm_label": "rendermarkdown()"
+    },
+    {
+      "label": "inlineMarkdown()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L125",
+      "id": "agentsidebar_inlinemarkdown",
+      "community": 13,
+      "norm_label": "inlinemarkdown()"
+    },
+    {
+      "label": "BacktestConfigStrip.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/BacktestConfigStrip.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_backtestconfigstrip_tsx",
+      "community": 41,
+      "norm_label": "backtestconfigstrip.tsx"
+    },
+    {
+      "label": "BacktestSummaryModal.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/BacktestSummaryModal.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_backtestsummarymodal_tsx",
+      "community": 38,
+      "norm_label": "backtestsummarymodal.tsx"
+    },
+    {
+      "label": "BacktestSummaryModal()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/BacktestSummaryModal.tsx",
+      "source_location": "L6",
+      "id": "backtestsummarymodal_backtestsummarymodal",
+      "community": 38,
+      "norm_label": "backtestsummarymodal()"
+    },
+    {
+      "label": "ChartPanel.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ChartPanel.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_chartpanel_tsx",
+      "community": 14,
+      "norm_label": "chartpanel.tsx"
+    },
+    {
+      "label": "onMove()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ChartPanel.tsx",
+      "source_location": "L68",
+      "id": "chartpanel_onmove",
+      "community": 14,
+      "norm_label": "onmove()"
+    },
+    {
+      "label": "onUp()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ChartPanel.tsx",
+      "source_location": "L75",
+      "id": "chartpanel_onup",
+      "community": 14,
+      "norm_label": "onup()"
+    },
+    {
+      "label": "ConfigPanel.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ConfigPanel.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_configpanel_tsx",
+      "community": 15,
+      "norm_label": "configpanel.tsx"
+    },
+    {
+      "label": "formatValue()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ConfigPanel.tsx",
+      "source_location": "L16",
+      "id": "configpanel_formatvalue",
+      "community": 15,
+      "norm_label": "formatvalue()"
+    },
+    {
+      "label": "handleChange()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ConfigPanel.tsx",
+      "source_location": "L44",
+      "id": "configpanel_handlechange",
+      "community": 15,
+      "norm_label": "handlechange()"
+    },
+    {
+      "label": "FlowCanvas.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/FlowCanvas.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_flowcanvas_tsx",
+      "community": 42,
+      "norm_label": "flowcanvas.tsx"
+    },
+    {
+      "label": "NodePalette.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/NodePalette.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_nodepalette_tsx",
+      "community": 43,
+      "norm_label": "nodepalette.tsx"
+    },
+    {
+      "label": "ToastContainer.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/ToastContainer.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_toastcontainer_tsx",
+      "community": 44,
+      "norm_label": "toastcontainer.tsx"
+    },
+    {
+      "label": "TopBar.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_topbar_tsx",
+      "community": 1,
+      "norm_label": "topbar.tsx"
+    },
+    {
+      "label": "handleConnect()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L37",
+      "id": "topbar_handleconnect",
+      "community": 1,
+      "norm_label": "handleconnect()"
+    },
+    {
+      "label": "getScheduleNode()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L48",
+      "id": "topbar_getschedulenode",
+      "community": 1,
+      "norm_label": "getschedulenode()"
+    },
+    {
+      "label": "executeOnce()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L55",
+      "id": "topbar_executeonce",
+      "community": 1,
+      "norm_label": "executeonce()"
+    },
+    {
+      "label": "handleRun()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L69",
+      "id": "topbar_handlerun",
+      "community": 1,
+      "norm_label": "handlerun()"
+    },
+    {
+      "label": "handleBacktest()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L123",
+      "id": "topbar_handlebacktest",
+      "community": 3,
+      "norm_label": "handlebacktest()"
+    },
+    {
+      "label": "WorkflowManager.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_canvas_workflowmanager_tsx",
+      "community": 2,
+      "norm_label": "workflowmanager.tsx"
+    },
+    {
+      "label": "handleSave()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L38",
+      "id": "workflowmanager_handlesave",
+      "community": 2,
+      "norm_label": "handlesave()"
+    },
+    {
+      "label": "handleLoad()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L45",
+      "id": "workflowmanager_handleload",
+      "community": 2,
+      "norm_label": "handleload()"
+    },
+    {
+      "label": "handleDelete()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L47",
+      "id": "workflowmanager_handledelete",
+      "community": 2,
+      "norm_label": "handledelete()"
+    },
+    {
+      "label": "handleLoadTemplate()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L53",
+      "id": "workflowmanager_handleloadtemplate",
+      "community": 2,
+      "norm_label": "handleloadtemplate()"
+    },
+    {
+      "label": "handleClear()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L55",
+      "id": "workflowmanager_handleclear",
+      "community": 2,
+      "norm_label": "handleclear()"
+    },
+    {
+      "label": "formatDate()",
+      "file_type": "code",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L57",
+      "id": "workflowmanager_formatdate",
+      "community": 2,
+      "norm_label": "formatdate()"
+    },
+    {
+      "label": "BaseNodeComponent.tsx",
+      "file_type": "code",
+      "source_file": "avax-agent/components/nodes/BaseNodeComponent.tsx",
+      "source_location": "L1",
+      "id": "avax_agent_components_nodes_basenodecomponent_tsx",
+      "community": 45,
+      "norm_label": "basenodecomponent.tsx"
+    },
+    {
+      "label": "templates.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/templates.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_templates_ts",
+      "community": 46,
+      "norm_label": "templates.ts"
+    },
+    {
+      "label": "systemPrompt.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/agent/systemPrompt.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_agent_systemprompt_ts",
+      "community": 9,
+      "norm_label": "systemprompt.ts"
+    },
+    {
+      "label": "buildSystemPrompt()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/agent/systemPrompt.ts",
+      "source_location": "L3",
+      "id": "systemprompt_buildsystemprompt",
+      "community": 9,
+      "norm_label": "buildsystemprompt()"
+    },
+    {
+      "label": "tools.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/agent/tools.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_agent_tools_ts",
+      "community": 47,
+      "norm_label": "tools.ts"
+    },
+    {
+      "label": "provider.ts",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/avalanche/provider.ts",
+      "source_location": "L1",
+      "id": "home_anik2003_documents_omeswap_avax_agent_lib_avalanche_provider_ts",
+      "community": 48,
+      "norm_label": "provider.ts"
+    },
+    {
+      "label": "BacktestRunner.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/backtest/BacktestRunner.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_backtest_backtestrunner_ts",
+      "community": 3,
+      "norm_label": "backtestrunner.ts"
+    },
+    {
+      "label": "runBacktest()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/backtest/BacktestRunner.ts",
+      "source_location": "L33",
+      "id": "backtestrunner_runbacktest",
+      "community": 3,
+      "norm_label": "runbacktest()"
+    },
+    {
+      "label": "fetchHistory.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/backtest/fetchHistory.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_backtest_fetchhistory_ts",
+      "community": 3,
+      "norm_label": "fetchhistory.ts"
+    },
+    {
+      "label": "fetchBinanceHistory()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/backtest/fetchHistory.ts",
+      "source_location": "L16",
+      "id": "fetchhistory_fetchbinancehistory",
+      "community": 3,
+      "norm_label": "fetchbinancehistory()"
+    },
+    {
+      "label": "BotRunner.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_engine_botrunner_ts",
+      "community": 3,
+      "norm_label": "botrunner.ts"
+    },
+    {
+      "label": "topologicalSort()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L11",
+      "id": "botrunner_topologicalsort",
+      "community": 3,
+      "norm_label": "topologicalsort()"
+    },
+    {
+      "label": "runBot()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L39",
+      "id": "botrunner_runbot",
+      "community": 3,
+      "norm_label": "runbot()"
+    },
+    {
+      "label": "BaseNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_basenode_ts",
+      "community": 5,
+      "norm_label": "basenode.ts"
+    },
+    {
+      "label": "constructor()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L24",
+      "id": "basenode_constructor",
+      "community": 5,
+      "norm_label": "constructor()"
+    },
+    {
+      "label": "init()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L29",
+      "id": "basenode_init",
+      "community": 5,
+      "norm_label": "init()"
+    },
+    {
+      "label": "setConfig()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L37",
+      "id": "basenode_setconfig",
+      "community": 5,
+      "norm_label": "setconfig()"
+    },
+    {
+      "label": "setStatus()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L41",
+      "id": "basenode_setstatus",
+      "community": 5,
+      "norm_label": "setstatus()"
+    },
+    {
+      "label": "registry.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_registry_ts",
+      "community": 5,
+      "norm_label": "registry.ts"
+    },
+    {
+      "label": "meta()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L38",
+      "id": "registry_meta",
+      "community": 5,
+      "norm_label": "meta()"
+    },
+    {
+      "label": "createNodeInstance()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L73",
+      "id": "registry_createnodeinstance",
+      "community": 5,
+      "norm_label": "createnodeinstance()"
+    },
+    {
+      "label": "AddChartMarkerNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/AddChartMarkerNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_action_addchartmarkernode_ts",
+      "community": 16,
+      "norm_label": "addchartmarkernode.ts"
+    },
+    {
+      "label": "AddChartMarkerNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/AddChartMarkerNode.ts",
+      "source_location": "L4",
+      "id": "addchartmarkernode_addchartmarkernode",
+      "community": 16,
+      "norm_label": "addchartmarkernode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/AddChartMarkerNode.ts",
+      "source_location": "L54",
+      "id": "addchartmarkernode_addchartmarkernode_execute",
+      "community": 16,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "LimitOrderNode.ts",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/LimitOrderNode.ts",
+      "source_location": "L1",
+      "id": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_limitordernode_ts",
+      "community": 17,
+      "norm_label": "limitordernode.ts"
+    },
+    {
+      "label": "LimitOrderNode",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/LimitOrderNode.ts",
+      "source_location": "L8",
+      "id": "limitordernode_limitordernode",
+      "community": 17,
+      "norm_label": "limitordernode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/LimitOrderNode.ts",
+      "source_location": "L52",
+      "id": "limitordernode_limitordernode_execute",
+      "community": 17,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "NotificationNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/NotificationNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_action_notificationnode_ts",
+      "community": 18,
+      "norm_label": "notificationnode.ts"
+    },
+    {
+      "label": "NotificationNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/NotificationNode.ts",
+      "source_location": "L4",
+      "id": "notificationnode_notificationnode",
+      "community": 18,
+      "norm_label": "notificationnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/action/NotificationNode.ts",
+      "source_location": "L41",
+      "id": "notificationnode_notificationnode_execute",
+      "community": 18,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "SwapNode.ts",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/SwapNode.ts",
+      "source_location": "L1",
+      "id": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_swapnode_ts",
+      "community": 19,
+      "norm_label": "swapnode.ts"
+    },
+    {
+      "label": "SwapNode",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/SwapNode.ts",
+      "source_location": "L25",
+      "id": "swapnode_swapnode",
+      "community": 19,
+      "norm_label": "swapnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/SwapNode.ts",
+      "source_location": "L76",
+      "id": "swapnode_swapnode_execute",
+      "community": 19,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "DEXPriceNode.ts",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/DEXPriceNode.ts",
+      "source_location": "L1",
+      "id": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_dexpricenode_ts",
+      "community": 20,
+      "norm_label": "dexpricenode.ts"
+    },
+    {
+      "label": "DEXPriceNode",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/DEXPriceNode.ts",
+      "source_location": "L16",
+      "id": "dexpricenode_dexpricenode",
+      "community": 20,
+      "norm_label": "dexpricenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/DEXPriceNode.ts",
+      "source_location": "L59",
+      "id": "dexpricenode_dexpricenode_execute",
+      "community": 20,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "PriceFeedNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/data/PriceFeedNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_data_pricefeednode_ts",
+      "community": 21,
+      "norm_label": "pricefeednode.ts"
+    },
+    {
+      "label": "PriceFeedNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/data/PriceFeedNode.ts",
+      "source_location": "L4",
+      "id": "pricefeednode_pricefeednode",
+      "community": 21,
+      "norm_label": "pricefeednode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/data/PriceFeedNode.ts",
+      "source_location": "L34",
+      "id": "pricefeednode_pricefeednode_execute",
+      "community": 21,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "WalletBalanceNode.ts",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/WalletBalanceNode.ts",
+      "source_location": "L1",
+      "id": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_walletbalancenode_ts",
+      "community": 22,
+      "norm_label": "walletbalancenode.ts"
+    },
+    {
+      "label": "WalletBalanceNode",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/WalletBalanceNode.ts",
+      "source_location": "L17",
+      "id": "walletbalancenode_walletbalancenode",
+      "community": 22,
+      "norm_label": "walletbalancenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/WalletBalanceNode.ts",
+      "source_location": "L40",
+      "id": "walletbalancenode_walletbalancenode_execute",
+      "community": 22,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "EndNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/EndNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_flow_endnode_ts",
+      "community": 23,
+      "norm_label": "endnode.ts"
+    },
+    {
+      "label": "EndNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/EndNode.ts",
+      "source_location": "L4",
+      "id": "endnode_endnode",
+      "community": 23,
+      "norm_label": "endnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/EndNode.ts",
+      "source_location": "L19",
+      "id": "endnode_endnode_execute",
+      "community": 23,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "MergeNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/MergeNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_flow_mergenode_ts",
+      "community": 24,
+      "norm_label": "mergenode.ts"
+    },
+    {
+      "label": "MergeNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/MergeNode.ts",
+      "source_location": "L4",
+      "id": "mergenode_mergenode",
+      "community": 24,
+      "norm_label": "mergenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/MergeNode.ts",
+      "source_location": "L23",
+      "id": "mergenode_mergenode_execute",
+      "community": 24,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "ScheduleTriggerNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_flow_scheduletriggernode_ts",
+      "community": 1,
+      "norm_label": "scheduletriggernode.ts"
+    },
+    {
+      "label": "ScheduleTriggerNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L4",
+      "id": "scheduletriggernode_scheduletriggernode",
+      "community": 1,
+      "norm_label": "scheduletriggernode"
+    },
+    {
+      "label": ".getInterval()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L36",
+      "id": "scheduletriggernode_scheduletriggernode_getinterval",
+      "community": 1,
+      "norm_label": ".getinterval()"
+    },
+    {
+      "label": ".getMaxRuns()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L40",
+      "id": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "community": 1,
+      "norm_label": ".getmaxruns()"
+    },
+    {
+      "label": ".shouldContinue()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L44",
+      "id": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "community": 1,
+      "norm_label": ".shouldcontinue()"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L49",
+      "id": "scheduletriggernode_scheduletriggernode_execute",
+      "community": 1,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": ".reset()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L61",
+      "id": "scheduletriggernode_scheduletriggernode_reset",
+      "community": 1,
+      "norm_label": ".reset()"
+    },
+    {
+      "label": "StartNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/StartNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_flow_startnode_ts",
+      "community": 25,
+      "norm_label": "startnode.ts"
+    },
+    {
+      "label": "StartNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/StartNode.ts",
+      "source_location": "L4",
+      "id": "startnode_startnode",
+      "community": 25,
+      "norm_label": "startnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/flow/StartNode.ts",
+      "source_location": "L19",
+      "id": "startnode_startnode_execute",
+      "community": 25,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "AccumulatorNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/AccumulatorNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_accumulatornode_ts",
+      "community": 26,
+      "norm_label": "accumulatornode.ts"
+    },
+    {
+      "label": "AccumulatorNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/AccumulatorNode.ts",
+      "source_location": "L4",
+      "id": "accumulatornode_accumulatornode",
+      "community": 26,
+      "norm_label": "accumulatornode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/AccumulatorNode.ts",
+      "source_location": "L41",
+      "id": "accumulatornode_accumulatornode_execute",
+      "community": 26,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "ConditionNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ConditionNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_conditionnode_ts",
+      "community": 27,
+      "norm_label": "conditionnode.ts"
+    },
+    {
+      "label": "ConditionNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ConditionNode.ts",
+      "source_location": "L6",
+      "id": "conditionnode_conditionnode",
+      "community": 27,
+      "norm_label": "conditionnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ConditionNode.ts",
+      "source_location": "L38",
+      "id": "conditionnode_conditionnode_execute",
+      "community": 27,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "DelayNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/DelayNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_delaynode_ts",
+      "community": 28,
+      "norm_label": "delaynode.ts"
+    },
+    {
+      "label": "DelayNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/DelayNode.ts",
+      "source_location": "L4",
+      "id": "delaynode_delaynode",
+      "community": 28,
+      "norm_label": "delaynode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/DelayNode.ts",
+      "source_location": "L27",
+      "id": "delaynode_delaynode_execute",
+      "community": 28,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "MathNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MathNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_mathnode_ts",
+      "community": 29,
+      "norm_label": "mathnode.ts"
+    },
+    {
+      "label": "MathNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MathNode.ts",
+      "source_location": "L6",
+      "id": "mathnode_mathnode",
+      "community": 29,
+      "norm_label": "mathnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MathNode.ts",
+      "source_location": "L31",
+      "id": "mathnode_mathnode_execute",
+      "community": 29,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "MovingAverageNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MovingAverageNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_movingaveragenode_ts",
+      "community": 30,
+      "norm_label": "movingaveragenode.ts"
+    },
+    {
+      "label": "MovingAverageNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MovingAverageNode.ts",
+      "source_location": "L4",
+      "id": "movingaveragenode_movingaveragenode",
+      "community": 30,
+      "norm_label": "movingaveragenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/MovingAverageNode.ts",
+      "source_location": "L38",
+      "id": "movingaveragenode_movingaveragenode_execute",
+      "community": 30,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "PreviousValueNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/PreviousValueNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_previousvaluenode_ts",
+      "community": 31,
+      "norm_label": "previousvaluenode.ts"
+    },
+    {
+      "label": "PreviousValueNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/PreviousValueNode.ts",
+      "source_location": "L4",
+      "id": "previousvaluenode_previousvaluenode",
+      "community": 31,
+      "norm_label": "previousvaluenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/PreviousValueNode.ts",
+      "source_location": "L21",
+      "id": "previousvaluenode_previousvaluenode_execute",
+      "community": 31,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "ThresholdAlertNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ThresholdAlertNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_thresholdalertnode_ts",
+      "community": 32,
+      "norm_label": "thresholdalertnode.ts"
+    },
+    {
+      "label": "ThresholdAlertNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ThresholdAlertNode.ts",
+      "source_location": "L4",
+      "id": "thresholdalertnode_thresholdalertnode",
+      "community": 32,
+      "norm_label": "thresholdalertnode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/ThresholdAlertNode.ts",
+      "source_location": "L34",
+      "id": "thresholdalertnode_thresholdalertnode_execute",
+      "community": 32,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "VariableNode.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/VariableNode.ts",
+      "source_location": "L1",
+      "id": "avax_agent_lib_nodes_logic_variablenode_ts",
+      "community": 3,
+      "norm_label": "variablenode.ts"
+    },
+    {
+      "label": "VariableNode",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/VariableNode.ts",
+      "source_location": "L4",
+      "id": "variablenode_variablenode",
+      "community": 3,
+      "norm_label": "variablenode"
+    },
+    {
+      "label": ".execute()",
+      "file_type": "code",
+      "source_file": "avax-agent/lib/nodes/logic/VariableNode.ts",
+      "source_location": "L35",
+      "id": "variablenode_variablenode_execute",
+      "community": 3,
+      "norm_label": ".execute()"
+    },
+    {
+      "label": "useStore.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L1",
+      "id": "avax_agent_store_usestore_ts",
+      "community": 2,
+      "norm_label": "usestore.ts"
+    },
+    {
+      "label": "listWorkflows()",
+      "file_type": "code",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L38",
+      "id": "usestore_listworkflows",
+      "community": 2,
+      "norm_label": "listworkflows()"
+    },
+    {
+      "label": "persistWorkflows()",
+      "file_type": "code",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L44",
+      "id": "usestore_persistworkflows",
+      "community": 2,
+      "norm_label": "persistworkflows()"
+    },
+    {
+      "label": "saveToSession()",
+      "file_type": "code",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L126",
+      "id": "usestore_savetosession",
+      "community": 2,
+      "norm_label": "savetosession()"
+    },
+    {
+      "label": "loadFromSession()",
+      "file_type": "code",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L134",
+      "id": "usestore_loadfromsession",
+      "community": 5,
+      "norm_label": "loadfromsession()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "avax-agent/types/index.ts",
+      "source_location": "L1",
+      "id": "avax_agent_types_index_ts",
+      "community": 49,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "Main Route Entrypoints and Layouts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "main_route_entrypoints_layouts",
+      "community": 4,
+      "norm_label": "main route entrypoints and layouts"
+    },
+    {
+      "label": "AppLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "layout_applayout",
+      "community": 4,
+      "norm_label": "applayout()"
+    },
+    {
+      "label": "BuilderLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "layout_builderlayout",
+      "community": 4,
+      "norm_label": "builderlayout()"
+    },
+    {
+      "label": "LandingLayout()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "layout_landinglayout",
+      "community": 4,
+      "norm_label": "landinglayout()"
+    },
+    {
+      "label": "app/api/crypto/route.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "api_crypto_route_ts",
+      "community": 4,
+      "norm_label": "app/api/crypto/route.ts"
+    },
+    {
+      "label": "GET()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "get_handler",
+      "community": 4,
+      "norm_label": "get()"
+    },
+    {
+      "label": "app/api/agent-builder/chat/route.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "api_agent_chat_route_ts",
+      "community": 4,
+      "norm_label": "app/api/agent-builder/chat/route.ts"
+    },
+    {
+      "label": "POST()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "id": "post_handler",
+      "community": 4,
+      "norm_label": "post()"
+    },
+    {
+      "label": "Next.js Starter Project",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "id": "readme_nextjs_starter_project",
+      "community": 6,
+      "norm_label": "next.js starter project"
+    },
+    {
+      "label": "Local Development Server",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "id": "readme_local_development_server",
+      "community": 6,
+      "norm_label": "local development server"
+    },
+    {
+      "label": "Vercel Deployment",
+      "file_type": "document",
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "id": "readme_vercel_deployment",
+      "community": 6,
+      "norm_label": "vercel deployment"
+    },
+    {
+      "label": "app/page.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "id": "app_page_tsx",
+      "community": 6,
+      "norm_label": "app/page.tsx"
+    },
+    {
+      "label": "Home()",
+      "file_type": "document",
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "id": "home_component",
+      "community": 6,
+      "norm_label": "home()"
+    },
+    {
+      "label": "FlowCanvas.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "id": "flowcanvas_tsx",
+      "community": 0,
+      "norm_label": "flowcanvas.tsx"
+    },
+    {
+      "label": "Visual Workflow Canvas",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "id": "visual_workflow_canvas",
+      "community": 0,
+      "norm_label": "visual workflow canvas"
+    },
+    {
+      "label": "CanvasPage",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "canvas_page",
+      "community": 0,
+      "norm_label": "canvaspage"
+    },
+    {
+      "label": "TopBar.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "id": "topbar_tsx",
+      "community": 0,
+      "norm_label": "topbar.tsx"
+    },
+    {
+      "label": "NodePalette",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "node_palette",
+      "community": 0,
+      "norm_label": "nodepalette"
+    },
+    {
+      "label": "ConfigPanel",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "config_panel",
+      "community": 0,
+      "norm_label": "configpanel"
+    },
+    {
+      "label": "handleRun()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "handle_run",
+      "community": 0,
+      "norm_label": "handlerun()"
+    },
+    {
+      "label": "ScheduleTriggerNode",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "schedule_trigger_node",
+      "community": 0,
+      "norm_label": "scheduletriggernode"
+    },
+    {
+      "label": "executeOnce()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "id": "execute_once",
+      "community": 0,
+      "norm_label": "executeonce()"
+    },
+    {
+      "label": "runBot()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "run_bot",
+      "community": 0,
+      "norm_label": "runbot()"
+    },
+    {
+      "label": "BotRunner.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "id": "botrunner_ts",
+      "community": 0,
+      "norm_label": "botrunner.ts"
+    },
+    {
+      "label": "BacktestRunner.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "id": "backtestrunner_ts",
+      "community": 0,
+      "norm_label": "backtestrunner.ts"
+    },
+    {
+      "label": "handleBacktest()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "id": "handle_backtest",
+      "community": 0,
+      "norm_label": "handlebacktest()"
+    },
+    {
+      "label": "runBacktest()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "id": "run_backtest",
+      "community": 0,
+      "norm_label": "runbacktest()"
+    },
+    {
+      "label": "registry.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "id": "node_registry_ts",
+      "community": 33,
+      "norm_label": "registry.ts"
+    },
+    {
+      "label": "createNodeInstance()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "id": "create_node_instance",
+      "community": 33,
+      "norm_label": "createnodeinstance()"
+    },
+    {
+      "label": "SwapNode",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "id": "swap_node",
+      "community": 33,
+      "norm_label": "swapnode"
+    },
+    {
+      "label": "WalletAnalysisPanel.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "id": "wallet_analysis_panel",
+      "community": 7,
+      "norm_label": "walletanalysispanel.tsx"
+    },
+    {
+      "label": "hooks/index.ts",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "id": "hooks_index_ts",
+      "community": 7,
+      "norm_label": "hooks/index.ts"
+    },
+    {
+      "label": "useWalletAnalysis()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "id": "use_wallet_analysis",
+      "community": 7,
+      "norm_label": "usewalletanalysis()"
+    },
+    {
+      "label": "useWalletAnalysisQuery()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "id": "use_wallet_analysis_query",
+      "community": 7,
+      "norm_label": "usewalletanalysisquery()"
+    },
+    {
+      "label": "analyzeWallet()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "id": "analyze_wallet",
+      "community": 7,
+      "norm_label": "analyzewallet()"
+    },
+    {
+      "label": "app/(app)/portfolio/page.tsx",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "id": "portfolio_page",
+      "community": 34,
+      "norm_label": "app/(app)/portfolio/page.tsx"
+    },
+    {
+      "label": "generateChartData()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "id": "generate_chart_data",
+      "community": 34,
+      "norm_label": "generatechartdata()"
+    },
+    {
+      "label": "fetchPrices()",
+      "file_type": "document",
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "id": "fetch_prices",
+      "community": 34,
+      "norm_label": "fetchprices()"
+    },
+    {
+      "label": "Document File Icon",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "id": "file_svg_document_icon",
+      "community": 8,
+      "norm_label": "document file icon"
+    },
+    {
+      "label": "Folded Corner",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "id": "file_svg_folded_corner",
+      "community": 8,
+      "norm_label": "folded corner"
+    },
+    {
+      "label": "Top Text Line Block",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "id": "file_svg_text_line_top",
+      "community": 8,
+      "norm_label": "top text line block"
+    },
+    {
+      "label": "Middle Text Line",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "id": "file_svg_text_line_middle",
+      "community": 8,
+      "norm_label": "middle text line"
+    },
+    {
+      "label": "Bottom Text Line",
+      "file_type": "image",
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "id": "file_svg_text_line_bottom",
+      "community": 8,
+      "norm_label": "bottom text line"
+    },
+    {
+      "label": "globe.svg",
+      "file_type": "image",
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "globe_svg",
+      "community": 10,
+      "norm_label": "globe.svg"
+    },
+    {
+      "label": "Globe Icon",
+      "file_type": "image",
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "globe_icon",
+      "community": 10,
+      "norm_label": "globe icon"
+    },
+    {
+      "label": "Main Globe Path Shape",
+      "file_type": "image",
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "main_path_shape",
+      "community": 10,
+      "norm_label": "main globe path shape"
+    },
+    {
+      "label": "Clip Path a",
+      "file_type": "image",
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "clip_path_a",
+      "community": 10,
+      "norm_label": "clip path a"
+    },
+    {
+      "label": "next.svg root element",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "svg",
+      "id": "next_svg_root",
+      "community": 11,
+      "norm_label": "next.svg root element"
+    },
+    {
+      "label": "Path 1 (wordmark geometry)",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path[1]",
+      "id": "next_svg_path_1",
+      "community": 11,
+      "norm_label": "path 1 (wordmark geometry)"
+    },
+    {
+      "label": "Path 2 (wordmark geometry)",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path[2]",
+      "id": "next_svg_path_2",
+      "community": 11,
+      "norm_label": "path 2 (wordmark geometry)"
+    },
+    {
+      "label": "Fill Color #000",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path/@fill",
+      "id": "next_svg_fill_black",
+      "community": 11,
+      "norm_label": "fill color #000"
+    },
+    {
+      "label": "Vercel SVG Logo",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "svg",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "vercel_svg_asset",
+      "community": 12,
+      "norm_label": "vercel svg logo"
+    },
+    {
+      "label": "Triangle Path Shape",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "path[d]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "vercel_svg_triangle_path",
+      "community": 12,
+      "norm_label": "triangle path shape"
+    },
+    {
+      "label": "White Fill Color (#fff)",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "path[fill]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "vercel_svg_white_fill",
+      "community": 12,
+      "norm_label": "white fill color (#fff)"
+    },
+    {
+      "label": "ViewBox 1155x1000",
+      "file_type": "image",
+      "source_file": "public/vercel.svg",
+      "source_location": "svg[viewBox]",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "vercel_svg_viewbox_1155_1000",
+      "community": 12,
+      "norm_label": "viewbox 1155x1000"
+    },
+    {
+      "label": "Window Icon",
+      "file_type": "image",
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "window_svg_window_icon",
+      "community": 35,
+      "norm_label": "window icon"
+    },
+    {
+      "label": "Window Frame",
+      "file_type": "image",
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "window_svg_window_frame",
+      "community": 35,
+      "norm_label": "window frame"
+    },
+    {
+      "label": "Top Bar Control Dots",
+      "file_type": "image",
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "window_svg_window_controls",
+      "community": 35,
+      "norm_label": "top bar control dots"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/app/layout.tsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "avax_agent_app_layout_tsx",
+      "_tgt": "layout_rootlayout",
+      "source": "avax_agent_app_layout_tsx",
+      "target": "layout_rootlayout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "layout_rootlayout",
+      "source": "layout_rootlayout",
+      "target": "main_route_entrypoints_layouts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/app/page.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "avax_agent_app_page_tsx",
+      "_tgt": "page_home",
+      "source": "avax_agent_app_page_tsx",
+      "target": "page_home",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/app/api/agent/route.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_src": "avax_agent_app_api_agent_route_ts",
+      "_tgt": "route_post",
+      "source": "avax_agent_app_api_agent_route_ts",
+      "target": "route_post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/app/api/agent/route.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "route_post",
+      "_tgt": "systemprompt_buildsystemprompt",
+      "source": "route_post",
+      "target": "systemprompt_buildsystemprompt"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/app/canvas/page.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "avax_agent_app_canvas_page_tsx",
+      "_tgt": "page_canvaspage",
+      "source": "avax_agent_app_canvas_page_tsx",
+      "target": "page_canvaspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_agentsidebar_tsx",
+      "_tgt": "agentsidebar_rendermarkdown",
+      "source": "avax_agent_components_canvas_agentsidebar_tsx",
+      "target": "agentsidebar_rendermarkdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_agentsidebar_tsx",
+      "_tgt": "agentsidebar_inlinemarkdown",
+      "source": "avax_agent_components_canvas_agentsidebar_tsx",
+      "target": "agentsidebar_inlinemarkdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/AgentSidebar.tsx",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "agentsidebar_rendermarkdown",
+      "_tgt": "agentsidebar_inlinemarkdown",
+      "source": "agentsidebar_rendermarkdown",
+      "target": "agentsidebar_inlinemarkdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/BacktestSummaryModal.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_backtestsummarymodal_tsx",
+      "_tgt": "backtestsummarymodal_backtestsummarymodal",
+      "source": "avax_agent_components_canvas_backtestsummarymodal_tsx",
+      "target": "backtestsummarymodal_backtestsummarymodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/ChartPanel.tsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_chartpanel_tsx",
+      "_tgt": "chartpanel_onmove",
+      "source": "avax_agent_components_canvas_chartpanel_tsx",
+      "target": "chartpanel_onmove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/ChartPanel.tsx",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_chartpanel_tsx",
+      "_tgt": "chartpanel_onup",
+      "source": "avax_agent_components_canvas_chartpanel_tsx",
+      "target": "chartpanel_onup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/ConfigPanel.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_configpanel_tsx",
+      "_tgt": "configpanel_formatvalue",
+      "source": "avax_agent_components_canvas_configpanel_tsx",
+      "target": "configpanel_formatvalue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/ConfigPanel.tsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_configpanel_tsx",
+      "_tgt": "configpanel_handlechange",
+      "source": "avax_agent_components_canvas_configpanel_tsx",
+      "target": "configpanel_handlechange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_topbar_tsx",
+      "_tgt": "topbar_handleconnect",
+      "source": "avax_agent_components_canvas_topbar_tsx",
+      "target": "topbar_handleconnect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_topbar_tsx",
+      "_tgt": "topbar_getschedulenode",
+      "source": "avax_agent_components_canvas_topbar_tsx",
+      "target": "topbar_getschedulenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_topbar_tsx",
+      "_tgt": "topbar_executeonce",
+      "source": "avax_agent_components_canvas_topbar_tsx",
+      "target": "topbar_executeonce",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_topbar_tsx",
+      "_tgt": "topbar_handlerun",
+      "source": "avax_agent_components_canvas_topbar_tsx",
+      "target": "topbar_handlerun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L123",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_topbar_tsx",
+      "_tgt": "topbar_handlebacktest",
+      "source": "avax_agent_components_canvas_topbar_tsx",
+      "target": "topbar_handlebacktest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L90",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "topbar_getschedulenode",
+      "source": "topbar_getschedulenode",
+      "target": "topbar_handlerun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "topbar_executeonce",
+      "source": "topbar_executeonce",
+      "target": "topbar_handlerun",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "topbar_executeonce",
+      "_tgt": "botrunner_runbot",
+      "source": "topbar_executeonce",
+      "target": "botrunner_runbot"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L93",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "scheduletriggernode_scheduletriggernode_reset",
+      "source": "topbar_handlerun",
+      "target": "scheduletriggernode_scheduletriggernode_reset"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "source": "topbar_handlerun",
+      "target": "scheduletriggernode_scheduletriggernode_shouldcontinue"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "source": "topbar_handlerun",
+      "target": "scheduletriggernode_scheduletriggernode_getmaxruns"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_src": "topbar_handlerun",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getinterval",
+      "source": "topbar_handlerun",
+      "target": "scheduletriggernode_scheduletriggernode_getinterval"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_src": "topbar_handlebacktest",
+      "_tgt": "fetchhistory_fetchbinancehistory",
+      "source": "topbar_handlebacktest",
+      "target": "fetchhistory_fetchbinancehistory"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/TopBar.tsx",
+      "source_location": "L157",
+      "weight": 1.0,
+      "_src": "topbar_handlebacktest",
+      "_tgt": "backtestrunner_runbacktest",
+      "source": "topbar_handlebacktest",
+      "target": "backtestrunner_runbacktest"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_handlesave",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_handlesave",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_handleload",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_handleload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_handledelete",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_handledelete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L53",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_handleloadtemplate",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_handleloadtemplate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_handleclear",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_handleclear",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_src": "avax_agent_components_canvas_workflowmanager_tsx",
+      "_tgt": "workflowmanager_formatdate",
+      "source": "avax_agent_components_canvas_workflowmanager_tsx",
+      "target": "workflowmanager_formatdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_src": "workflowmanager_handlesave",
+      "_tgt": "usestore_listworkflows",
+      "source": "workflowmanager_handlesave",
+      "target": "usestore_listworkflows"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/components/canvas/WorkflowManager.tsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "workflowmanager_handledelete",
+      "_tgt": "usestore_listworkflows",
+      "source": "workflowmanager_handledelete",
+      "target": "usestore_listworkflows"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/agent/systemPrompt.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_agent_systemprompt_ts",
+      "_tgt": "systemprompt_buildsystemprompt",
+      "source": "avax_agent_lib_agent_systemprompt_ts",
+      "target": "systemprompt_buildsystemprompt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/backtest/BacktestRunner.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_backtest_backtestrunner_ts",
+      "_tgt": "backtestrunner_runbacktest",
+      "source": "avax_agent_lib_backtest_backtestrunner_ts",
+      "target": "backtestrunner_runbacktest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/lib/backtest/BacktestRunner.ts",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "backtestrunner_runbacktest",
+      "_tgt": "botrunner_runbot",
+      "source": "backtestrunner_runbacktest",
+      "target": "botrunner_runbot"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/backtest/fetchHistory.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_backtest_fetchhistory_ts",
+      "_tgt": "fetchhistory_fetchbinancehistory",
+      "source": "avax_agent_lib_backtest_fetchhistory_ts",
+      "target": "fetchhistory_fetchbinancehistory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_engine_botrunner_ts",
+      "_tgt": "botrunner_topologicalsort",
+      "source": "avax_agent_lib_engine_botrunner_ts",
+      "target": "botrunner_topologicalsort",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_engine_botrunner_ts",
+      "_tgt": "botrunner_runbot",
+      "source": "avax_agent_lib_engine_botrunner_ts",
+      "target": "botrunner_runbot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_src": "botrunner_runbot",
+      "_tgt": "botrunner_topologicalsort",
+      "source": "botrunner_topologicalsort",
+      "target": "botrunner_runbot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_src": "botrunner_runbot",
+      "_tgt": "basenode_setstatus",
+      "source": "botrunner_runbot",
+      "target": "basenode_setstatus"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/lib/engine/BotRunner.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_src": "botrunner_runbot",
+      "_tgt": "variablenode_variablenode_execute",
+      "source": "botrunner_runbot",
+      "target": "variablenode_variablenode_execute"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_basenode_ts",
+      "_tgt": "basenode_constructor",
+      "source": "avax_agent_lib_nodes_basenode_ts",
+      "target": "basenode_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_basenode_ts",
+      "_tgt": "basenode_init",
+      "source": "avax_agent_lib_nodes_basenode_ts",
+      "target": "basenode_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_basenode_ts",
+      "_tgt": "basenode_setconfig",
+      "source": "avax_agent_lib_nodes_basenode_ts",
+      "target": "basenode_setconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/BaseNode.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_basenode_ts",
+      "_tgt": "basenode_setstatus",
+      "source": "avax_agent_lib_nodes_basenode_ts",
+      "target": "basenode_setstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "registry_createnodeinstance",
+      "_tgt": "basenode_init",
+      "source": "basenode_init",
+      "target": "registry_createnodeinstance"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L150",
+      "weight": 1.0,
+      "_src": "usestore_loadfromsession",
+      "_tgt": "basenode_setconfig",
+      "source": "basenode_setconfig",
+      "target": "usestore_loadfromsession"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_registry_ts",
+      "_tgt": "registry_meta",
+      "source": "avax_agent_lib_nodes_registry_ts",
+      "target": "registry_meta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/registry.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_registry_ts",
+      "_tgt": "registry_createnodeinstance",
+      "source": "avax_agent_lib_nodes_registry_ts",
+      "target": "registry_createnodeinstance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_src": "usestore_loadfromsession",
+      "_tgt": "registry_createnodeinstance",
+      "source": "registry_createnodeinstance",
+      "target": "usestore_loadfromsession"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/action/AddChartMarkerNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_action_addchartmarkernode_ts",
+      "_tgt": "addchartmarkernode_addchartmarkernode",
+      "source": "avax_agent_lib_nodes_action_addchartmarkernode_ts",
+      "target": "addchartmarkernode_addchartmarkernode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/action/AddChartMarkerNode.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "addchartmarkernode_addchartmarkernode",
+      "_tgt": "addchartmarkernode_addchartmarkernode_execute",
+      "source": "addchartmarkernode_addchartmarkernode",
+      "target": "addchartmarkernode_addchartmarkernode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/LimitOrderNode.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_src": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_limitordernode_ts",
+      "_tgt": "limitordernode_limitordernode",
+      "source": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_limitordernode_ts",
+      "target": "limitordernode_limitordernode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/LimitOrderNode.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "limitordernode_limitordernode",
+      "_tgt": "limitordernode_limitordernode_execute",
+      "source": "limitordernode_limitordernode",
+      "target": "limitordernode_limitordernode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/action/NotificationNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_action_notificationnode_ts",
+      "_tgt": "notificationnode_notificationnode",
+      "source": "avax_agent_lib_nodes_action_notificationnode_ts",
+      "target": "notificationnode_notificationnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/action/NotificationNode.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_src": "notificationnode_notificationnode",
+      "_tgt": "notificationnode_notificationnode_execute",
+      "source": "notificationnode_notificationnode",
+      "target": "notificationnode_notificationnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/SwapNode.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_src": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_swapnode_ts",
+      "_tgt": "swapnode_swapnode",
+      "source": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_action_swapnode_ts",
+      "target": "swapnode_swapnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/action/SwapNode.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_src": "swapnode_swapnode",
+      "_tgt": "swapnode_swapnode_execute",
+      "source": "swapnode_swapnode",
+      "target": "swapnode_swapnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/DEXPriceNode.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_dexpricenode_ts",
+      "_tgt": "dexpricenode_dexpricenode",
+      "source": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_dexpricenode_ts",
+      "target": "dexpricenode_dexpricenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/DEXPriceNode.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "dexpricenode_dexpricenode",
+      "_tgt": "dexpricenode_dexpricenode_execute",
+      "source": "dexpricenode_dexpricenode",
+      "target": "dexpricenode_dexpricenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/data/PriceFeedNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_data_pricefeednode_ts",
+      "_tgt": "pricefeednode_pricefeednode",
+      "source": "avax_agent_lib_nodes_data_pricefeednode_ts",
+      "target": "pricefeednode_pricefeednode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/data/PriceFeedNode.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "pricefeednode_pricefeednode",
+      "_tgt": "pricefeednode_pricefeednode_execute",
+      "source": "pricefeednode_pricefeednode",
+      "target": "pricefeednode_pricefeednode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/WalletBalanceNode.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_src": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_walletbalancenode_ts",
+      "_tgt": "walletbalancenode_walletbalancenode",
+      "source": "home_anik2003_documents_omeswap_avax_agent_lib_nodes_data_walletbalancenode_ts",
+      "target": "walletbalancenode_walletbalancenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/anik2003/Documents/omeswap/avax-agent/lib/nodes/data/WalletBalanceNode.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "walletbalancenode_walletbalancenode",
+      "_tgt": "walletbalancenode_walletbalancenode_execute",
+      "source": "walletbalancenode_walletbalancenode",
+      "target": "walletbalancenode_walletbalancenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/EndNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_flow_endnode_ts",
+      "_tgt": "endnode_endnode",
+      "source": "avax_agent_lib_nodes_flow_endnode_ts",
+      "target": "endnode_endnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/EndNode.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "endnode_endnode",
+      "_tgt": "endnode_endnode_execute",
+      "source": "endnode_endnode",
+      "target": "endnode_endnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/MergeNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_flow_mergenode_ts",
+      "_tgt": "mergenode_mergenode",
+      "source": "avax_agent_lib_nodes_flow_mergenode_ts",
+      "target": "mergenode_mergenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/MergeNode.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "mergenode_mergenode",
+      "_tgt": "mergenode_mergenode_execute",
+      "source": "mergenode_mergenode",
+      "target": "mergenode_mergenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_flow_scheduletriggernode_ts",
+      "_tgt": "scheduletriggernode_scheduletriggernode",
+      "source": "avax_agent_lib_nodes_flow_scheduletriggernode_ts",
+      "target": "scheduletriggernode_scheduletriggernode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getinterval",
+      "source": "scheduletriggernode_scheduletriggernode",
+      "target": "scheduletriggernode_scheduletriggernode_getinterval",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "source": "scheduletriggernode_scheduletriggernode",
+      "target": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode",
+      "_tgt": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "source": "scheduletriggernode_scheduletriggernode",
+      "target": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode",
+      "_tgt": "scheduletriggernode_scheduletriggernode_execute",
+      "source": "scheduletriggernode_scheduletriggernode",
+      "target": "scheduletriggernode_scheduletriggernode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode",
+      "_tgt": "scheduletriggernode_scheduletriggernode_reset",
+      "source": "scheduletriggernode_scheduletriggernode",
+      "target": "scheduletriggernode_scheduletriggernode_reset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode_execute",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getinterval",
+      "source": "scheduletriggernode_scheduletriggernode_getinterval",
+      "target": "scheduletriggernode_scheduletriggernode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "source": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "target": "scheduletriggernode_scheduletriggernode_shouldcontinue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/ScheduleTriggerNode.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "scheduletriggernode_scheduletriggernode_execute",
+      "_tgt": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "source": "scheduletriggernode_scheduletriggernode_getmaxruns",
+      "target": "scheduletriggernode_scheduletriggernode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/StartNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_flow_startnode_ts",
+      "_tgt": "startnode_startnode",
+      "source": "avax_agent_lib_nodes_flow_startnode_ts",
+      "target": "startnode_startnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/flow/StartNode.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_src": "startnode_startnode",
+      "_tgt": "startnode_startnode_execute",
+      "source": "startnode_startnode",
+      "target": "startnode_startnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/AccumulatorNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_accumulatornode_ts",
+      "_tgt": "accumulatornode_accumulatornode",
+      "source": "avax_agent_lib_nodes_logic_accumulatornode_ts",
+      "target": "accumulatornode_accumulatornode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/AccumulatorNode.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_src": "accumulatornode_accumulatornode",
+      "_tgt": "accumulatornode_accumulatornode_execute",
+      "source": "accumulatornode_accumulatornode",
+      "target": "accumulatornode_accumulatornode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/ConditionNode.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_conditionnode_ts",
+      "_tgt": "conditionnode_conditionnode",
+      "source": "avax_agent_lib_nodes_logic_conditionnode_ts",
+      "target": "conditionnode_conditionnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/ConditionNode.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "conditionnode_conditionnode",
+      "_tgt": "conditionnode_conditionnode_execute",
+      "source": "conditionnode_conditionnode",
+      "target": "conditionnode_conditionnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/DelayNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_delaynode_ts",
+      "_tgt": "delaynode_delaynode",
+      "source": "avax_agent_lib_nodes_logic_delaynode_ts",
+      "target": "delaynode_delaynode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/DelayNode.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "delaynode_delaynode",
+      "_tgt": "delaynode_delaynode_execute",
+      "source": "delaynode_delaynode",
+      "target": "delaynode_delaynode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/MathNode.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_mathnode_ts",
+      "_tgt": "mathnode_mathnode",
+      "source": "avax_agent_lib_nodes_logic_mathnode_ts",
+      "target": "mathnode_mathnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/MathNode.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "mathnode_mathnode",
+      "_tgt": "mathnode_mathnode_execute",
+      "source": "mathnode_mathnode",
+      "target": "mathnode_mathnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/MovingAverageNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_movingaveragenode_ts",
+      "_tgt": "movingaveragenode_movingaveragenode",
+      "source": "avax_agent_lib_nodes_logic_movingaveragenode_ts",
+      "target": "movingaveragenode_movingaveragenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/MovingAverageNode.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "movingaveragenode_movingaveragenode",
+      "_tgt": "movingaveragenode_movingaveragenode_execute",
+      "source": "movingaveragenode_movingaveragenode",
+      "target": "movingaveragenode_movingaveragenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/PreviousValueNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_previousvaluenode_ts",
+      "_tgt": "previousvaluenode_previousvaluenode",
+      "source": "avax_agent_lib_nodes_logic_previousvaluenode_ts",
+      "target": "previousvaluenode_previousvaluenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/PreviousValueNode.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "previousvaluenode_previousvaluenode",
+      "_tgt": "previousvaluenode_previousvaluenode_execute",
+      "source": "previousvaluenode_previousvaluenode",
+      "target": "previousvaluenode_previousvaluenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/ThresholdAlertNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_thresholdalertnode_ts",
+      "_tgt": "thresholdalertnode_thresholdalertnode",
+      "source": "avax_agent_lib_nodes_logic_thresholdalertnode_ts",
+      "target": "thresholdalertnode_thresholdalertnode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/ThresholdAlertNode.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "thresholdalertnode_thresholdalertnode",
+      "_tgt": "thresholdalertnode_thresholdalertnode_execute",
+      "source": "thresholdalertnode_thresholdalertnode",
+      "target": "thresholdalertnode_thresholdalertnode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/VariableNode.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "avax_agent_lib_nodes_logic_variablenode_ts",
+      "_tgt": "variablenode_variablenode",
+      "source": "avax_agent_lib_nodes_logic_variablenode_ts",
+      "target": "variablenode_variablenode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/lib/nodes/logic/VariableNode.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "variablenode_variablenode",
+      "_tgt": "variablenode_variablenode_execute",
+      "source": "variablenode_variablenode",
+      "target": "variablenode_variablenode_execute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "avax_agent_store_usestore_ts",
+      "_tgt": "usestore_listworkflows",
+      "source": "avax_agent_store_usestore_ts",
+      "target": "usestore_listworkflows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_src": "avax_agent_store_usestore_ts",
+      "_tgt": "usestore_persistworkflows",
+      "source": "avax_agent_store_usestore_ts",
+      "target": "usestore_persistworkflows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_src": "avax_agent_store_usestore_ts",
+      "_tgt": "usestore_savetosession",
+      "source": "avax_agent_store_usestore_ts",
+      "target": "usestore_savetosession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "avax-agent/store/useStore.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "_src": "avax_agent_store_usestore_ts",
+      "_tgt": "usestore_loadfromsession",
+      "source": "avax_agent_store_usestore_ts",
+      "target": "usestore_loadfromsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "layout_applayout",
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_applayout"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "layout_builderlayout",
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_builderlayout"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "layout_landinglayout",
+      "source": "main_route_entrypoints_layouts",
+      "target": "layout_landinglayout"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "api_crypto_route_ts",
+      "source": "main_route_entrypoints_layouts",
+      "target": "api_crypto_route_ts"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_route_entrypoints_layouts",
+      "_tgt": "api_agent_chat_route_ts",
+      "source": "main_route_entrypoints_layouts",
+      "target": "api_agent_chat_route_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "api_crypto_route_ts",
+      "_tgt": "get_handler",
+      "source": "api_crypto_route_ts",
+      "target": "get_handler"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "api_agent_chat_route_ts",
+      "_tgt": "post_handler",
+      "source": "api_agent_chat_route_ts",
+      "target": "post_handler"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "readme_nextjs_starter_project",
+      "_tgt": "readme_local_development_server",
+      "source": "readme_nextjs_starter_project",
+      "target": "readme_local_development_server"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/README.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "readme_nextjs_starter_project",
+      "_tgt": "readme_vercel_deployment",
+      "source": "readme_nextjs_starter_project",
+      "target": "readme_vercel_deployment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "app_page_tsx",
+      "_tgt": "readme_nextjs_starter_project",
+      "source": "readme_nextjs_starter_project",
+      "target": "app_page_tsx"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/graphify-out/memory/query_20260418_113633_path_from_app_page_tsx_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "app_page_tsx",
+      "_tgt": "home_component",
+      "source": "app_page_tsx",
+      "target": "home_component"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "flowcanvas_tsx",
+      "_tgt": "visual_workflow_canvas",
+      "source": "flowcanvas_tsx",
+      "target": "visual_workflow_canvas"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "canvas_page",
+      "_tgt": "flowcanvas_tsx",
+      "source": "flowcanvas_tsx",
+      "target": "canvas_page"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.78,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "flowcanvas_tsx",
+      "_tgt": "botrunner_ts",
+      "source": "flowcanvas_tsx",
+      "target": "botrunner_ts"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "visual_workflow_canvas",
+      "_tgt": "topbar_tsx",
+      "source": "visual_workflow_canvas",
+      "target": "topbar_tsx"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "canvas_page",
+      "_tgt": "topbar_tsx",
+      "source": "canvas_page",
+      "target": "topbar_tsx"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "canvas_page",
+      "_tgt": "node_palette",
+      "source": "canvas_page",
+      "target": "node_palette"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "canvas_page",
+      "_tgt": "config_panel",
+      "source": "canvas_page",
+      "target": "config_panel"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "topbar_tsx",
+      "_tgt": "execute_once",
+      "source": "topbar_tsx",
+      "target": "execute_once"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.86,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "handle_run",
+      "_tgt": "schedule_trigger_node",
+      "source": "handle_run",
+      "target": "schedule_trigger_node"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "handle_run",
+      "_tgt": "execute_once",
+      "source": "handle_run",
+      "target": "execute_once"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_flowcanvas_to_botrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "execute_once",
+      "_tgt": "run_bot",
+      "source": "execute_once",
+      "target": "run_bot"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "run_bot",
+      "_tgt": "botrunner_ts",
+      "source": "run_bot",
+      "target": "botrunner_ts"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "run_backtest",
+      "_tgt": "run_bot",
+      "source": "run_bot",
+      "target": "run_backtest"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "backtestrunner_ts",
+      "_tgt": "run_backtest",
+      "source": "backtestrunner_ts",
+      "target": "run_backtest"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "handle_backtest",
+      "_tgt": "run_backtest",
+      "source": "handle_backtest",
+      "target": "run_backtest"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "node_registry_ts",
+      "_tgt": "swap_node",
+      "source": "node_registry_ts",
+      "target": "swap_node"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "node_registry_ts",
+      "_tgt": "create_node_instance",
+      "source": "node_registry_ts",
+      "target": "create_node_instance"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_path_from_node_registry_to_swapnode.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "create_node_instance",
+      "_tgt": "swap_node",
+      "source": "create_node_instance",
+      "target": "swap_node"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "wallet_analysis_panel",
+      "_tgt": "hooks_index_ts",
+      "source": "wallet_analysis_panel",
+      "target": "hooks_index_ts"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "hooks_index_ts",
+      "_tgt": "use_wallet_analysis",
+      "source": "hooks_index_ts",
+      "target": "use_wallet_analysis"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "hooks_index_ts",
+      "_tgt": "use_wallet_analysis_query",
+      "source": "hooks_index_ts",
+      "target": "use_wallet_analysis_query"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "use_wallet_analysis",
+      "_tgt": "analyze_wallet",
+      "source": "use_wallet_analysis",
+      "target": "analyze_wallet"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "use_wallet_analysis_query",
+      "_tgt": "analyze_wallet",
+      "source": "use_wallet_analysis_query",
+      "target": "analyze_wallet"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "portfolio_page",
+      "_tgt": "generate_chart_data",
+      "source": "portfolio_page",
+      "target": "generate_chart_data"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "portfolio_page",
+      "_tgt": "fetch_prices",
+      "source": "portfolio_page",
+      "target": "fetch_prices"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "file_svg_folded_corner",
+      "_tgt": "file_svg_document_icon",
+      "source": "file_svg_document_icon",
+      "target": "file_svg_folded_corner"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "file_svg_text_line_top",
+      "_tgt": "file_svg_document_icon",
+      "source": "file_svg_document_icon",
+      "target": "file_svg_text_line_top"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "file_svg_text_line_middle",
+      "_tgt": "file_svg_document_icon",
+      "source": "file_svg_document_icon",
+      "target": "file_svg_text_line_middle"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "public/file.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "file_svg_text_line_bottom",
+      "_tgt": "file_svg_document_icon",
+      "source": "file_svg_document_icon",
+      "target": "file_svg_text_line_bottom"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "globe_svg",
+      "_tgt": "globe_icon",
+      "source": "globe_svg",
+      "target": "globe_icon"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "globe_icon",
+      "_tgt": "main_path_shape",
+      "source": "globe_icon",
+      "target": "main_path_shape"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "globe_icon",
+      "_tgt": "clip_path_a",
+      "source": "globe_icon",
+      "target": "clip_path_a"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/globe.svg",
+      "source_location": null,
+      "weight": 1.0,
+      "_src": "main_path_shape",
+      "_tgt": "clip_path_a",
+      "source": "main_path_shape",
+      "target": "clip_path_a"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg",
+      "_src": "next_svg_root",
+      "_tgt": "next_svg_path_1",
+      "source": "next_svg_root",
+      "target": "next_svg_path_1"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg",
+      "_src": "next_svg_root",
+      "_tgt": "next_svg_path_2",
+      "source": "next_svg_root",
+      "target": "next_svg_path_2"
+    },
+    {
+      "relation": "uses_fill",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg",
+      "_src": "next_svg_path_1",
+      "_tgt": "next_svg_fill_black",
+      "source": "next_svg_path_1",
+      "target": "next_svg_fill_black"
+    },
+    {
+      "relation": "uses_fill",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg",
+      "_src": "next_svg_path_2",
+      "_tgt": "next_svg_fill_black",
+      "source": "next_svg_path_2",
+      "target": "next_svg_fill_black"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "svg->path",
+      "weight": 1.0,
+      "_src": "vercel_svg_asset",
+      "_tgt": "vercel_svg_triangle_path",
+      "source": "vercel_svg_asset",
+      "target": "vercel_svg_triangle_path"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "svg[viewBox]",
+      "weight": 1.0,
+      "_src": "vercel_svg_asset",
+      "_tgt": "vercel_svg_viewbox_1155_1000",
+      "source": "vercel_svg_asset",
+      "target": "vercel_svg_viewbox_1155_1000"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg",
+      "source_location": "path[fill]",
+      "weight": 1.0,
+      "_src": "vercel_svg_triangle_path",
+      "_tgt": "vercel_svg_white_fill",
+      "source": "vercel_svg_triangle_path",
+      "target": "vercel_svg_white_fill"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "weight": 1,
+      "_src": "window_svg_window_icon",
+      "_tgt": "window_svg_window_frame",
+      "source": "window_svg_window_icon",
+      "target": "window_svg_window_frame"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "weight": 1,
+      "_src": "window_svg_window_icon",
+      "_tgt": "window_svg_window_controls",
+      "source": "window_svg_window_icon",
+      "target": "window_svg_window_controls"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "public/window.svg",
+      "source_location": null,
+      "weight": 1,
+      "_src": "window_svg_window_controls",
+      "_tgt": "window_svg_window_frame",
+      "source": "window_svg_window_frame",
+      "target": "window_svg_window_controls"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "route_and_layout_entrypoints",
+      "label": "Route and Layout Entrypoints",
+      "nodes": [
+        "main_route_entrypoints_layouts",
+        "layout_rootlayout",
+        "layout_applayout",
+        "layout_builderlayout",
+        "layout_landinglayout",
+        "api_crypto_route_ts",
+        "api_agent_chat_route_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101338_what_are_the_main_route_entrypoints_and_layouts_in.md"
+    },
+    {
+      "id": "live_execution_flow",
+      "label": "Live Execution Flow",
+      "nodes": [
+        "canvas_page",
+        "topbar_tsx",
+        "handle_run",
+        "schedule_trigger_node",
+        "execute_once",
+        "run_bot",
+        "botrunner_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.88,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_what_are_the_core_execution_flows_in_the_agent_bui.md"
+    },
+    {
+      "id": "backtest_execution_flow",
+      "label": "Backtest Execution Flow",
+      "nodes": [
+        "handle_backtest",
+        "run_backtest",
+        "run_bot",
+        "backtestrunner_ts"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_113033_explain_backtestrunner.md"
+    },
+    {
+      "id": "wallet_analysis_pipeline",
+      "label": "Wallet Analysis Pipeline",
+      "nodes": [
+        "wallet_analysis_panel",
+        "hooks_index_ts",
+        "use_wallet_analysis",
+        "use_wallet_analysis_query",
+        "analyze_wallet"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_112931_path_from_wallet_analysis_to_walletanalysispanel.md"
+    },
+    {
+      "id": "portfolio_page_local_pipeline",
+      "label": "Portfolio Page Local Data Pipeline",
+      "nodes": [
+        "portfolio_page",
+        "generate_chart_data",
+        "fetch_prices"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "avax-agent/public/graphify-out/memory/query_20260418_101348_explain_portfolio_page.md"
+    },
+    {
+      "id": "file_svg_text_content_group",
+      "label": "Text Content Group",
+      "nodes": [
+        "file_svg_text_line_top",
+        "file_svg_text_line_middle",
+        "file_svg_text_line_bottom"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.84,
+      "source_file": "public/file.svg"
+    },
+    {
+      "id": "globe_icon_render_group",
+      "label": "Globe Icon Render Group",
+      "nodes": [
+        "globe_icon",
+        "main_path_shape",
+        "clip_path_a"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/globe.svg"
+    },
+    {
+      "id": "next_svg_wordmark_shape_set",
+      "label": "Next.js wordmark shape set",
+      "nodes": [
+        "next_svg_path_1",
+        "next_svg_path_2",
+        "next_svg_root"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    },
+    {
+      "id": "vercel_logo_rendering_group",
+      "label": "Vercel Logo Rendering Components",
+      "nodes": [
+        "vercel_svg_asset",
+        "vercel_svg_triangle_path",
+        "vercel_svg_white_fill",
+        "vercel_svg_viewbox_1155_1000"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/vercel.svg"
+    },
+    {
+      "id": "window_svg_window_ui_structure",
+      "label": "Window UI Structure",
+      "nodes": [
+        "window_svg_window_icon",
+        "window_svg_window_frame",
+        "window_svg_window_controls"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "public/window.svg"
+    }
+  ]
+}

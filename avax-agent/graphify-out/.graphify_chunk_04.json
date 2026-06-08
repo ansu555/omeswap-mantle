@@ -1,0 +1,83 @@
+{
+  "nodes": [
+    {
+      "id": "next_svg_root",
+      "label": "next.svg root element",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "svg"
+    },
+    {
+      "id": "next_svg_path_1",
+      "label": "Path 1 (wordmark geometry)",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path[1]"
+    },
+    {
+      "id": "next_svg_path_2",
+      "label": "Path 2 (wordmark geometry)",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path[2]"
+    },
+    {
+      "id": "next_svg_fill_black",
+      "label": "Fill Color #000",
+      "file_type": "image",
+      "source_file": "public/next.svg",
+      "source_location": "path/@fill"
+    }
+  ],
+  "edges": [
+    {
+      "source": "next_svg_root",
+      "target": "next_svg_path_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    },
+    {
+      "source": "next_svg_root",
+      "target": "next_svg_path_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    },
+    {
+      "source": "next_svg_path_1",
+      "target": "next_svg_fill_black",
+      "relation": "uses_fill",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    },
+    {
+      "source": "next_svg_path_2",
+      "target": "next_svg_fill_black",
+      "relation": "uses_fill",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "next_svg_wordmark_shape_set",
+      "label": "Next.js wordmark shape set",
+      "nodes": [
+        "next_svg_path_1",
+        "next_svg_path_2",
+        "next_svg_root"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/next.svg"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
