@@ -27,40 +27,41 @@ export type DexMarketConfig = {
   };
 };
 
-export const DEFAULT_DEX_MARKET_ID = "0g-w0g-usdce";
+export const DEFAULT_DEX_MARKET_ID = "mantle-wmnt-usdc";
 
 export const DEX_MARKETS: DexMarketConfig[] = [
   {
-    id: "0g-w0g-usdce",
-    symbol: "W0G",
-    pairLabel: "W0G/USDC.e",
-    name: "Wrapped 0G",
+    id: "mantle-wmnt-usdc",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDC",
+    name: "Mantle",
     kind: "spot",
-    network: "0g",
-    networkName: "0G",
-    chainId: 16661,
-    dex: "Jaine",
-    poolAddress: "0x961da9b2fd03e04b088a90843a93e66f13112d0a",
-    displayToken: "quote",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "FusionX V3",
+    poolAddress: "",
+    displayToken: "base",
     baseToken: {
-      symbol: "USDC.e",
-      name: "Bridged USDC",
-      address: "0x1f3aa82227281ca364bfb3d253b0f1af1da6473e",
+      symbol: "WMNT",
+      name: "Wrapped Mantle",
+      address: "0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8",
     },
     quoteToken: {
-      symbol: "W0G",
-      name: "Wrapped 0G",
-      address: "0x1cd0690ff9a693f5ef2dd976660a8dafc81a109c",
+      symbol: "USDC",
+      name: "USD Coin",
+      address: "0x09bc4e0d864854c6afb6eb9a9cdf58ac190d0df9",
     },
+    chartSymbol: "MNTUSDT",
     leverage: null,
     color: "bg-violet-500",
-    executionVenue: "Jaine",
+    executionVenue: "FusionX V3",
     fallback: {
-      priceUsd: 0.531342,
-      change24h: 0.153,
-      volume24hUsd: 9334,
-      liquidityUsd: 508553,
-      transactions24h: 60,
+      priceUsd: 0.55,
+      change24h: 0,
+      volume24hUsd: 50000,
+      liquidityUsd: 500000,
+      transactions24h: 100,
     },
   },
   {

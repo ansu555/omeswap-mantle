@@ -8,10 +8,9 @@
  *   - Approves ERC-20 tokens if needed (ERC20 `approve`)
  *   - Signs and submits the swap using the agent burner wallet (viem)
  *
- * Router dispatch:
- *   chainId == 16600 (0G) + real router address → UniswapV2 `swapExactTokensForTokens`
- *   chainId == 16600 (0G) + placeholder address → returns pending_deployment status
- *   chainId == 1 (Ethereum) → Uniswap V3 `exactInputSingle` via SwapRouter02
+ * Router dispatch (by the chain's primary router type in the registry):
+ *   type 'uniswapV2' → UniswapV2 `swapExactTokensForTokens`
+ *   type 'custom'    → Uniswap V3 `exactInputSingle` (e.g. FusionX V3 on Mantle)
  *
  * Emits:
  *   agent.thinking      — start
@@ -30,14 +29,8 @@ import {
 import type { RunEvent, RiskSizing } from '@/lib/ats/types'
 import { getOrCreateAgentWallet } from '@/lib/agent-wallet/manager'
 import { getChainConfig } from '@/lib/chain-registry'
-import { SWAP_ROUTER_ABI, ERC20_ABI } from '@/lib/uniswap/constants'
-import { getDexMarket } from '@/lib/dex/geckoterminal'
-import {
-  executeJaineAgentSwap,
-  isJaineTicker,
-  JAINE_CHAIN_ID,
-  JAINE_MARKET_ID,
-} from '@/lib/dex/jaine'
+import { ERC20_ABI } from '@/lib/uniswap/constants'
+import { executeFusionXAgentSwap } from '@/lib/dex/fusionx'
 
 // ── Result type ───────────────────────────────────────────────────────────────
 
@@ -119,9 +112,8 @@ const TICKER_ALIAS: Record<string, string> = {
   ETH: 'WETH',
   ETHER: 'WETH',
   BITCOIN: 'WBTC',
-  '0G': 'W0G',
-  OG: 'W0G',
-  ZEROG: 'W0G',
+  MNT: 'WMNT',
+  MANTLE: 'WMNT',
 }
 
 function resolveTokenSymbol(ticker: string): string {
@@ -138,9 +130,9 @@ async function executeV3Swap(
   agentWallet: { address: string; account: import('viem/accounts').PrivateKeyAccount },
   chainConfig: ReturnType<typeof getChainConfig>,
 ): Promise<ExecutionAgentResult> {
-  const router = chainConfig.dexRouters.find((r) => r.type === 'custom' || r.type === 'uniswapV2')
+  const router = chainConfig.dexRouters.find((r) => r.type === 'custom')
   if (!router) {
-    return { tx_hash: null, status: 'failed', amount_in_usd: 0, token_in: 'unknown', token_out: 'unknown', chain_id: chainConfig.chain.id, error: 'No suitable DEX router found.' }
+    return { tx_hash: null, status: 'failed', amount_in_usd: 0, token_in: 'unknown', token_out: 'unknown', chain_id: chainConfig.chain.id, error: 'No V3 DEX router configured for this chain.' }
   }
 
   const tokenSymbol = resolveTokenSymbol(ticker)
@@ -173,7 +165,6 @@ async function executeV3Swap(
 
   const rpcUrl = chainConfig.chain.rpcUrls.default.http[0]
   const publicClient = createPublicClient({ chain: chainConfig.chain, transport: http(rpcUrl) })
-  const walletClient = createWalletClient({ account: agentWallet.account, chain: chainConfig.chain, transport: http(rpcUrl) })
 
   // Check tokenIn balance
   const balanceRaw = await publicClient.readContract({
@@ -197,48 +188,40 @@ async function executeV3Swap(
 
   const amountIn = parseUnits(Math.min(amountInUsd, balance).toFixed(tokenIn.decimals), tokenIn.decimals)
 
-  // Approve if needed (V3)
-  const routerAddress = router.routerAddress as Address
-  const allowance = await publicClient.readContract({
-    address: tokenIn.address as Address,
-    abi: ERC20_ABI,
-    functionName: 'allowance',
-    args: [agentWallet.account.address, routerAddress],
-  }) as bigint
-
-  if (allowance < amountIn) {
-    const approveTx = await walletClient.writeContract({
-      address: tokenIn.address as Address,
-      abi: ERC20_ABI,
-      functionName: 'approve',
-      args: [routerAddress, amountIn * 10n],
-    })
-    await publicClient.waitForTransactionReceipt({ hash: approveTx })
-  }
-
-  // SwapRouter02 exactInputSingle — deadline removed in V3 SwapRouter02
-  const txHash = await walletClient.writeContract({
-    address: routerAddress,
-    abi: SWAP_ROUTER_ABI,
-    functionName: 'exactInputSingle',
-    args: [{
-      tokenIn: tokenIn.address as Address,
-      tokenOut: tokenOut.address as Address,
-      fee: 3000,
-      recipient: agentWallet.account.address,
+  // Quote (best fee tier) → approve → exactInputSingle, via the FusionX V3 adapter.
+  // The adapter derives amountOutMinimum from a live QuoterV2 quote, so it is
+  // correct for any decimal/price ratio (unlike a naive 1:1 minimum).
+  try {
+    const result = await executeFusionXAgentSwap({
+      account: agentWallet.account,
+      chain: chainConfig.chain,
+      rpcUrl,
+      tokenIn: { address: tokenIn.address as Address, symbol: tokenIn.symbol, decimals: tokenIn.decimals },
+      tokenOut: { address: tokenOut.address as Address, symbol: tokenOut.symbol, decimals: tokenOut.decimals },
       amountIn,
-      amountOutMinimum: withSlippage(amountIn),
-      sqrtPriceLimitX96: 0n,
-    }],
-  })
+      slippageBps: Number(SLIPPAGE_BPS),
+      swapRouter: router.routerAddress,
+      quoter: router.quoterAddress,
+    })
 
-  return {
-    tx_hash: txHash,
-    status: 'submitted',
-    amount_in_usd: amountInUsd,
-    token_in: tokenIn.symbol,
-    token_out: tokenOut.symbol,
-    chain_id: chainConfig.chain.id,
+    return {
+      tx_hash: result.txHash,
+      status: 'submitted',
+      amount_in_usd: amountInUsd,
+      token_in: tokenIn.symbol,
+      token_out: tokenOut.symbol,
+      chain_id: chainConfig.chain.id,
+    }
+  } catch (err) {
+    return {
+      tx_hash: null,
+      status: 'failed',
+      amount_in_usd: amountInUsd,
+      token_in: tokenIn.symbol,
+      token_out: tokenOut.symbol,
+      chain_id: chainConfig.chain.id,
+      error: err instanceof Error ? err.message : String(err),
+    }
   }
 }
 
@@ -260,7 +243,7 @@ async function executeV2Swap(
       token_in: decision === 'BUY' ? 'USDC' : resolveTokenSymbol(ticker),
       token_out: decision === 'BUY' ? resolveTokenSymbol(ticker) : 'USDC',
       chain_id: chainConfig.chain.id,
-      error: `0G DEX router not yet deployed. Trade queued — update lib/chain-registry/chains/zerog.ts with live router address to enable execution.`,
+      error: `No UniswapV2 router configured for chain ${chainConfig.chain.id}. Trade queued — add a router to the chain registry to enable execution.`,
     }
   }
 
@@ -347,49 +330,6 @@ async function executeV2Swap(
   }
 }
 
-// ── Jaine V3 execution path (0G W0G/USDC.e) ───────────────────────────────────
-
-async function executeJaineSwap(
-  decision: 'BUY' | 'SELL',
-  ticker: string,
-  sizing: RiskSizing,
-  agentWallet: { address: string; account: import('viem/accounts').PrivateKeyAccount },
-  chainConfig: ReturnType<typeof getChainConfig>,
-): Promise<ExecutionAgentResult> {
-  if (!isJaineTicker(ticker)) {
-    const tokenSymbol = resolveTokenSymbol(ticker)
-    return {
-      tx_hash: null,
-      status: 'skipped',
-      amount_in_usd: sizing.size_usd,
-      token_in: decision === 'BUY' ? 'USDC.e' : tokenSymbol,
-      token_out: decision === 'BUY' ? tokenSymbol : 'USDC.e',
-      chain_id: chainConfig.chain.id,
-      error: 'Jaine agent execution currently supports the W0G/USDC.e market only.',
-    }
-  }
-
-  const market = await getDexMarket(JAINE_MARKET_ID)
-  const rpcUrl = chainConfig.chain.rpcUrls.default.http[0]
-  const result = await executeJaineAgentSwap({
-    account: agentWallet.account,
-    chain: chainConfig.chain,
-    rpcUrl,
-    decision,
-    sizeUsd: sizing.size_usd,
-    priceUsd: market.priceUsd,
-  })
-
-  return {
-    tx_hash: result.txHash,
-    status: 'submitted',
-    amount_in_usd: result.amountInUsd,
-    token_in: result.tokenIn,
-    token_out: result.tokenOut,
-    chain_id: chainConfig.chain.id,
-  }
-}
-
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
@@ -433,16 +373,12 @@ export async function runExecutionAgent(
     const agentWallet = await getOrCreateAgentWallet(userWallet, chainId)
     const chainConfig = getChainConfig(chainId)
 
-    if (chainConfig.chain.id === JAINE_CHAIN_ID) {
-      result = await executeJaineSwap(decision, ticker, sizing, agentWallet, chainConfig)
+    // Dispatch to V2 or V3 based on the chain's primary router type
+    const primaryRouter = chainConfig.dexRouters[0]
+    if (primaryRouter?.type === 'uniswapV2') {
+      result = await executeV2Swap(decision, ticker, sizing, agentWallet, chainConfig)
     } else {
-      // Dispatch to V2 or V3 based on the chain's primary router type
-      const primaryRouter = chainConfig.dexRouters[0]
-      if (primaryRouter?.type === 'uniswapV2') {
-        result = await executeV2Swap(decision, ticker, sizing, agentWallet, chainConfig)
-      } else {
-        result = await executeV3Swap(decision, ticker, sizing, agentWallet, chainConfig)
-      }
+      result = await executeV3Swap(decision, ticker, sizing, agentWallet, chainConfig)
     }
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)

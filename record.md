@@ -50,3 +50,8 @@ changes: made chain layer agnostic — terminal store/TradePanel/InfoTile now re
 user: ansu555
 branch: main
 changes: built realtime-service/ (Node+viem+ws) for true real-time Mantle data — multi-factory V3 pool discovery, eth_subscribe Swap listener, USD price engine, own WS broadcast + REST /price//pools//route, Dockerfile/resync; added mantle.ts chain config, lib/realtime/client.ts, use-realtime-feed hook (wired into terminal), /api/realtime/price; validated on Mantle mainnet, build green
+
+[2026-06-09 12:40]
+user: ansu555
+branch: service
+changes: removed dead weight — avax-agent/ (Avalanche prototype), Python ats/, 0g-contract/ + hardhat scripts + Avalanche hardhat.config.js (263 files); kept TS lib/ats; deferred 0G→Mantle flip (0G still live default — jaine/lib/zerog have no Mantle replacement yet), build green

@@ -17,7 +17,7 @@
  * DA RPC (Newton Testnet): https://da-client-testnet.0g.ai
  */
 
-import { ZEROG_DA_RPC } from '@/lib/chain-registry/chains/zerog'
+import { ZEROG_DA_RPC } from './config'
 
 export interface DASubmitResult {
   /** DA commitment hash — use this to prove data availability */

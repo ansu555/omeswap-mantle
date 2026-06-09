@@ -16,7 +16,7 @@
  *   npm install @0glabs/0g-ts-sdk
  */
 
-import { ZEROG_STORAGE_RPC } from '@/lib/chain-registry/chains/zerog'
+import { ZEROG_STORAGE_RPC } from './config'
 
 export interface StorageUploadResult {
   /** Content-addressed root hash of the uploaded data */

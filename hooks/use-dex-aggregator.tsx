@@ -14,16 +14,12 @@ import { MAINNET_TOKENS } from "@/contracts/config";
 import { ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
 import {
-  JAINE_CHAIN_ID,
-  JAINE_DEX_ID,
-  JAINE_DEX_NAME,
-  JAINE_MARKET_ID,
-  JAINE_POOL_FEE,
-  JAINE_V3_ROUTER_ABI,
-  JAINE_V3_ROUTER_ADDRESS,
-  isJaineTokenPair,
-} from "@/lib/dex/jaine";
-import { getDexMarketConfig } from "@/lib/dex/markets";
+  FUSIONX_CHAIN_ID,
+  FUSIONX_DEX_ID,
+  FUSIONX_DEX_NAME,
+  FUSIONX_V3_ROUTER_ABI,
+  quoteFusionXBestTier,
+} from "@/lib/dex/fusionx";
 import { useTransactionStore } from "@/store/transaction-store";
 
 const OMESWAP_DEX_ID = "omeswap" as const;
@@ -174,6 +170,8 @@ export interface DexQuote {
   // V2-specific — used to build the Path struct for the swap
   v2BinSteps?: bigint[];
   v2Versions?: number[];
+  // V3-specific — the fee tier (hundredths of a bip) the swap must use
+  v3Fee?: number;
   isBest: boolean;
 }
 
@@ -182,26 +180,6 @@ function isPlaceholderAddress(address: Address | undefined) {
   const lower = address.toLowerCase();
   if (lower === "0x0000000000000000000000000000000000000000") return true;
   return /^0x0{20,}[0-9a-f]{1,20}$/i.test(lower);
-}
-
-function decimalString(value: number, decimals: number) {
-  if (!Number.isFinite(value) || value <= 0) return "0";
-  return value.toFixed(Math.min(decimals, 18));
-}
-
-async function fetchJainePriceUsd() {
-  const fallback = getDexMarketConfig(JAINE_MARKET_ID).fallback.priceUsd;
-
-  try {
-    const response = await fetch(`/api/dex/markets?id=${encodeURIComponent(JAINE_MARKET_ID)}`);
-    if (!response.ok) return fallback;
-
-    const payload = (await response.json()) as { market?: { priceUsd?: number } };
-    const price = payload.market?.priceUsd;
-    return typeof price === "number" && Number.isFinite(price) && price > 0 ? price : fallback;
-  } catch {
-    return fallback;
-  }
 }
 
 export function useDexAggregator(
@@ -223,11 +201,15 @@ export function useDexAggregator(
   const publicClient = usePublicClient({ chainId });
   const tokenIn = MAINNET_TOKENS[tokenInSymbol];
   const tokenOut = MAINNET_TOKENS[tokenOutSymbol];
-  const supportsJainePair =
-    chainId === JAINE_CHAIN_ID &&
+  const fusionx = chainConfig.dexRouters.find((r) => r.id === FUSIONX_DEX_ID);
+  const supportsFusionX =
+    chainId === FUSIONX_CHAIN_ID &&
+    !!fusionx &&
+    !isPlaceholderAddress(fusionx.routerAddress) &&
+    !isPlaceholderAddress(fusionx.quoterAddress) &&
     !!tokenIn &&
     !!tokenOut &&
-    isJaineTokenPair(tokenIn.address, tokenOut.address);
+    tokenIn.address.toLowerCase() !== tokenOut.address.toLowerCase();
 
   // DEX config derived from registry
   const v1DexConfig = chainConfig.dexRouters
@@ -244,14 +226,14 @@ export function useDexAggregator(
   const hasOmeswapRouter =
     !isPlaceholderAddress(omeswapPoolsAddr) && !isPlaceholderAddress(omeswapRouterAddr);
   const hasConfiguredRouters =
-    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || supportsJainePair || hasOmeswapRouter;
+    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || supportsFusionX || hasOmeswapRouter;
 
   const [quotes, setQuotes] = useState<DexQuote[]>([]);
   const [selectedDex, setSelectedDex] = useState<DexSource>(() => {
-    if (supportsJainePair) return JAINE_DEX_ID;
+    if (supportsFusionX) return FUSIONX_DEX_ID;
     if (hasOmeswapRouter) return OMESWAP_DEX_ID;
     if (hasConfiguredTjV2 && tjV2?.id) return tjV2.id as DexSource;
-    return (activeV1DexConfig[0]?.dex ?? v1DexConfig[0]?.dex ?? "zerog_dex") as DexSource;
+    return (activeV1DexConfig[0]?.dex ?? v1DexConfig[0]?.dex ?? FUSIONX_DEX_ID) as DexSource;
   });
   const [isLoadingQuotes, setIsLoadingQuotes] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -262,14 +244,14 @@ export function useDexAggregator(
     quotes.find((q) => q.dex === selectedDex) ?? quotes[0] ?? null;
 
   const defaultSpender =
-    (supportsJainePair ? JAINE_V3_ROUTER_ADDRESS : undefined) ??
+    (supportsFusionX ? (fusionx?.routerAddress as Address) : undefined) ??
     (hasOmeswapRouter ? omeswapRouterAddr : undefined) ??
     (hasConfiguredTjV2 ? tjV2?.routerAddress : undefined) ??
     activeV1DexConfig[0]?.router ??
     "0x0000000000000000000000000000000000000000";
   const approvalSpender: Address =
-    selectedDex === JAINE_DEX_ID && supportsJainePair
-      ? JAINE_V3_ROUTER_ADDRESS
+    selectedDex === FUSIONX_DEX_ID && supportsFusionX && fusionx
+      ? (fusionx.routerAddress as Address)
       : selectedDex === OMESWAP_DEX_ID && hasOmeswapRouter && omeswapRouterAddr
       ? omeswapRouterAddr
       : selectedDex === tjV2?.id && hasConfiguredTjV2
@@ -355,32 +337,29 @@ export function useDexAggregator(
       const amountIn = parseUnits(amountInRaw, tokenIn.decimals);
       const newQuotes: DexQuote[] = [];
 
-      // --- Jaine CLMM quote (0G W0G/USDC.e) ---
-      if (supportsJainePair) {
-        const priceUsd = await fetchJainePriceUsd();
-        const amount = Number(amountInRaw);
-        const tokenInIsW0G =
-          tokenIn.address.toLowerCase() === chainConfig.nativeWrapped.toLowerCase();
-        const amountOutFloat = tokenInIsW0G ? amount * priceUsd : amount / priceUsd;
-
+      // --- FusionX V3 quote (Mantle) — probe fee tiers via QuoterV2 ---
+      if (supportsFusionX && fusionx) {
         try {
-          const amountOut = parseUnits(
-            decimalString(amountOutFloat, tokenOut.decimals),
-            tokenOut.decimals,
-          );
+          const best = await quoteFusionXBestTier(publicClient, {
+            tokenIn: tokenIn.address,
+            tokenOut: tokenOut.address,
+            amountIn,
+            quoter: fusionx.quoterAddress as Address,
+          });
 
-          if (amountOut > 0n) {
+          if (best && best.amountOut > 0n) {
             newQuotes.push({
-              dex: JAINE_DEX_ID,
-              dexName: JAINE_DEX_NAME,
-              amountOut,
-              amountOutFormatted: formatUnits(amountOut, tokenOut.decimals),
+              dex: FUSIONX_DEX_ID,
+              dexName: FUSIONX_DEX_NAME,
+              amountOut: best.amountOut,
+              amountOutFormatted: formatUnits(best.amountOut, tokenOut.decimals),
               path: [tokenIn.address, tokenOut.address],
+              v3Fee: best.fee,
               isBest: false,
             });
           }
         } catch {
-          /* ignore malformed estimated quote */
+          /* no FusionX V3 pool for this pair */
         }
       }
 
@@ -519,7 +498,7 @@ export function useDexAggregator(
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, supportsJainePair, hasOmeswapRouter]);
+  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, supportsFusionX, hasOmeswapRouter]);
 
   const needsApproval = (): boolean => {
     if (!hasConfiguredRouters) return false;
@@ -529,7 +508,7 @@ export function useDexAggregator(
 
   const executeSwapTx = () => {
     if (!hasConfiguredRouters) {
-      setError("Routers are not configured for this 0G deployment yet.");
+      setError("No DEX routers are configured for this chain yet.");
       return;
     }
     if (!selectedQuote || !address || !amountInRaw || !tokenIn || !tokenOut) return;
@@ -548,16 +527,16 @@ export function useDexAggregator(
         args: [tokenIn.address, tokenOut.address, amountIn, amountOutMin, address],
         chainId,
       });
-    } else if (selectedQuote.dex === JAINE_DEX_ID && supportsJainePair) {
+    } else if (selectedQuote.dex === FUSIONX_DEX_ID && supportsFusionX && fusionx) {
       writeSwap({
-        address: JAINE_V3_ROUTER_ADDRESS,
-        abi: JAINE_V3_ROUTER_ABI,
+        address: fusionx.routerAddress as Address,
+        abi: FUSIONX_V3_ROUTER_ABI,
         functionName: "exactInputSingle",
         args: [
           {
             tokenIn: tokenIn.address,
             tokenOut: tokenOut.address,
-            fee: JAINE_POOL_FEE,
+            fee: selectedQuote.v3Fee ?? 3000,
             recipient: address,
             deadline,
             amountIn,
@@ -565,7 +544,7 @@ export function useDexAggregator(
             sqrtPriceLimitX96: 0n,
           },
         ],
-        chainId: JAINE_CHAIN_ID,
+        chainId,
       });
     } else if (
       tjV2 &&
@@ -609,7 +588,7 @@ export function useDexAggregator(
 
   const executeSwap = () => {
     if (!hasConfiguredRouters) {
-      setError("Routers are not configured for this 0G deployment yet.");
+      setError("No DEX routers are configured for this chain yet.");
       return;
     }
     if (!selectedQuote || !address || !amountInRaw || !tokenIn) return;
