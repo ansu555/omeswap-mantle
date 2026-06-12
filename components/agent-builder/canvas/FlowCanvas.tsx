@@ -254,7 +254,7 @@ export default function FlowCanvas() {
                 chainExposure > 5 ? "text-amber-400/70" : "text-white/25"
               }
             >
-              Exposure: {chainExposure.toFixed(4)} W0G
+              Exposure: {chainExposure.toFixed(4)} WMNT
             </span>
           </>
         )}

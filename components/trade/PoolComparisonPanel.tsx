@@ -32,22 +32,16 @@ function shortAddress(value: string) {
   return `${value.slice(0, 6)}...${value.slice(-4)}`;
 }
 
-function zeroGExplorerBase(chainId: number | null | undefined) {
-  if (chainId === 16661) return "https://chainscan.0g.ai";
-  if (chainId === 16602) return "https://chainscan-galileo.0g.ai";
-  return null;
-}
-
-export function PoolComparisonPanel({ token0Symbol = "OmE", token1Symbol = "USDO" }: PoolComparisonPanelProps) {
-  const [activeTab, setActiveTab] = useState<"jaine" | "omega">("jaine");
-  const [jaineMarket, setJaineMarket] = useState<DexMarket | null>(null);
+export function PoolComparisonPanel({ token0Symbol = "WMNT", token1Symbol = "USDC" }: PoolComparisonPanelProps) {
+  const [activeTab, setActiveTab] = useState<"fusionx" | "omega">("fusionx");
+  const [fusionxMarket, setFusionxMarket] = useState<DexMarket | null>(null);
   const [isLoadingMarket, setIsLoadingMarket] = useState(true);
   const [marketError, setMarketError] = useState<string | null>(null);
 
   const poolsAddress = CONTRACT_ADDRESSES.POOLS as Address;
   const isOmeSwapConfigured = poolsAddress.toLowerCase() !== ZERO_ADDRESS;
 
-  const omegaToken0Cfg = TOKENS[token0Symbol] ?? TOKENS.W0G;
+  const omegaToken0Cfg = TOKENS[token0Symbol] ?? TOKENS.WMNT;
   const omegaToken1Cfg = TOKENS[token1Symbol] ?? TOKENS.USDC;
 
   const [token0Address, token1Address] = useMemo(() => {
@@ -96,16 +90,16 @@ export function PoolComparisonPanel({ token0Symbol = "OmE", token1Symbol = "USDO
           `/api/dex/markets?id=${encodeURIComponent(DEFAULT_DEX_MARKET_ID)}`,
           { signal: aborter.signal },
         );
-        if (!response.ok) throw new Error("Unable to load Jaine market");
+        if (!response.ok) throw new Error("Unable to load FusionX market");
 
         const payload = (await response.json()) as MarketResponse;
         if (!disposed) {
-          setJaineMarket(payload.market ?? null);
+          setFusionxMarket(payload.market ?? null);
           setMarketError(null);
         }
       } catch {
         if (!disposed && !aborter.signal.aborted) {
-          setMarketError("Jaine market feed is temporarily unavailable.");
+          setMarketError("FusionX market feed is temporarily unavailable.");
         }
       } finally {
         if (!disposed) setIsLoadingMarket(false);
@@ -126,9 +120,9 @@ export function PoolComparisonPanel({ token0Symbol = "OmE", token1Symbol = "USDO
   const reserve0 = Number.parseFloat(formatUnits(poolTuple?.[2] ?? 0n, token0.decimals));
   const reserve1 = Number.parseFloat(formatUnits(poolTuple?.[3] ?? 0n, token1.decimals));
   const totalSupply = Number.parseFloat(formatUnits(poolTuple?.[4] ?? 0n, 18));
-  const zeroGPoolExplorer =
-    jaineMarket && zeroGExplorerBase(jaineMarket.chainId)
-      ? `${zeroGExplorerBase(jaineMarket.chainId)}/address/${jaineMarket.poolAddress}`
+  const fusionxPoolExplorer =
+    fusionxMarket && fusionxMarket.chainId
+      ? getExplorerLink(fusionxMarket.chainId, "address", fusionxMarket.poolAddress)
       : null;
 
   return (
@@ -138,23 +132,23 @@ export function PoolComparisonPanel({ token0Symbol = "OmE", token1Symbol = "USDO
           <h3 className="text-lg font-semibold">Pool Details</h3>
         </div>
         <span className="text-[11px] px-2 py-1 rounded-full border border-primary/30 text-primary">
-          0G
+          Mantle
         </span>
       </div>
 
       {/* Tabs */}
       <div className="flex items-center gap-1 bg-muted/50 rounded-xl p-1">
         <button
-          onClick={() => setActiveTab("jaine")}
+          onClick={() => setActiveTab("fusionx")}
           className={cn(
             "flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-sm font-medium transition-colors",
-            activeTab === "jaine"
+            activeTab === "fusionx"
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Activity className="w-3.5 h-3.5" />
-          Jaine
+          FusionX
         </button>
         <button
           onClick={() => setActiveTab("omega")}
@@ -170,66 +164,66 @@ export function PoolComparisonPanel({ token0Symbol = "OmE", token1Symbol = "USDO
         </button>
       </div>
 
-      {/* Jaine Tab */}
-      {activeTab === "jaine" && (
+      {/* FusionX Tab */}
+      {activeTab === "fusionx" && (
         <div className="rounded-xl border border-border/70 bg-muted/25 p-4 space-y-3">
-          {isLoadingMarket && !jaineMarket ? (
-            <p className="text-sm text-muted-foreground">Loading Jaine pool data...</p>
-          ) : jaineMarket ? (
+          {isLoadingMarket && !fusionxMarket ? (
+            <p className="text-sm text-muted-foreground">Loading FusionX pool data...</p>
+          ) : fusionxMarket ? (
             <>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Pair</span>
-                <span className="font-medium">{jaineMarket.pairLabel}</span>
+                <span className="font-medium">{fusionxMarket.pairLabel}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Price</span>
-                <span className="font-medium">{formatUsd(jaineMarket.priceUsd)}</span>
+                <span className="font-medium">{formatUsd(fusionxMarket.priceUsd)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Liquidity</span>
-                <span className="font-medium">{formatUsd(jaineMarket.liquidityUsd)}</span>
+                <span className="font-medium">{formatUsd(fusionxMarket.liquidityUsd)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">24h Volume</span>
-                <span className="font-medium">{formatUsd(jaineMarket.volume24hUsd)}</span>
+                <span className="font-medium">{formatUsd(fusionxMarket.volume24hUsd)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">24h Trades</span>
-                <span className="font-medium">{jaineMarket.transactions24h.toLocaleString()}</span>
+                <span className="font-medium">{fusionxMarket.transactions24h.toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Execution Venue</span>
-                <span className="font-medium">{jaineMarket.executionVenue}</span>
+                <span className="font-medium">{fusionxMarket.executionVenue}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Pool</span>
-                {zeroGPoolExplorer ? (
+                {fusionxPoolExplorer ? (
                   <a
-                    href={zeroGPoolExplorer}
+                    href={fusionxPoolExplorer}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-primary hover:underline"
                   >
-                    {shortAddress(jaineMarket.poolAddress)}
+                    {shortAddress(fusionxMarket.poolAddress)}
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 ) : (
-                  <span className="font-mono">{shortAddress(jaineMarket.poolAddress)}</span>
+                  <span className="font-mono">{shortAddress(fusionxMarket.poolAddress)}</span>
                 )}
               </div>
               <a
-                href="https://jaine.app/pools"
+                href="https://fusionx.finance/pools"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-1 flex items-center justify-center gap-1.5 w-full py-2 rounded-lg border border-primary/30 text-xs text-primary hover:bg-primary/10 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Provide LP on Jaine
+                Provide LP on FusionX
                 <ExternalLink className="w-3 h-3" />
               </a>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">{marketError ?? "No Jaine pool data yet."}</p>
+            <p className="text-sm text-muted-foreground">{marketError ?? "No FusionX pool data yet."}</p>
           )}
         </div>
       )}

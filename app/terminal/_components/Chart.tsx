@@ -28,6 +28,7 @@ import {
 import type { DexCandle, DexMarket, DexTrade } from "@/lib/dex/types";
 import { pollLivePrice } from "@/lib/terminal/data/livePriceTick";
 import { CandleAggregator } from "@/lib/terminal/data/candleAggregator";
+import { getDefaultChainId, getChainConfig } from "@/lib/chain-registry";
 
 type BtcCandle = CandlestickData<UTCTimestamp> & {
   volume: number;
@@ -116,10 +117,10 @@ export function Chart({ marketId }: { marketId: string }) {
     VOL: true,
   });
   const [stats, setStats] = useState<BtcStats>({
-    symbol: "W0G",
-    pairLabel: "W0G/USDC.e",
-    networkName: "0G",
-    dex: "Jaine",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDC",
+    networkName: "Mantle",
+    dex: "FusionX V3",
     mark: 0,
     index: 0,
     changeAmount: 0,
@@ -131,7 +132,13 @@ export function Chart({ marketId }: { marketId: string }) {
   });
   const [latestCandle, setLatestCandle] = useState<BtcCandle | null>(null);
   const [status, setStatus] = useState<"loading" | "live" | "offline">("loading");
-  const explorerBase = "https://chainscan.0g.ai";
+  const explorerBase = useMemo(() => {
+    try {
+      return getChainConfig(getDefaultChainId()).explorerUrl;
+    } catch {
+      return "https://explorer.mantle.xyz";
+    }
+  }, []);
   const [utcTime, setUtcTime] = useState("");
   const [bottomTab, setBottomTab] = useState("Positions (0)");
   const [indicatorMenuOpen, setIndicatorMenuOpen] = useState(false);

@@ -47,7 +47,7 @@ const VALID_TRANSPORTS: AxlTransport[] = ['local', 'axl', 'auto']
  * the caller doesn't pass one explicitly.
  */
 const TOKEN_ALIASES: Array<{ canonical: string; terms: string[] }> = [
-  { canonical: 'W0G', terms: ['W0G', '0G', 'ZEROG'] },
+  { canonical: 'WMNT', terms: ['WMNT', 'MNT', 'MANTLE'] },
   { canonical: 'BTC', terms: ['BTC', 'BITCOIN'] },
   { canonical: 'ETH', terms: ['ETH', 'ETHEREUM'] },
   { canonical: 'SOL', terms: ['SOL', 'SOLANA'] },
@@ -121,7 +121,7 @@ function resolveRequestedTicker(
   if (matches.length === 0) {
     return {
       ok: false,
-      message: 'Your research prompt must mention exactly one token, for example BTC, ETH, SOL, or W0G.',
+      message: 'Your research prompt must mention exactly one token, for example BTC, ETH, SOL, or WMNT.',
     }
   }
 
@@ -153,8 +153,8 @@ async function estimateAgentBalanceUSD(
     })
     const raw = await client.getBalance({ address: agentAddress as `0x${string}` })
     const native = parseFloat(formatEther(raw))
-    // ETH mainnet: rough $3k/ETH; 0G testnet: $1 placeholder
-    const priceUSD = chainId === 1 ? 3000 : 1
+    // ETH mainnet: rough $3k/ETH; Mantle mainnet: $0.80 MNT; others: $1 placeholder
+    const priceUSD = chainId === 1 ? 3000 : chainId === 5000 ? 0.8 : 1
     return native * priceUSD
   } catch {
     return 0
