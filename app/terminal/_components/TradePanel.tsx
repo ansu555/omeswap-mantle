@@ -439,13 +439,20 @@ export function TradePanel({ marketId }: { marketId: string }) {
           decimals: activeChain.tokens[market.symbol].decimals,
         }
       : null;
-  const quoteTok: SpotToken | null = activeChain.tokens.USDC
-    ? {
-        address: activeChain.tokens.USDC.address,
-        symbol: activeChain.tokens.USDC.symbol,
-        decimals: activeChain.tokens.USDC.decimals,
-      }
-    : null;
+  const quoteTok: SpotToken | null =
+    market && activeChain.tokens[market.quoteToken.symbol]
+      ? {
+          address: activeChain.tokens[market.quoteToken.symbol].address,
+          symbol: activeChain.tokens[market.quoteToken.symbol].symbol,
+          decimals: activeChain.tokens[market.quoteToken.symbol].decimals,
+        }
+      : activeChain.tokens.USDC
+      ? {
+          address: activeChain.tokens.USDC.address,
+          symbol: activeChain.tokens.USDC.symbol,
+          decimals: activeChain.tokens.USDC.decimals,
+        }
+      : null;
 
   const publicClient = usePublicClient({ chainId: FUSIONX_CHAIN_ID });
 
@@ -546,9 +553,7 @@ export function TradePanel({ marketId }: { marketId: string }) {
 
   const fundingSymbol = isPerp
     ? market?.quoteToken.symbol ?? "USD"
-    : market?.symbol === "USDC"
-      ? market.quoteToken.symbol
-      : "USDC";
+    : market?.quoteToken.symbol ?? "USDC";
 
   const preview = useMemo(() => {
     const amountValue = Math.max(0, Number(amount) || 0);
