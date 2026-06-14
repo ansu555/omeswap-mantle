@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAccount, useChainId, usePublicClient, useReadContract, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { formatUnits, parseUnits, type Address } from "viem";
+import { formatUnits, parseUnits, type Address, type Hex } from "viem";
 import type { DexMarket } from "@/lib/dex/types";
 import { UniswapSwapCard } from "@/components/trade/UniswapSwapCard";
 import type { SwapToken } from "@/hooks/use-uniswap-swap";
@@ -16,9 +16,13 @@ import {
   FUSIONX_CHAIN_ID,
   FUSIONX_ERC20_ABI,
   FUSIONX_V3_ROUTER_ABI,
+  FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
   ZERO_ADDRESS,
+  isPlaceholderAddress,
   quoteFusionXBestTier,
+  quoteFusionXMultiHop,
 } from "@/lib/dex/fusionx";
+import { LB_ROUTER_ABI, quoteLBBestPath } from "@/lib/dex/liquidity-book";
 
 function getTokenDecimals(address: string): number {
   const config = getChainConfig(getDefaultChainId());
@@ -427,10 +431,37 @@ export function TradePanel({ marketId }: { marketId: string }) {
   const isEthSpot = market?.network === "eth" && market?.kind === "spot";
   const isMantleSpot = market?.network === "mantle" && market?.kind === "spot";
 
-  // Resolve the spot pair (base asset + quote stable) + the FusionX router from
-  // the chain registry. `base` is the market's asset, `quote` is the funding stable.
+  // Resolve the spot pair (base asset + quote stable) from the chain registry.
+  // `base` is the market's asset, `quote` is the funding stable.
   const activeChain = getChainConfig(getDefaultChainId());
-  const fusionxRouter = activeChain.dexRouters.find((r) => r.type === "custom");
+
+  // All Uniswap-V3-shaped "custom" routers (FusionX V3, Agni Finance, ...) with
+  // a configured quoter — every trade quotes across all of them (plus a
+  // two-hop route through a hub token on each) and routes through whichever
+  // gives the best output, regardless of which DEX the market is tagged with.
+  const v3CustomRouters = useMemo(
+    () =>
+      activeChain.dexRouters.filter(
+        (r) =>
+          r.type === "custom" &&
+          !isPlaceholderAddress(r.routerAddress as Address) &&
+          !isPlaceholderAddress(r.quoterAddress as Address),
+      ),
+    [activeChain],
+  );
+
+  // Merchant Moe (Trader Joe Liquidity Book v2.2) router/quoter, if configured —
+  // also competes for best price, including 2-hop paths via hub tokens.
+  const lbRouter = useMemo(
+    () =>
+      activeChain.dexRouters.find(
+        (r) =>
+          r.type === "traderJoeV2" &&
+          !isPlaceholderAddress(r.routerAddress as Address) &&
+          !isPlaceholderAddress(r.quoterAddress as Address),
+      ),
+    [activeChain],
+  );
   const baseTok: SpotToken | null =
     market && activeChain.tokens[market.symbol]
       ? {
@@ -483,33 +514,109 @@ export function TradePanel({ marketId }: { marketId: string }) {
     }
   }, [amount, isMantleSpot, fxTokenIn]);
 
+  // Best route found across all configured DEXes for this pair — either a
+  // direct pool on one DEX, a two-hop route through a hub token (V3-shaped
+  // DEXes), or a Merchant Moe Liquidity Book path (direct or via a hub).
+  const [fxRoute, setFxRoute] = useState<{
+    routerAddress: Address;
+    dexName: string;
+    amountOut: bigint;
+    path: Address[];
+    v3Fee?: number;
+    v3Path?: Hex;
+    lbBinSteps?: bigint[];
+    lbVersions?: number[];
+  } | null>(null);
+
   const { data: fxAllowance, refetch: refetchFxAllowance } = useReadContract({
     address: fxTokenIn?.address,
     abi: FUSIONX_ERC20_ABI,
     functionName: "allowance",
-    args: [address ?? ZERO_ADDRESS, (fusionxRouter?.routerAddress ?? ZERO_ADDRESS) as Address],
+    args: [address ?? ZERO_ADDRESS, (fxRoute?.routerAddress ?? ZERO_ADDRESS) as Address],
     chainId: FUSIONX_CHAIN_ID,
-    query: { enabled: !!address && isMantleSpot && !!fxTokenIn && !!fusionxRouter, refetchInterval: 30000 },
+    query: { enabled: !!address && isMantleSpot && !!fxTokenIn && !!fxRoute, refetchInterval: 30000 },
   });
 
-  // Live QuoterV2 quote — drives both the best fee tier and amountOutMinimum.
-  const [fxQuote, setFxQuote] = useState<{ fee: number; amountOut: bigint } | null>(null);
+  // Live multi-DEX, multi-hop quote — drives the route, fee/path, and
+  // amountOutMinimum. Probes the direct pool and a two-hop route through each
+  // hub token (WMNT/USDC/USDT) on every configured DEX (FusionX V3, Agni
+  // Finance, Merchant Moe), then picks the best. Debounced 300ms to avoid
+  // firing a burst of RPC calls on every keystroke.
   useEffect(() => {
-    if (!isMantleSpot || !publicClient || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountIn <= 0n) {
-      setFxQuote(null);
+    if (!isMantleSpot || !publicClient || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountIn <= 0n || (v3CustomRouters.length === 0 && !lbRouter)) {
+      setFxRoute(null);
       return;
     }
     let cancelled = false;
-    quoteFusionXBestTier(publicClient, {
-      tokenIn: fxTokenIn.address,
-      tokenOut: fxTokenOut.address,
-      amountIn: fxAmountIn,
-      quoter: fusionxRouter?.quoterAddress as Address,
-    })
-      .then((q) => { if (!cancelled) setFxQuote(q); })
-      .catch(() => { if (!cancelled) setFxQuote(null); });
-    return () => { cancelled = true; };
-  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, fusionxRouter?.quoterAddress]);
+    const timeoutId = setTimeout(async () => {
+      let best: typeof fxRoute = null;
+      for (const r of v3CustomRouters) {
+        const routerAddress = r.routerAddress as Address;
+        const quoter = r.quoterAddress as Address;
+        try {
+          const [direct, multiHop] = await Promise.all([
+            quoteFusionXBestTier(publicClient, {
+              tokenIn: fxTokenIn.address,
+              tokenOut: fxTokenOut.address,
+              amountIn: fxAmountIn,
+              quoter,
+            }),
+            quoteFusionXMultiHop(publicClient, {
+              tokenIn: fxTokenIn.address,
+              tokenOut: fxTokenOut.address,
+              amountIn: fxAmountIn,
+              hubTokens: activeChain.hubTokens,
+              quoter,
+            }),
+          ]);
+
+          if (direct && direct.amountOut > 0n && (!best || direct.amountOut > best.amountOut)) {
+            best = {
+              routerAddress,
+              dexName: r.name,
+              amountOut: direct.amountOut,
+              path: [fxTokenIn.address, fxTokenOut.address],
+              v3Fee: direct.fee,
+            };
+          }
+          if (multiHop && multiHop.amountOut > 0n && (!best || multiHop.amountOut > best.amountOut)) {
+            best = {
+              routerAddress,
+              dexName: r.name,
+              amountOut: multiHop.amountOut,
+              path: multiHop.path,
+              v3Path: multiHop.encodedPath,
+            };
+          }
+        } catch {
+          /* no pool for this pair on this router */
+        }
+      }
+
+      if (lbRouter) {
+        const lb = await quoteLBBestPath(publicClient, {
+          tokenIn: fxTokenIn.address,
+          tokenOut: fxTokenOut.address,
+          amountIn: fxAmountIn,
+          hubTokens: activeChain.hubTokens,
+          quoter: lbRouter.quoterAddress as Address,
+        });
+        if (lb && lb.amountOut > 0n && (!best || lb.amountOut > best.amountOut)) {
+          best = {
+            routerAddress: lbRouter.routerAddress as Address,
+            dexName: lbRouter.name,
+            amountOut: lb.amountOut,
+            path: lb.route,
+            lbBinSteps: lb.pairBinSteps,
+            lbVersions: lb.versions,
+          };
+        }
+      }
+
+      if (!cancelled) setFxRoute(best);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(timeoutId); };
+  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, v3CustomRouters, lbRouter, activeChain.hubTokens]);
 
   const {
     writeContract: writeFxApproval,
@@ -530,6 +637,20 @@ export function TradePanel({ marketId }: { marketId: string }) {
 
   const { isLoading: isFxSwapConfirming, isSuccess: isFxSwapSuccess } =
     useWaitForTransactionReceipt({ hash: fxSwapHash });
+
+  // Human-readable route label for the live multi-DEX/multi-hop quote, e.g.
+  // "Agni Finance" (direct) or "FusionX V3 · WMNT -> USDC -> USDT" (2-hop).
+  const fxRouteLabel = useMemo(() => {
+    if (!isMantleSpot || !fxRoute) return null;
+    if (fxRoute.path.length <= 2) return fxRoute.dexName;
+    const symbols = fxRoute.path.map((addr) => {
+      const match = Object.values(activeChain.tokens).find(
+        (t) => t.address.toLowerCase() === addr.toLowerCase(),
+      );
+      return match?.symbol ?? `${addr.slice(0, 6)}…`;
+    });
+    return `${fxRoute.dexName} · ${symbols.join(" -> ")}`;
+  }, [isMantleSpot, fxRoute, activeChain.tokens]);
 
   const swapTokenBase = useMemo<SwapToken | null>(() => {
     if (!market || !isEthSpot) return null;
@@ -559,9 +680,19 @@ export function TradePanel({ marketId }: { marketId: string }) {
     const amountValue = Math.max(0, Number(amount) || 0);
     const entry = orderType === "Limit Intent" && Number(limitPrice) > 0 ? Number(limitPrice) : markPrice;
     const notionalUsd = side === "buy" || isPerp ? amountValue : amountValue * entry;
+    const expectedReceive = side === "buy" && entry > 0 ? amountValue / entry : notionalUsd;
+
+    // For Mantle spot, derive the real receive amount and price impact from the
+    // live on-chain quote (vs. mark price) instead of the liquidity heuristic.
+    if (isMantleSpot && fxRoute && fxTokenOut && expectedReceive > 0) {
+      const receive = Number(formatUnits(fxRoute.amountOut, fxTokenOut.decimals));
+      const priceImpact = Math.min(100, Math.max(0, ((expectedReceive - receive) / expectedReceive) * 100));
+      return { entry, amountValue, notionalUsd, receive, priceImpact };
+    }
+
     const priceImpact = liquidity > 0 ? Math.min(8, (notionalUsd / liquidity) * 100) : 0;
     const impactMultiplier = Math.max(0, 1 - priceImpact / 100);
-    const receive = side === "buy" && entry > 0 ? (amountValue / entry) * impactMultiplier : notionalUsd * impactMultiplier;
+    const receive = expectedReceive * impactMultiplier;
 
     return {
       entry,
@@ -570,12 +701,12 @@ export function TradePanel({ marketId }: { marketId: string }) {
       receive,
       priceImpact,
     };
-  }, [amount, isPerp, limitPrice, liquidity, markPrice, orderType, side]);
+  }, [amount, isMantleSpot, fxRoute, fxTokenOut, isPerp, limitPrice, liquidity, markPrice, orderType, side]);
 
   const fxAmountOutMin = useMemo(() => {
-    if (!fxQuote || !fxTokenOut) return 0n;
-    return (fxQuote.amountOut * BigInt(Math.max(0, 10_000 - slippageBps))) / 10_000n;
-  }, [fxQuote, fxTokenOut, slippageBps]);
+    if (!fxRoute || !fxTokenOut) return 0n;
+    return (fxRoute.amountOut * BigInt(Math.max(0, 10_000 - slippageBps))) / 10_000n;
+  }, [fxRoute, fxTokenOut, slippageBps]);
 
   const isWrongChain = isMantleSpot && !!address && connectedChainId !== FUSIONX_CHAIN_ID;
   const needsFxApproval =
@@ -584,35 +715,71 @@ export function TradePanel({ marketId }: { marketId: string }) {
     (fxAllowance === undefined || fxAmountIn > (fxAllowance as bigint));
 
   const executeFxSwap = useCallback(() => {
-    if (!address || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountOutMin <= 0n || !fusionxRouter) return;
+    if (!address || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountOutMin <= 0n || !fxRoute) return;
 
     setSwapError(null);
-    writeFxSwap({
-      address: fusionxRouter.routerAddress as Address,
-      abi: FUSIONX_V3_ROUTER_ABI,
-      functionName: "exactInputSingle",
-      args: [
-        {
-          tokenIn: fxTokenIn.address,
-          tokenOut: fxTokenOut.address,
-          fee: fxQuote?.fee ?? 3000,
-          recipient: address,
-          deadline: BigInt(Math.floor(Date.now() / 1000) + 20 * 60),
-          amountIn: fxAmountIn,
-          amountOutMinimum: fxAmountOutMin,
-          sqrtPriceLimitX96: 0n,
-        },
-      ],
-      chainId: FUSIONX_CHAIN_ID,
-    });
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60);
+    if (fxRoute.lbBinSteps && fxRoute.lbVersions) {
+      writeFxSwap({
+        address: fxRoute.routerAddress,
+        abi: LB_ROUTER_ABI,
+        functionName: "swapExactTokensForTokens",
+        args: [
+          fxAmountIn,
+          fxAmountOutMin,
+          {
+            pairBinSteps: fxRoute.lbBinSteps,
+            versions: fxRoute.lbVersions,
+            tokenPath: fxRoute.path,
+          },
+          address,
+          deadline,
+        ],
+        chainId: FUSIONX_CHAIN_ID,
+      });
+    } else if (fxRoute.v3Path) {
+      writeFxSwap({
+        address: fxRoute.routerAddress,
+        abi: FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
+        functionName: "exactInput",
+        args: [
+          {
+            path: fxRoute.v3Path,
+            recipient: address,
+            deadline,
+            amountIn: fxAmountIn,
+            amountOutMinimum: fxAmountOutMin,
+          },
+        ],
+        chainId: FUSIONX_CHAIN_ID,
+      });
+    } else {
+      writeFxSwap({
+        address: fxRoute.routerAddress,
+        abi: FUSIONX_V3_ROUTER_ABI,
+        functionName: "exactInputSingle",
+        args: [
+          {
+            tokenIn: fxTokenIn.address,
+            tokenOut: fxTokenOut.address,
+            fee: fxRoute.v3Fee ?? 3000,
+            recipient: address,
+            deadline,
+            amountIn: fxAmountIn,
+            amountOutMinimum: fxAmountOutMin,
+            sqrtPriceLimitX96: 0n,
+          },
+        ],
+        chainId: FUSIONX_CHAIN_ID,
+      });
+    }
   }, [
     address,
     fxTokenIn,
     fxTokenOut,
     fxAmountIn,
     fxAmountOutMin,
-    fxQuote,
-    fusionxRouter,
+    fxRoute,
     writeFxSwap,
   ]);
 
@@ -629,19 +796,19 @@ export function TradePanel({ marketId }: { marketId: string }) {
       return;
     }
 
-    if (fxAmountOutMin <= 0n) {
-      setSwapError("No FusionX pool/liquidity for this pair yet.");
+    if (fxAmountOutMin <= 0n || !fxRoute) {
+      setSwapError("No pool/liquidity for this pair yet.");
       return;
     }
 
-    if (needsFxApproval && fxTokenIn && fusionxRouter) {
+    if (needsFxApproval && fxTokenIn) {
       setSwapError(null);
       setPendingSwapAfterApprove(true);
       writeFxApproval({
         address: fxTokenIn.address,
         abi: FUSIONX_ERC20_ABI,
         functionName: "approve",
-        args: [fusionxRouter.routerAddress as Address, fxAmountIn],
+        args: [fxRoute.routerAddress, fxAmountIn],
         chainId: FUSIONX_CHAIN_ID,
       });
       return;
@@ -792,7 +959,7 @@ export function TradePanel({ marketId }: { marketId: string }) {
           <SliderField value={slippageBps} min={5} max={300} suffix="bps" onChange={setSlippageBps} />
         </div>
 
-        <Row label="Route" value={route} />
+        <Row label="Route" value={fxRouteLabel ?? route} />
         <Row label="Entry Price" value={formatUsd(preview.entry)} />
         <Row
           label={isPerp ? "Position Notional" : "Est. Receive"}

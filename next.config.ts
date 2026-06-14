@@ -45,6 +45,11 @@ const config: NextConfig = {
         hostname: 'static-assets.coinbase.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cryptologos.cc',
+        pathname: '/**',
+      },
     ],
   },
   webpack: (cfg, { isServer, webpack }) => {

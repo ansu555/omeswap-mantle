@@ -55,3 +55,20 @@ changes: built realtime-service/ (Node+viem+ws) for true real-time Mantle data �
 user: ansu555
 branch: service
 changes: removed dead weight — avax-agent/ (Avalanche prototype), Python ats/, 0g-contract/ + hardhat scripts + Avalanche hardhat.config.js (263 files); kept TS lib/ats; deferred 0G→Mantle flip (0G still live default — jaine/lib/zerog have no Mantle replacement yet), build green
+
+[2026-06-14 22:12]
+user: manovHacksaw
+branch: feat/terminal
+changes: integrated Agni Finance (UniV3 fork) and Merchant Moe (LB v2.2) into Mantle chain registry; generalized swap aggregator's V3-custom path beyond FusionX-only
+[2026-06-14 23:05]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Agni Finance WMNT/USDT terminal market, generalized TradePanel quoting/execution to use each market's DEX router
+[2026-06-14 23:40]
+user: manovHacksaw
+branch: feat/terminal
+changes: added multi-DEX + 2-hop swap routing (FusionX V3 + Agni Finance, via WMNT/USDC/USDT hubs) to terminal TradePanel and swap aggregator
+[2026-06-14 23:58]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Merchant Moe (LB v2.2) to terminal/aggregator multi-routing, debounced quote effect, real on-chain price-impact estimate
