@@ -14,6 +14,14 @@ export type DexMarketConfig = {
   displayToken: DexDisplayToken;
   baseToken: DexToken;
   quoteToken: DexToken;
+  /**
+   * Whether `baseToken` corresponds to GeckoTerminal's pool "base_token" or
+   * "quote_token" for this specific pool. GeckoTerminal assigns base/quote per
+   * pool using its own heuristics, independent of which token we treat as the
+   * market's primary asset — this field lets us pick the right price/OHLCV
+   * field regardless. Defaults to "base" when omitted.
+   */
+  geckoBaseToken?: DexDisplayToken;
   chartSymbol?: string;
   leverage: number | null;
   color: string;
@@ -40,8 +48,9 @@ export const DEX_MARKETS: DexMarketConfig[] = [
     networkName: "Mantle",
     chainId: 5000,
     dex: "FusionX V3",
-    poolAddress: "",
+    poolAddress: "0xe87E42ff34d6baAF619eB91dd957e4EC45226894",
     displayToken: "base",
+    geckoBaseToken: "quote",
     baseToken: {
       symbol: "WMNT",
       name: "Wrapped Mantle",
@@ -74,8 +83,9 @@ export const DEX_MARKETS: DexMarketConfig[] = [
     networkName: "Mantle",
     chainId: 5000,
     dex: "FusionX V3",
-    poolAddress: "",
+    poolAddress: "0x01845ec86909006758DE0D57957D88Da10bf5809",
     displayToken: "base",
+    geckoBaseToken: "quote",
     baseToken: {
       symbol: "WETH",
       name: "Wrapped Ether",
@@ -108,8 +118,9 @@ export const DEX_MARKETS: DexMarketConfig[] = [
     networkName: "Mantle",
     chainId: 5000,
     dex: "FusionX V3",
-    poolAddress: "",
+    poolAddress: "0x262255F4770aEbE2D0C8b97a46287dCeCc2a0AfF",
     displayToken: "base",
+    geckoBaseToken: "base",
     baseToken: {
       symbol: "WMNT",
       name: "Wrapped Mantle",
@@ -142,8 +153,9 @@ export const DEX_MARKETS: DexMarketConfig[] = [
     networkName: "Mantle",
     chainId: 5000,
     dex: "FusionX V3",
-    poolAddress: "",
+    poolAddress: "0xD3d3127D9654f806370da592eb292eA0a347f0e3",
     displayToken: "base",
+    geckoBaseToken: "base",
     baseToken: {
       symbol: "WETH",
       name: "Wrapped Ether",

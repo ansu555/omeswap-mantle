@@ -93,7 +93,7 @@ export async function getDexMarket(id: string | null | undefined): Promise<DexMa
     if (!attrs) throw new Error("GeckoTerminal pool response missing attributes");
 
     const priceUsd =
-      config.displayToken === "base"
+      (config.geckoBaseToken ?? "base") === "base"
         ? toNumber(attrs.base_token_price_usd, config.fallback.priceUsd)
         : toNumber(attrs.quote_token_price_usd, config.fallback.priceUsd);
     const txns = attrs.transactions?.h24;
@@ -113,6 +113,26 @@ export async function getDexMarket(id: string | null | undefined): Promise<DexMa
   }
 }
 
+/**
+ * Sorts candles by time and drops duplicate timestamps (keeping the last
+ * occurrence), since lightweight-charts requires strictly ascending,
+ * unique-by-time data and throws otherwise.
+ */
+function dedupeCandles(candles: DexCandle[]): DexCandle[] {
+  const sorted = [...candles].sort((a, b) => a.time - b.time);
+  const result: DexCandle[] = [];
+
+  for (const candle of sorted) {
+    if (result.length && result[result.length - 1].time === candle.time) {
+      result[result.length - 1] = candle;
+    } else {
+      result.push(candle);
+    }
+  }
+
+  return result;
+}
+
 export async function getDexCandles(
   id: string | null | undefined,
   interval: DexInterval,
@@ -130,7 +150,7 @@ export async function getDexCandles(
   }
 
   const { timeframe, aggregate } = intervalToGecko(interval);
-  const token = config.displayToken;
+  const token = config.geckoBaseToken ?? "base";
 
   try {
     const response = await fetch(
@@ -151,10 +171,10 @@ export async function getDexCandles(
         close,
         volume,
       }))
-      .filter((candle) => candle.time > 0 && candle.close > 0)
-      .sort((a, b) => a.time - b.time);
+      .filter((candle) => candle.time > 0 && candle.close > 0);
+    const deduped = dedupeCandles(candles);
 
-    return candles.length ? candles : fallbackCandles(config, interval, limit);
+    return deduped.length ? deduped : fallbackCandles(config, interval, limit);
   } catch {
     return fallbackCandles(config, interval, limit);
   }

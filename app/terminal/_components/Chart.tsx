@@ -26,6 +26,7 @@ import {
   type UTCTimestamp,
 } from "lightweight-charts";
 import type { DexCandle, DexMarket, DexTrade } from "@/lib/dex/types";
+import { TokenIcon } from "./Icon";
 import { pollLivePrice } from "@/lib/terminal/data/livePriceTick";
 import { CandleAggregator } from "@/lib/terminal/data/candleAggregator";
 import { getDefaultChainId, getChainConfig } from "@/lib/chain-registry";
@@ -501,9 +502,7 @@ export function Chart({ marketId }: { marketId: string }) {
           <ChevronLeft className="h-4 w-4" />
         </button>
         <div className="flex items-center gap-2 shrink-0">
-          <div className="h-8 w-8 rounded-full bg-violet-500 flex items-center justify-center text-xs font-bold text-white">
-            {stats.symbol.slice(0, 2)}
-          </div>
+          <TokenIcon symbol={stats.symbol} color="bg-violet-500" size={32} />
           <span className="text-xl font-semibold">{stats.symbol}</span>
           <button className="ml-2 text-xs px-2.5 py-1 rounded-md bg-panel text-foreground hover:bg-panel-hover border border-border">
             Follow
