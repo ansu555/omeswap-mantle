@@ -14,9 +14,7 @@ import { MAINNET_TOKENS } from "@/contracts/config";
 import { ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
 import {
-  FUSIONX_CHAIN_ID,
   FUSIONX_DEX_ID,
-  FUSIONX_DEX_NAME,
   FUSIONX_V3_ROUTER_ABI,
   quoteFusionXBestTier,
 } from "@/lib/dex/fusionx";
@@ -201,12 +199,15 @@ export function useDexAggregator(
   const publicClient = usePublicClient({ chainId });
   const tokenIn = MAINNET_TOKENS[tokenInSymbol];
   const tokenOut = MAINNET_TOKENS[tokenOutSymbol];
-  const fusionx = chainConfig.dexRouters.find((r) => r.id === FUSIONX_DEX_ID);
-  const supportsFusionX =
-    chainId === FUSIONX_CHAIN_ID &&
-    !!fusionx &&
-    !isPlaceholderAddress(fusionx.routerAddress) &&
-    !isPlaceholderAddress(fusionx.quoterAddress) &&
+  // Uniswap-V3-shaped "custom" routers (FusionX V3, Agni Finance, ...) — all
+  // share the same QuoterV2 / SwapRouter ABI shape, so they're quoted and
+  // executed generically via the FusionX adapter's ABIs.
+  const v3CustomDexConfig = chainConfig.dexRouters
+    .filter((r) => r.type === 'custom' && r.quoterAddress)
+    .map((r) => ({ dex: r.id as DexSource, dexName: r.name, router: r.routerAddress, quoter: r.quoterAddress as Address }))
+    .filter(({ router, quoter }) => !isPlaceholderAddress(router) && !isPlaceholderAddress(quoter));
+  const hasV3CustomRouters =
+    v3CustomDexConfig.length > 0 &&
     !!tokenIn &&
     !!tokenOut &&
     tokenIn.address.toLowerCase() !== tokenOut.address.toLowerCase();
@@ -226,11 +227,11 @@ export function useDexAggregator(
   const hasOmeswapRouter =
     !isPlaceholderAddress(omeswapPoolsAddr) && !isPlaceholderAddress(omeswapRouterAddr);
   const hasConfiguredRouters =
-    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || supportsFusionX || hasOmeswapRouter;
+    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || hasV3CustomRouters || hasOmeswapRouter;
 
   const [quotes, setQuotes] = useState<DexQuote[]>([]);
   const [selectedDex, setSelectedDex] = useState<DexSource>(() => {
-    if (supportsFusionX) return FUSIONX_DEX_ID;
+    if (hasV3CustomRouters) return v3CustomDexConfig[0].dex;
     if (hasOmeswapRouter) return OMESWAP_DEX_ID;
     if (hasConfiguredTjV2 && tjV2?.id) return tjV2.id as DexSource;
     return (activeV1DexConfig[0]?.dex ?? v1DexConfig[0]?.dex ?? FUSIONX_DEX_ID) as DexSource;
@@ -243,15 +244,17 @@ export function useDexAggregator(
   const selectedQuote =
     quotes.find((q) => q.dex === selectedDex) ?? quotes[0] ?? null;
 
+  const selectedV3CustomDex = v3CustomDexConfig.find((d) => d.dex === selectedDex);
+
   const defaultSpender =
-    (supportsFusionX ? (fusionx?.routerAddress as Address) : undefined) ??
+    (hasV3CustomRouters ? v3CustomDexConfig[0].router : undefined) ??
     (hasOmeswapRouter ? omeswapRouterAddr : undefined) ??
     (hasConfiguredTjV2 ? tjV2?.routerAddress : undefined) ??
     activeV1DexConfig[0]?.router ??
     "0x0000000000000000000000000000000000000000";
   const approvalSpender: Address =
-    selectedDex === FUSIONX_DEX_ID && supportsFusionX && fusionx
-      ? (fusionx.routerAddress as Address)
+    selectedV3CustomDex
+      ? selectedV3CustomDex.router
       : selectedDex === OMESWAP_DEX_ID && hasOmeswapRouter && omeswapRouterAddr
       ? omeswapRouterAddr
       : selectedDex === tjV2?.id && hasConfiguredTjV2
@@ -337,29 +340,31 @@ export function useDexAggregator(
       const amountIn = parseUnits(amountInRaw, tokenIn.decimals);
       const newQuotes: DexQuote[] = [];
 
-      // --- FusionX V3 quote (Mantle) — probe fee tiers via QuoterV2 ---
-      if (supportsFusionX && fusionx) {
-        try {
-          const best = await quoteFusionXBestTier(publicClient, {
-            tokenIn: tokenIn.address,
-            tokenOut: tokenOut.address,
-            amountIn,
-            quoter: fusionx.quoterAddress as Address,
-          });
-
-          if (best && best.amountOut > 0n) {
-            newQuotes.push({
-              dex: FUSIONX_DEX_ID,
-              dexName: FUSIONX_DEX_NAME,
-              amountOut: best.amountOut,
-              amountOutFormatted: formatUnits(best.amountOut, tokenOut.decimals),
-              path: [tokenIn.address, tokenOut.address],
-              v3Fee: best.fee,
-              isBest: false,
+      // --- Uniswap-V3-shaped "custom" router quotes (FusionX V3, Agni Finance, ...) ---
+      if (hasV3CustomRouters) {
+        for (const { dex, dexName, quoter } of v3CustomDexConfig) {
+          try {
+            const best = await quoteFusionXBestTier(publicClient, {
+              tokenIn: tokenIn.address,
+              tokenOut: tokenOut.address,
+              amountIn,
+              quoter,
             });
+
+            if (best && best.amountOut > 0n) {
+              newQuotes.push({
+                dex,
+                dexName,
+                amountOut: best.amountOut,
+                amountOutFormatted: formatUnits(best.amountOut, tokenOut.decimals),
+                path: [tokenIn.address, tokenOut.address],
+                v3Fee: best.fee,
+                isBest: false,
+              });
+            }
+          } catch {
+            /* no pool for this pair on this router */
           }
-        } catch {
-          /* no FusionX V3 pool for this pair */
         }
       }
 
@@ -498,7 +503,7 @@ export function useDexAggregator(
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, supportsFusionX, hasOmeswapRouter]);
+  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, hasV3CustomRouters, hasOmeswapRouter]);
 
   const needsApproval = (): boolean => {
     if (!hasConfiguredRouters) return false;
@@ -527,9 +532,9 @@ export function useDexAggregator(
         args: [tokenIn.address, tokenOut.address, amountIn, amountOutMin, address],
         chainId,
       });
-    } else if (selectedQuote.dex === FUSIONX_DEX_ID && supportsFusionX && fusionx) {
+    } else if (selectedV3CustomDex) {
       writeSwap({
-        address: fusionx.routerAddress as Address,
+        address: selectedV3CustomDex.router,
         abi: FUSIONX_V3_ROUTER_ABI,
         functionName: "exactInputSingle",
         args: [

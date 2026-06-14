@@ -120,6 +120,25 @@ export const FUSIONX_V3_SWAP_ROUTER =
 export const FUSIONX_V3_QUOTER_V2 =
   "0x90f72244294E7c5028aFd6a96E18CC2c1E913995" as Address;
 
+// ── Agni Finance (Uniswap V3 fork) — verified on Mantle mainnet ───────────────
+// Source: agni-protocol/contracts deployments/mantleMainnet.json. SwapRouter
+// independently confirmed as "Agni Finance: Swap Router" on Mantlescan. Both
+// the SwapRouter (exactInputSingle w/ deadline, selector 0x414bf389) and the
+// QuoterV2 (quoteExactInputSingle struct param, selector 0xc6a5026a) match the
+// FusionX V3 ABI shape, so the same adapter ABIs are reused.
+export const AGNI_V3_SWAP_ROUTER =
+  "0x319B69888b0d11cEC22caA5034e25FfFBDc88421" as Address;
+export const AGNI_V3_QUOTER_V2 =
+  "0xc4aaDc921E1cdb66c5300Bc158a313292923C0cb" as Address;
+
+// ── Merchant Moe (Trader Joe Liquidity Book v2.2 fork) — Mantle mainnet ───────
+// Source: docs.merchantmoe.com/resources/contracts. LBRouter and LBQuoter
+// selectors match the existing traderJoeV2 ABIs in use-dex-aggregator.tsx.
+export const MERCHANT_MOE_LB_ROUTER =
+  "0x013e138EF6008ae5FDFDE29700e3f2Bc61d21E3a" as Address;
+export const MERCHANT_MOE_LB_QUOTER =
+  "0x501b8AFd35df20f531fF45F6f695793AC3316c85" as Address;
+
 // ── Full ChainConfig ─────────────────────────────────────────────────────────
 
 export const mantleConfig: ChainConfig = {
@@ -143,6 +162,20 @@ export const mantleConfig: ChainConfig = {
             type: "custom",
             routerAddress: FUSIONX_V3_SWAP_ROUTER,
             quoterAddress: FUSIONX_V3_QUOTER_V2,
+          },
+          {
+            id: "agni_v3",
+            name: "Agni Finance",
+            type: "custom",
+            routerAddress: AGNI_V3_SWAP_ROUTER,
+            quoterAddress: AGNI_V3_QUOTER_V2,
+          },
+          {
+            id: "merchant_moe",
+            name: "Merchant Moe",
+            type: "traderJoeV2",
+            routerAddress: MERCHANT_MOE_LB_ROUTER,
+            quoterAddress: MERCHANT_MOE_LB_QUOTER,
           },
         ]
       : [],
