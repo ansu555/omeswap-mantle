@@ -68,3 +68,7 @@ changes: added Agni Finance WMNT/USDT terminal market, generalized TradePanel qu
 user: manovHacksaw
 branch: feat/terminal
 changes: added multi-DEX + 2-hop swap routing (FusionX V3 + Agni Finance, via WMNT/USDC/USDT hubs) to terminal TradePanel and swap aggregator
+[2026-06-14 23:58]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Merchant Moe (LB v2.2) to terminal/aggregator multi-routing, debounced quote effect, real on-chain price-impact estimate
