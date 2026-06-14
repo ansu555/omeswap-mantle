@@ -22,11 +22,11 @@ import type { StrategyDraftPayload } from "@/lib/marketplace/validate-strategy"
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const ASSET_PAIR_PRESETS = [
-  "W0G/USDC.e",
+  "WMNT/USDC",
   "WETH/USDC",
   "WBTC/USDC",
-  "0G/USDC",
-  "WETH/W0G",
+  "WMNT/USDT",
+  "WETH/WMNT",
 ]
 
 const REGIME_OPTIONS = ["bull", "bear", "sideways", "volatile", "ranging"]
@@ -35,7 +35,7 @@ const STRAT_KEY = "omeswap_draft_strategy_id"
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type PricingToken = "free" | "OG" | "USDC"
+type PricingToken = "free" | "MNT" | "USDC"
 
 type WizardState = {
   // Step 1 — Details
@@ -202,7 +202,7 @@ export function PublishWizard({ onClose }: PublishWizardProps) {
     slippageBps: "75",
     isFree: true,
     priceAmount: "",
-    priceToken: "OG",
+    priceToken: "MNT",
     payoutWallet: wallet ?? "",
   })
 
@@ -662,7 +662,7 @@ export function PublishWizard({ onClose }: PublishWizardProps) {
                 </Field>
                 <Field label="Token">
                   <div className="flex rounded-lg border border-zinc-700 p-1 gap-1">
-                    {(["OG", "USDC"] as PricingToken[]).map((t) => (
+                    {(["MNT", "USDC"] as PricingToken[]).map((t) => (
                       <button
                         key={t}
                         type="button"

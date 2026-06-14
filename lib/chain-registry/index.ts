@@ -1,12 +1,11 @@
 /**
  * Chain Registry — central lookup for all supported chain configs.
  *
- * Default chain: 0G (selected in lib/chain-registry/chains/zerog.ts)
- * 0G is an EVM-compatible Layer-1 for AI agents with four core primitives:
- *   - 0G Chain    — EVM execution (Mainnet 16661 / Testnet 16602)
- *   - 0G Storage  — decentralized KV + Log for persistent agent memory
- *   - 0G DA       — infinitely scalable data availability
- *   - 0G Compute  — decentralized AI inference (qwen3, GLM-5-FP8, etc.)
+ * Default chain: Mantle (selected in lib/chain-registry/chains/mantle.ts)
+ * Mantle is an EVM-compatible L2 (chainId 5000); FusionX V3 is its primary DEX.
+ *
+ * Note: 0G's Storage / Compute / DA remain in use as external agent
+ * infrastructure via lib/zerog — independent of this trading-chain registry.
  *
  * To add a new chain:
  *   1. Create lib/chain-registry/chains/<chain>.ts exporting a ChainConfig
@@ -16,15 +15,15 @@
  */
 
 import type { ChainConfig, DexRouter, TokenInfo } from './types'
-import { zeroGConfig } from './chains/zerog'
+import { mantleConfig } from './chains/mantle'
 
 // ── Registry ─────────────────────────────────────────────────────────────────
 
 const REGISTRY: Record<number, ChainConfig> = {
-  [zeroGConfig.chain.id]: zeroGConfig,
+  [mantleConfig.chain.id]: mantleConfig,
 }
 
-export const DEFAULT_CHAIN_ID: number = zeroGConfig.chain.id
+export const DEFAULT_CHAIN_ID: number = mantleConfig.chain.id
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
 
@@ -48,7 +47,7 @@ export function getSupportedChains(): ChainConfig[] {
   return Object.values(REGISTRY)
 }
 
-/** Returns the default chain ID for the selected 0G network */
+/** Returns the default chain ID (Mantle). */
 export function getDefaultChainId(): number {
   return DEFAULT_CHAIN_ID
 }

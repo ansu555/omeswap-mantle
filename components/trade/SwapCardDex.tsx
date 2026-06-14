@@ -20,7 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getExplorerLink, getDexRouters, getDefaultChainId, getChainConfig } from "@/lib/chain-registry";
-import { JAINE_DEX_ID } from "@/lib/dex/jaine";
+import { FUSIONX_DEX_ID } from "@/lib/dex/fusionx";
 
 type SwapMode = "swap" | "limit" | "buy" | "sell";
 
@@ -29,9 +29,7 @@ interface SwapCardDexProps {
 }
 
 const DEX_LABEL_COLORS: Record<string, string> = {
-  [JAINE_DEX_ID]: "text-primary",
-  zerog_dex: "text-violet-300",
-  zerog_dex_v2: "text-violet-200",
+  [FUSIONX_DEX_ID]: "text-primary",
 };
 
 const DEX_LABELS: Record<string, { name: string; color: string }> =
@@ -49,8 +47,8 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
   const { isConnected, chain, address, switchChain } = useWallet();
 
   const [mode, setMode] = useState<SwapMode>("swap");
-  const [tokenIn, setTokenIn] = useState<string>("OmE");
-  const [tokenOut, setTokenOut] = useState<string>("USDO");
+  const [tokenIn, setTokenIn] = useState<string>("WMNT");
+  const [tokenOut, setTokenOut] = useState<string>("USDC");
   const [amountIn, setAmountIn] = useState<string>("");
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isPayTokenOpen, setIsPayTokenOpen] = useState(false);
@@ -142,7 +140,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
         </div>
         <div className="grid gap-1 max-h-96 overflow-y-auto">
           {Object.entries(TOKEN_ADDRESSES)
-            .filter(([key]) => ['W0G', 'USDC', 'OmE', 'USDO'].includes(key))
+            .filter(([key]) => ['WMNT', 'USDC', 'USDT', 'WETH'].includes(key))
             .sort(([keyA], [keyB]) => {
               // Sort tokens with non-zero balance to the top
               const balA = parseFloat(walletBalances[keyA] ?? '0');

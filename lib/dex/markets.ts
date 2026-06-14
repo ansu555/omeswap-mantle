@@ -14,6 +14,14 @@ export type DexMarketConfig = {
   displayToken: DexDisplayToken;
   baseToken: DexToken;
   quoteToken: DexToken;
+  /**
+   * Whether `baseToken` corresponds to GeckoTerminal's pool "base_token" or
+   * "quote_token" for this specific pool. GeckoTerminal assigns base/quote per
+   * pool using its own heuristics, independent of which token we treat as the
+   * market's primary asset — this field lets us pick the right price/OHLCV
+   * field regardless. Defaults to "base" when omitted.
+   */
+  geckoBaseToken?: DexDisplayToken;
   chartSymbol?: string;
   leverage: number | null;
   color: string;
@@ -27,40 +35,182 @@ export type DexMarketConfig = {
   };
 };
 
-export const DEFAULT_DEX_MARKET_ID = "0g-w0g-usdce";
+export const DEFAULT_DEX_MARKET_ID = "mantle-wmnt-usdc";
 
 export const DEX_MARKETS: DexMarketConfig[] = [
   {
-    id: "0g-w0g-usdce",
-    symbol: "W0G",
-    pairLabel: "W0G/USDC.e",
-    name: "Wrapped 0G",
+    id: "mantle-wmnt-usdc",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDC",
+    name: "Mantle",
     kind: "spot",
-    network: "0g",
-    networkName: "0G",
-    chainId: 16661,
-    dex: "Jaine",
-    poolAddress: "0x961da9b2fd03e04b088a90843a93e66f13112d0a",
-    displayToken: "quote",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "FusionX V3",
+    poolAddress: "0xe87E42ff34d6baAF619eB91dd957e4EC45226894",
+    displayToken: "base",
+    geckoBaseToken: "quote",
     baseToken: {
-      symbol: "USDC.e",
-      name: "Bridged USDC",
-      address: "0x1f3aa82227281ca364bfb3d253b0f1af1da6473e",
+      symbol: "WMNT",
+      name: "Wrapped Mantle",
+      address: "0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8",
     },
     quoteToken: {
-      symbol: "W0G",
-      name: "Wrapped 0G",
-      address: "0x1cd0690ff9a693f5ef2dd976660a8dafc81a109c",
+      symbol: "USDC",
+      name: "USD Coin",
+      address: "0x09bc4e0d864854c6afb6eb9a9cdf58ac190d0df9",
     },
+    chartSymbol: "MNTUSDT",
     leverage: null,
     color: "bg-violet-500",
-    executionVenue: "Jaine",
+    executionVenue: "FusionX V3",
     fallback: {
-      priceUsd: 0.531342,
-      change24h: 0.153,
-      volume24hUsd: 9334,
-      liquidityUsd: 508553,
-      transactions24h: 60,
+      priceUsd: 0.55,
+      change24h: 0,
+      volume24hUsd: 50000,
+      liquidityUsd: 500000,
+      transactions24h: 100,
+    },
+  },
+  {
+    id: "mantle-weth-usdc",
+    symbol: "WETH",
+    pairLabel: "WETH/USDC",
+    name: "Wrapped Ether",
+    kind: "spot",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "FusionX V3",
+    poolAddress: "0x01845ec86909006758DE0D57957D88Da10bf5809",
+    displayToken: "base",
+    geckoBaseToken: "quote",
+    baseToken: {
+      symbol: "WETH",
+      name: "Wrapped Ether",
+      address: "0xdeaddeaddeaddeaddeaddeaddeaddeaddead1111",
+    },
+    quoteToken: {
+      symbol: "USDC",
+      name: "USD Coin",
+      address: "0x09bc4e0d864854c6afb6eb9a9cdf58ac190d0df9",
+    },
+    chartSymbol: "ETHUSDT",
+    leverage: null,
+    color: "bg-blue-500",
+    executionVenue: "FusionX V3",
+    fallback: {
+      priceUsd: 3500.0,
+      change24h: 1.2,
+      volume24hUsd: 120000,
+      liquidityUsd: 2500000,
+      transactions24h: 450,
+    },
+  },
+  {
+    id: "mantle-wmnt-usdt",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDT",
+    name: "Wrapped Mantle",
+    kind: "spot",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "FusionX V3",
+    poolAddress: "0x262255F4770aEbE2D0C8b97a46287dCeCc2a0AfF",
+    displayToken: "base",
+    geckoBaseToken: "base",
+    baseToken: {
+      symbol: "WMNT",
+      name: "Wrapped Mantle",
+      address: "0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8",
+    },
+    quoteToken: {
+      symbol: "USDT",
+      name: "Tether USD",
+      address: "0x201eba5cc46d216ce6dc03f6a759e8e766e956ae",
+    },
+    chartSymbol: "MNTUSDT",
+    leverage: null,
+    color: "bg-violet-500",
+    executionVenue: "FusionX V3",
+    fallback: {
+      priceUsd: 0.55,
+      change24h: -0.4,
+      volume24hUsd: 30000,
+      liquidityUsd: 350000,
+      transactions24h: 80,
+    },
+  },
+  {
+    id: "mantle-weth-wmnt",
+    symbol: "WETH",
+    pairLabel: "WETH/WMNT",
+    name: "Wrapped Ether",
+    kind: "spot",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "FusionX V3",
+    poolAddress: "0xD3d3127D9654f806370da592eb292eA0a347f0e3",
+    displayToken: "base",
+    geckoBaseToken: "base",
+    baseToken: {
+      symbol: "WETH",
+      name: "Wrapped Ether",
+      address: "0xdeaddeaddeaddeaddeaddeaddeaddeaddead1111",
+    },
+    quoteToken: {
+      symbol: "WMNT",
+      name: "Wrapped Mantle",
+      address: "0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8",
+    },
+    chartSymbol: "ETHMNT",
+    leverage: null,
+    color: "bg-blue-500",
+    executionVenue: "FusionX V3",
+    fallback: {
+      priceUsd: 6363.63,
+      change24h: 1.6,
+      volume24hUsd: 45000,
+      liquidityUsd: 800000,
+      transactions24h: 120,
+    },
+  },
+  {
+    id: "mantle-wmnt-usdt-agni",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDT",
+    name: "Wrapped Mantle",
+    kind: "spot",
+    network: "mantle",
+    networkName: "Mantle",
+    chainId: 5000,
+    dex: "Agni Finance",
+    poolAddress: "0xD08C50F7E69e9aeb2867DefF4A8053d9A855e26A",
+    displayToken: "base",
+    geckoBaseToken: "quote",
+    baseToken: {
+      symbol: "WMNT",
+      name: "Wrapped Mantle",
+      address: "0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8",
+    },
+    quoteToken: {
+      symbol: "USDT",
+      name: "Tether USD",
+      address: "0x201eba5cc46d216ce6dc03f6a759e8e766e956ae",
+    },
+    chartSymbol: "MNTUSDT",
+    leverage: null,
+    color: "bg-violet-500",
+    executionVenue: "Agni Finance",
+    fallback: {
+      priceUsd: 0.55,
+      change24h: -0.35,
+      volume24hUsd: 70,
+      liquidityUsd: 14300,
+      transactions24h: 35,
     },
   },
   {

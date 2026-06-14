@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { DexDepth, DexDepthRow, DexMarket, DexTrade } from "@/lib/dex/types";
 
@@ -101,7 +102,7 @@ export function OrderBook({ marketId }: { marketId: string }) {
   const isPerp = market?.kind === "perp";
 
   return (
-    <div className="w-[340px] shrink-0 border-r border-border bg-background flex flex-col">
+    <div className="h-full w-[340px] shrink-0 border-r border-border bg-background flex flex-col">
       <div className="grid grid-cols-2 border-b border-border text-sm">
         <button
           onClick={() => setActiveTab("depth")}
@@ -123,37 +124,29 @@ export function OrderBook({ marketId }: { marketId: string }) {
 
       {activeTab === "depth" ? (
         <div className="relative flex-1 flex flex-col min-h-0">
-          <div className="grid grid-cols-3 px-3 py-2 text-[11px] text-muted-foreground">
-            <span>Price</span>
-            <span className="text-right">Size ({sizeLabel})</span>
-            <span className="text-right">Total ({sizeLabel})</span>
+          <div className="flex items-center justify-between gap-3 px-3 py-2 text-[11px] text-muted-foreground border-b border-border">
+            <span className="flex items-center gap-1.5">
+              <StatusDot status={status} />
+              AMM spread · <span className="tabular text-foreground">{spread ? formatPrice(spread) : "..."}</span>
+            </span>
+            <span className="tabular">
+              {status === "live" && lastUpdated
+                ? secondsAgo < 5
+                  ? "just now"
+                  : `${secondsAgo}s ago`
+                : status === "loading"
+                  ? "updating…"
+                  : "offline"}
+            </span>
           </div>
 
-          <div className="flex-1 overflow-hidden">
-            {(asks.length ? asks : placeholderRows("ask")).map((row, index) => (
-              <BookRow key={`a-${row.price}-${index}`} row={row} side="ask" maxTotal={maxTotal} muted={!asks.length} />
-            ))}
-
-            <div className="flex items-center justify-between gap-3 py-1.5 px-3 text-[11px] text-muted-foreground border-y border-border bg-panel/40">
-              <span className="flex items-center gap-1.5">
-                <StatusDot status={status} />
-                AMM spread · <span className="tabular text-foreground">{spread ? formatPrice(spread) : "..."}</span>
-              </span>
-              <span className="tabular">
-                {status === "live" && lastUpdated
-                  ? secondsAgo < 5
-                    ? "just now"
-                    : `${secondsAgo}s ago`
-                  : status === "loading"
-                    ? "updating…"
-                    : "offline"}
-              </span>
-            </div>
-
-            {(bids.length ? bids : placeholderRows("bid")).map((row, index) => (
-              <BookRow key={`b-${row.price}-${index}`} row={row} side="bid" maxTotal={maxTotal} muted={!bids.length} />
-            ))}
-          </div>
+          <DepthChart
+            asks={asks.length ? asks : placeholderRows("ask")}
+            bids={bids.length ? bids : placeholderRows("bid")}
+            maxTotal={maxTotal}
+            sizeLabel={sizeLabel}
+            muted={!asks.length && !bids.length}
+          />
 
           <div className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
             Synthetic AMM depth from pool liquidity, not centralized limit orders.
@@ -195,27 +188,150 @@ export function OrderBook({ marketId }: { marketId: string }) {
   );
 }
 
-function BookRow({
-  row,
-  side,
+type DepthPoint = { row: DexDepthRow; x: number; y: number };
+
+const CHART_W = 100;
+const CHART_H = 56;
+const CENTER_X = CHART_W / 2;
+
+function toDepthPoints(rows: DexDepthRow[], maxTotal: number, side: "ask" | "bid"): DepthPoint[] {
+  // bids are ordered closest-to-spread -> outward; asks are ordered farthest -> closest.
+  // Reverse both so x increases away from the spread on each side.
+  const ordered = [...rows].reverse();
+  const n = ordered.length;
+
+  return ordered.map((row, index) => {
+    const t = n > 1 ? index / (n - 1) : 0;
+    const x = side === "bid" ? t * CENTER_X : CENTER_X + t * (CHART_W - CENTER_X);
+    const y = (row.total / maxTotal) * CHART_H;
+    return { row, x, y };
+  });
+}
+
+function buildStepArea(points: DepthPoint[]): string {
+  if (!points.length) return "";
+
+  let path = `M ${points[0].x} ${CHART_H}`;
+  points.forEach((point, index) => {
+    path += ` L ${point.x} ${CHART_H - point.y}`;
+    const next = points[index + 1];
+    if (next) path += ` L ${next.x} ${CHART_H - point.y}`;
+  });
+  const last = points[points.length - 1];
+  path += ` L ${last.x} ${CHART_H} Z`;
+
+  return path;
+}
+
+function DepthChart({
+  asks,
+  bids,
   maxTotal,
+  sizeLabel,
   muted,
 }: {
-  row: DexDepthRow;
-  side: "ask" | "bid";
+  asks: DexDepthRow[];
+  bids: DexDepthRow[];
   maxTotal: number;
+  sizeLabel: string;
   muted?: boolean;
 }) {
-  const pct = Math.max(3, (row.total / maxTotal) * 100);
-  const color = side === "ask" ? "text-bear" : "text-bull";
-  const bg = side === "ask" ? "bg-bear/15" : "bg-bull/15";
+  const [hover, setHover] = useState<{ point: DepthPoint; side: "ask" | "bid" } | null>(null);
+
+  const bidPoints = useMemo(() => toDepthPoints(bids, maxTotal, "bid"), [bids, maxTotal]);
+  const askPoints = useMemo(() => toDepthPoints(asks, maxTotal, "ask"), [asks, maxTotal]);
+  const bidPath = useMemo(() => buildStepArea(bidPoints), [bidPoints]);
+  const askPath = useMemo(() => buildStepArea(askPoints), [askPoints]);
+
+  const leftPrice = bidPoints[0]?.row.price ?? 0;
+  const rightPrice = askPoints[askPoints.length - 1]?.row.price ?? 0;
+  const midPrice =
+    (bidPoints[bidPoints.length - 1]?.row.price ?? 0) > 0 && (askPoints[0]?.row.price ?? 0) > 0
+      ? ((bidPoints[bidPoints.length - 1]?.row.price ?? 0) + (askPoints[0]?.row.price ?? 0)) / 2
+      : 0;
+
+  function handleMove(event: MouseEvent<SVGSVGElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const px = ((event.clientX - rect.left) / rect.width) * CHART_W;
+    const points = px < CENTER_X ? bidPoints : askPoints;
+    if (!points.length) {
+      setHover(null);
+      return;
+    }
+
+    let nearest = points[0];
+    for (const point of points) {
+      if (Math.abs(point.x - px) < Math.abs(nearest.x - px)) nearest = point;
+    }
+    setHover({ point: nearest, side: px < CENTER_X ? "bid" : "ask" });
+  }
 
   return (
-    <div className={`relative grid grid-cols-3 px-3 py-[3px] text-xs tabular hover:bg-panel/60 ${muted ? "opacity-40" : ""}`}>
-      <div className={`absolute right-0 top-0 bottom-0 ${bg}`} style={{ width: `${pct}%` }} />
-      <span className={`${color} relative`}>{row.price ? formatPrice(row.price) : "..."}</span>
-      <span className="text-right relative">{row.size ? formatSize(row.size) : "..."}</span>
-      <span className="text-right relative">{row.total ? formatSize(row.total) : "..."}</span>
+    <div className={`relative flex-1 flex flex-col min-h-0 px-3 py-3 ${muted ? "opacity-40" : ""}`}>
+      <div className="text-center mb-2">
+        <div className="text-lg font-semibold tabular text-amber-400">{midPrice ? formatPrice(midPrice) : "..."}</div>
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Mid-Market Price</div>
+      </div>
+
+      <div className="relative flex-1 min-h-0 flex">
+        <div className="relative flex-1 min-h-0">
+          <svg
+            viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+            preserveAspectRatio="none"
+            className="h-full w-full"
+            onMouseMove={handleMove}
+            onMouseLeave={() => setHover(null)}
+          >
+            <line x1={0} y1={CHART_H} x2={CHART_W} y2={CHART_H} stroke="hsl(var(--border))" strokeWidth={0.3} />
+            <path d={bidPath} fill="hsl(var(--bull) / 0.18)" stroke="hsl(var(--bull))" strokeWidth={0.4} />
+            <path d={askPath} fill="hsl(var(--bear) / 0.18)" stroke="hsl(var(--bear))" strokeWidth={0.4} />
+            {hover && (
+              <line
+                x1={hover.point.x}
+                y1={0}
+                x2={hover.point.x}
+                y2={CHART_H}
+                stroke="hsl(var(--muted-foreground))"
+                strokeWidth={0.3}
+                strokeDasharray="1 1"
+              />
+            )}
+          </svg>
+
+          {hover && (
+            <div
+              className={`pointer-events-none absolute top-1 -translate-x-1/2 rounded border border-border bg-card px-2 py-1 text-[11px] tabular shadow-sm ${
+                hover.side === "ask" ? "text-bear" : "text-bull"
+              }`}
+              style={{
+                left: `${hover.point.x}%`,
+                transform: hover.point.x > CHART_W - 12 ? "translateX(-100%)" : hover.point.x < 12 ? "translateX(0)" : "translateX(-50%)",
+              }}
+            >
+              <div>{hover.point.row.price ? formatPrice(hover.point.row.price) : "..."}</div>
+              <div className="text-muted-foreground">
+                {hover.point.row.total ? formatSize(hover.point.row.total) : "..."} {sizeLabel}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex w-12 flex-col pl-1.5 text-right text-[10px] text-muted-foreground tabular">
+          <span className="text-[9px] uppercase tracking-wide">{sizeLabel}</span>
+          <div className="flex flex-1 flex-col justify-between">
+            <span>{formatSize(maxTotal)}</span>
+            <span>{formatSize(maxTotal / 2)}</span>
+            <span>0</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-1.5 flex justify-between border-t border-border pt-1.5 text-[11px] text-muted-foreground tabular">
+        <span className="text-bull">{leftPrice ? formatPrice(leftPrice) : "..."}</span>
+        <span>{midPrice ? formatPrice(midPrice) : "..."}</span>
+        <span className="text-bear">{rightPrice ? formatPrice(rightPrice) : "..."}</span>
+      </div>
+      <div className="mt-0.5 text-center text-[9px] uppercase tracking-widest text-muted-foreground">Price</div>
     </div>
   );
 }

@@ -7,31 +7,25 @@ import type {
 import { useTransactionStore } from "@/store/transaction-store";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
 import { normalizeWalletAddress } from "@/lib/onboarding";
-import { JAINE_DEX_ID, JAINE_DEX_NAME } from "@/lib/dex/jaine";
+import { FUSIONX_DEX_NAME } from "@/lib/dex/fusionx";
 
 // Resolved once at module load from the chain registry
 const _config = getChainConfig(getDefaultChainId());
 const _nativeSymbol = _config.chain.nativeCurrency.symbol;
-const _v1Routers = _config.dexRouters.filter((r) => r.type === "uniswapV2");
-const _jaineRouter = _config.dexRouters.find((r) => r.id === JAINE_DEX_ID);
-const _dexNames = [
-  ..._v1Routers.map((r) => r.name),
-  ...(_jaineRouter ? [_jaineRouter.name] : []),
-];
-const _defaultDex = _dexNames[0] ?? JAINE_DEX_NAME;
+const _dexNames = _config.dexRouters.map((r) => r.name);
+const _defaultDex = _dexNames[0] ?? FUSIONX_DEX_NAME;
 const _tokenSymbols = Object.keys(_config.tokens);
 
 function normalizeTokenKey(value: string) {
   if (_config.tokens[value]) return value;
   if (value.toUpperCase() === "USDC.E") return "USDC";
-  // Keep native "0G" distinct from ERC-20 "W0G"
   return value;
 }
 
 export class SwapNode extends BaseNode {
   readonly type = "swap";
   readonly label = "Swap";
-  readonly description = `Executes a token swap on ${_dexNames.join(" or ") || JAINE_DEX_NAME}`;
+  readonly description = `Executes a token swap on ${_dexNames.join(" or ") || FUSIONX_DEX_NAME}`;
   readonly icon = "Repeat2";
   readonly category = "action" as const;
   readonly color = "border-green-500";
@@ -59,7 +53,7 @@ export class SwapNode extends BaseNode {
       key: "dex",
       label: "DEX",
       type: "select",
-      options: _dexNames.length ? _dexNames : [JAINE_DEX_NAME],
+      options: _dexNames.length ? _dexNames : [FUSIONX_DEX_NAME],
       default: _defaultDex,
     },
     {
@@ -75,7 +69,7 @@ export class SwapNode extends BaseNode {
       label: "Token Out",
       type: "select",
       options: _tokenSymbols,
-      default: "W0G",
+      default: "WMNT",
     },
     {
       key: "amountIn",
@@ -103,7 +97,7 @@ export class SwapNode extends BaseNode {
 
     const dex = (this.config.dex as string) || _defaultDex;
     const tokenIn = normalizeTokenKey((this.config.tokenIn as string) || "USDC");
-    const tokenOut = normalizeTokenKey((this.config.tokenOut as string) || "W0G");
+    const tokenOut = normalizeTokenKey((this.config.tokenOut as string) || "WMNT");
     const amountIn = Number(this.config.amountIn ?? this.config.amount ?? 0.1);
     const slippage = (this.config.slippage as number) || 0.5;
 

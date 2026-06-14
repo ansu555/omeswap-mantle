@@ -58,6 +58,7 @@ export function Chart(_: Props) {
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const dexPriceSeriesRef = useRef<ISeriesApi<"Line"> | null>(null);
   const markersPluginRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
   const markersRef = useRef<SeriesMarker<Time>[]>([]);
   const managedRef = useRef<Map<string, ManagedIndicator>>(new Map());
@@ -67,6 +68,7 @@ export function Chart(_: Props) {
   const candles = useChartStore((s) => s.candles);
   const indicators = useChartStore((s) => s.indicators);
   const trades = useChartStore((s) => s.trades);
+  const dexPricePoints = useChartStore((s) => s.dexPricePoints);
   const setHovered = useChartStore((s) => s.setHoveredCandleIndex);
 
   // Init chart once
@@ -108,11 +110,22 @@ export function Chart(_: Props) {
       scaleMargins: { top: 0.78, bottom: 0 },
     });
 
+    const dexPriceSeries = chart.addSeries(LineSeries, {
+      color: "#f97316",
+      lineWidth: 1,
+      title: "DEX",
+      priceLineVisible: false,
+      crosshairMarkerVisible: true,
+      crosshairMarkerRadius: 3,
+      lastValueVisible: true,
+    });
+
     const markersPlugin = createSeriesMarkers(candleSeries, []);
 
     chartRef.current = chart;
     candleSeriesRef.current = candleSeries;
     volumeSeriesRef.current = volumeSeries;
+    dexPriceSeriesRef.current = dexPriceSeries;
     markersPluginRef.current = markersPlugin;
 
     const onCrosshairMove = (param: { time?: Time }) => {
@@ -132,6 +145,7 @@ export function Chart(_: Props) {
       chartRef.current = null;
       candleSeriesRef.current = null;
       volumeSeriesRef.current = null;
+      dexPriceSeriesRef.current = null;
       markersPluginRef.current = null;
       managedRef.current.clear();
       paneAllocRef.current.clear();
@@ -159,6 +173,14 @@ export function Chart(_: Props) {
     );
     if (candles.length > 0) chartRef.current?.timeScale().fitContent();
   }, [candles]);
+
+  // Push DEX price overlay points
+  useEffect(() => {
+    if (!dexPriceSeriesRef.current) return;
+    dexPriceSeriesRef.current.setData(
+      dexPricePoints.map((p) => ({ time: p.time as unknown as Time, value: p.value })),
+    );
+  }, [dexPricePoints]);
 
   // Sync indicators
   const indicatorsKey = useMemo(

@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { JAINE_SWAP_URL } from "@/lib/dex/jaine";
+import { FUSIONX_SWAP_URL } from "@/lib/dex/fusionx";
 
 // Map pool IDs to token pairs (based on deployment)
 const POOL_PAIRS: { [key: string]: { token0: string; token1: string } } = {
@@ -46,8 +46,8 @@ export default function PoolPage() {
   const { address, isConnected } = useWallet();
   const [timeRange, setTimeRange] = useState("1D");
   const [showSwap, setShowSwap] = useState(false);
-  const openJaineSwap = () => {
-    window.open(JAINE_SWAP_URL, "_blank", "noopener,noreferrer");
+  const openFusionXSwap = () => {
+    window.open(FUSIONX_SWAP_URL, "_blank", "noopener,noreferrer");
   };
 
   const poolPair = POOL_PAIRS[poolId];
@@ -361,9 +361,9 @@ export default function PoolPage() {
                 <Button
                   className="flex-1"
                   variant="outline"
-                  onClick={openJaineSwap}
+                  onClick={openFusionXSwap}
                 >
-                  Open Jaine
+                  Open FusionX
                 </Button>
               </div>
             )}
@@ -556,18 +556,18 @@ export default function PoolPage() {
                   <Button
                     className="w-full justify-start"
                     variant="outline"
-                    onClick={openJaineSwap}
+                    onClick={openFusionXSwap}
                   >
                     <Droplet className="w-4 h-4 mr-2" />
-                    Open Jaine
+                    Open FusionX
                   </Button>
                   <Button
                     className="w-full justify-start"
                     variant="outline"
-                    onClick={openJaineSwap}
+                    onClick={openFusionXSwap}
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    Swap on Jaine
+                    Swap on FusionX
                   </Button>
                   <Button
                     className="w-full justify-start"

@@ -12,8 +12,9 @@
  *   - compute.ts  → 0G Compute (decentralized AI inference, qwen3/GLM-5)
  *   - da.ts       → 0G DA (high-throughput data availability commitments)
  *
- * Chain config lives in:
- *   lib/chain-registry/chains/zerog.ts
+ * 0G service endpoints (Storage/Compute/DA) live in:
+ *   lib/zerog/config.ts
+ * They are independent of the app's trading chain (the chain registry).
  */
 
 export * from './storage'
@@ -27,6 +28,4 @@ export {
   ZEROG_DA_RPC,
   ZEROG_RPC,
   ZEROG_CHAIN_ID,
-  zeroGChain,
-  zeroGConfig,
-} from '@/lib/chain-registry/chains/zerog'
+} from './config'

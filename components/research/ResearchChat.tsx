@@ -59,7 +59,7 @@ const QUICK_PROMPTS = [
     icon: TrendingUp,
     label: "Worth It Check",
     description: "Fast go/no-go thesis",
-    prompt: "Is W0G worth buying on 0G right now? Give me the full picture.",
+    prompt: "Is WMNT worth buying on Mantle right now? Give me the full picture.",
   },
   {
     icon: Target,
@@ -170,7 +170,7 @@ function AssistantMessage({
 
         <div className="mt-3 flex items-center gap-2 text-[10px] text-violet-200/80">
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          Six ATS agents are scoring the setup on 0G.
+          Six ATS agents are scoring the setup on Mantle.
         </div>
       </div>
     );
@@ -272,7 +272,7 @@ function AssistantMessage({
               }}
             >
               <p className="text-[9px] uppercase tracking-[0.18em] text-white/24">
-                0G Execution
+                Mantle Execution
               </p>
               <p className="mt-1 text-[12px] font-medium text-white/88">
                 {brief.execution.status.replace(/_/g, " ")}
@@ -418,7 +418,7 @@ function ApprovalBanner({
       </div>
 
       <p className="mt-3 text-[11px] leading-relaxed text-white/58">
-        The agents found an executable thesis on 0G. Approve to continue into the
+        The agents found an executable thesis on Mantle. Approve to continue into the
         execution path, or review it in Terminal first.
       </p>
 
@@ -500,7 +500,7 @@ export default function ResearchChat() {
 
       addUserMessage(
         executionApproved
-          ? "Approve and execute the current 0G thesis."
+          ? "Approve and execute the current Mantle thesis."
           : trimmed,
       );
       startAssistantDraft(
@@ -631,7 +631,7 @@ export default function ResearchChat() {
               ATS Research
             </p>
             <p className="truncate text-[10px] text-white/34">
-              Six-agent report desk for 0G research runs
+              Six-agent report desk for Mantle research runs
             </p>
           </div>
         </div>
@@ -812,7 +812,7 @@ export default function ResearchChat() {
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
               disabled={isRunning || !address}
-              placeholder="Example: Is W0G worth entering this week? Include risks and size."
+              placeholder="Example: Is WMNT worth entering this week? Include risks and size."
               rows={3}
               className="min-h-[104px] w-full resize-none bg-transparent px-11 py-4 pr-12 text-[13px] leading-relaxed text-white placeholder:text-white/[0.28] focus:outline-none disabled:opacity-45"
             />

@@ -7,12 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "hardhat:compile": "cd 0g-contract && npx hardhat compile",
-    "hardhat:test": "cd 0g-contract && npx hardhat test",
-    "hardhat:deploy": "cd 0g-contract && npx hardhat run scripts/deploy.js --network zerog",
-    "hardhat:liquidity": "cd 0g-contract && npx hardhat run scripts/addLiquidity.js --network zerog",
-    "hardhat:tokens": "cd 0g-contract && npx hardhat run scripts/deployTokens.js --network zerog",
-    "hardhat:ome-liquidity": "cd 0g-contract && npx hardhat run scripts/addLiquidityOmE.js --network zerog",
     "axl:agent": "bun run scripts/axl-agent-service.ts",
     "axl:demo": "bun run scripts/axl-demo.ts"
   },

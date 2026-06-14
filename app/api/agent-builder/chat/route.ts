@@ -98,7 +98,7 @@ CRITICAL RULES:
 - For stop-loss / take-profit, use type "condition" with threshold parameters
 
 When creating blocks, include relevant parameters:
-- token/pair: Token symbol (e.g., "W0G", "ETH", "USDC")
+- token/pair: Token symbol (e.g., "WMNT", "ETH", "USDC")
 - amount: Number amount
 - price/threshold: Price or threshold value
 - interval/period: Time interval or period
@@ -116,11 +116,11 @@ Example block:
 {
   "type": "swap",
   "subType": "buy",
-  "label": "Buy W0G",
-  "description": "Swap USDC for W0G",
+  "label": "Buy WMNT",
+  "description": "Swap USDC for WMNT",
   "parameters": [
     {"name": "tokenIn", "value": "USDC", "type": "text"},
-    {"name": "tokenOut", "value": "W0G", "type": "text"},
+    {"name": "tokenOut", "value": "WMNT", "type": "text"},
     {"name": "amount", "value": 100, "type": "number"}
   ]
 }
@@ -144,7 +144,7 @@ Valid examples:
 
 Respond with helpful explanations and generate appropriate blocks when users ask to create strategies.
 If user asks for a complete strategy, provide 3-6 connected blocks that form a working flow.
-This is an Omega DeFi app on 0G — default to W0G/USDC strategies when the user does not specify a pair.`,
+This is an Omega DeFi app on Mantle — default to WMNT/USDC strategies when the user does not specify a pair.`,
       },
     ];
 

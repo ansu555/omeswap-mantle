@@ -26,8 +26,10 @@ import {
   type UTCTimestamp,
 } from "lightweight-charts";
 import type { DexCandle, DexMarket, DexTrade } from "@/lib/dex/types";
+import { TokenIcon } from "./Icon";
 import { pollLivePrice } from "@/lib/terminal/data/livePriceTick";
 import { CandleAggregator } from "@/lib/terminal/data/candleAggregator";
+import { getDefaultChainId, getChainConfig } from "@/lib/chain-registry";
 
 type BtcCandle = CandlestickData<UTCTimestamp> & {
   volume: number;
@@ -116,10 +118,10 @@ export function Chart({ marketId }: { marketId: string }) {
     VOL: true,
   });
   const [stats, setStats] = useState<BtcStats>({
-    symbol: "W0G",
-    pairLabel: "W0G/USDC.e",
-    networkName: "0G",
-    dex: "Jaine",
+    symbol: "WMNT",
+    pairLabel: "WMNT/USDC",
+    networkName: "Mantle",
+    dex: "FusionX V3",
     mark: 0,
     index: 0,
     changeAmount: 0,
@@ -131,7 +133,13 @@ export function Chart({ marketId }: { marketId: string }) {
   });
   const [latestCandle, setLatestCandle] = useState<BtcCandle | null>(null);
   const [status, setStatus] = useState<"loading" | "live" | "offline">("loading");
-  const explorerBase = "https://chainscan.0g.ai";
+  const explorerBase = useMemo(() => {
+    try {
+      return getChainConfig(getDefaultChainId()).explorerUrl;
+    } catch {
+      return "https://explorer.mantle.xyz";
+    }
+  }, []);
   const [utcTime, setUtcTime] = useState("");
   const [bottomTab, setBottomTab] = useState("Positions (0)");
   const [indicatorMenuOpen, setIndicatorMenuOpen] = useState(false);
@@ -494,9 +502,7 @@ export function Chart({ marketId }: { marketId: string }) {
           <ChevronLeft className="h-4 w-4" />
         </button>
         <div className="flex items-center gap-2 shrink-0">
-          <div className="h-8 w-8 rounded-full bg-violet-500 flex items-center justify-center text-xs font-bold text-white">
-            {stats.symbol.slice(0, 2)}
-          </div>
+          <TokenIcon symbol={stats.symbol} color="bg-violet-500" size={32} />
           <span className="text-xl font-semibold">{stats.symbol}</span>
           <button className="ml-2 text-xs px-2.5 py-1 rounded-md bg-panel text-foreground hover:bg-panel-hover border border-border">
             Follow
