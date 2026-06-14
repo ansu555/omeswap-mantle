@@ -60,3 +60,7 @@ changes: removed dead weight — avax-agent/ (Avalanche prototype), Python ats/,
 user: manovHacksaw
 branch: feat/terminal
 changes: integrated Agni Finance (UniV3 fork) and Merchant Moe (LB v2.2) into Mantle chain registry; generalized swap aggregator's V3-custom path beyond FusionX-only
+[2026-06-14 23:05]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Agni Finance WMNT/USDT terminal market, generalized TradePanel quoting/execution to use each market's DEX router
