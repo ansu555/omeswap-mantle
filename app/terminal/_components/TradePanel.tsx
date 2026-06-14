@@ -22,6 +22,7 @@ import {
   quoteFusionXBestTier,
   quoteFusionXMultiHop,
 } from "@/lib/dex/fusionx";
+import { LB_ROUTER_ABI, quoteLBBestPath } from "@/lib/dex/liquidity-book";
 
 function getTokenDecimals(address: string): number {
   const config = getChainConfig(getDefaultChainId());
@@ -448,6 +449,19 @@ export function TradePanel({ marketId }: { marketId: string }) {
       ),
     [activeChain],
   );
+
+  // Merchant Moe (Trader Joe Liquidity Book v2.2) router/quoter, if configured —
+  // also competes for best price, including 2-hop paths via hub tokens.
+  const lbRouter = useMemo(
+    () =>
+      activeChain.dexRouters.find(
+        (r) =>
+          r.type === "traderJoeV2" &&
+          !isPlaceholderAddress(r.routerAddress as Address) &&
+          !isPlaceholderAddress(r.quoterAddress as Address),
+      ),
+    [activeChain],
+  );
   const baseTok: SpotToken | null =
     market && activeChain.tokens[market.symbol]
       ? {
@@ -501,7 +515,8 @@ export function TradePanel({ marketId }: { marketId: string }) {
   }, [amount, isMantleSpot, fxTokenIn]);
 
   // Best route found across all configured DEXes for this pair — either a
-  // direct pool on one DEX or a two-hop route through a hub token.
+  // direct pool on one DEX, a two-hop route through a hub token (V3-shaped
+  // DEXes), or a Merchant Moe Liquidity Book path (direct or via a hub).
   const [fxRoute, setFxRoute] = useState<{
     routerAddress: Address;
     dexName: string;
@@ -509,6 +524,8 @@ export function TradePanel({ marketId }: { marketId: string }) {
     path: Address[];
     v3Fee?: number;
     v3Path?: Hex;
+    lbBinSteps?: bigint[];
+    lbVersions?: number[];
   } | null>(null);
 
   const { data: fxAllowance, refetch: refetchFxAllowance } = useReadContract({
@@ -522,14 +539,16 @@ export function TradePanel({ marketId }: { marketId: string }) {
 
   // Live multi-DEX, multi-hop quote — drives the route, fee/path, and
   // amountOutMinimum. Probes the direct pool and a two-hop route through each
-  // hub token (WMNT/USDC/USDT) on every configured DEX, then picks the best.
+  // hub token (WMNT/USDC/USDT) on every configured DEX (FusionX V3, Agni
+  // Finance, Merchant Moe), then picks the best. Debounced 300ms to avoid
+  // firing a burst of RPC calls on every keystroke.
   useEffect(() => {
-    if (!isMantleSpot || !publicClient || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountIn <= 0n || v3CustomRouters.length === 0) {
+    if (!isMantleSpot || !publicClient || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountIn <= 0n || (v3CustomRouters.length === 0 && !lbRouter)) {
       setFxRoute(null);
       return;
     }
     let cancelled = false;
-    (async () => {
+    const timeoutId = setTimeout(async () => {
       let best: typeof fxRoute = null;
       for (const r of v3CustomRouters) {
         const routerAddress = r.routerAddress as Address;
@@ -573,10 +592,31 @@ export function TradePanel({ marketId }: { marketId: string }) {
           /* no pool for this pair on this router */
         }
       }
+
+      if (lbRouter) {
+        const lb = await quoteLBBestPath(publicClient, {
+          tokenIn: fxTokenIn.address,
+          tokenOut: fxTokenOut.address,
+          amountIn: fxAmountIn,
+          hubTokens: activeChain.hubTokens,
+          quoter: lbRouter.quoterAddress as Address,
+        });
+        if (lb && lb.amountOut > 0n && (!best || lb.amountOut > best.amountOut)) {
+          best = {
+            routerAddress: lbRouter.routerAddress as Address,
+            dexName: lbRouter.name,
+            amountOut: lb.amountOut,
+            path: lb.route,
+            lbBinSteps: lb.pairBinSteps,
+            lbVersions: lb.versions,
+          };
+        }
+      }
+
       if (!cancelled) setFxRoute(best);
-    })();
-    return () => { cancelled = true; };
-  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, v3CustomRouters, activeChain.hubTokens]);
+    }, 300);
+    return () => { cancelled = true; clearTimeout(timeoutId); };
+  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, v3CustomRouters, lbRouter, activeChain.hubTokens]);
 
   const {
     writeContract: writeFxApproval,
@@ -640,9 +680,19 @@ export function TradePanel({ marketId }: { marketId: string }) {
     const amountValue = Math.max(0, Number(amount) || 0);
     const entry = orderType === "Limit Intent" && Number(limitPrice) > 0 ? Number(limitPrice) : markPrice;
     const notionalUsd = side === "buy" || isPerp ? amountValue : amountValue * entry;
+    const expectedReceive = side === "buy" && entry > 0 ? amountValue / entry : notionalUsd;
+
+    // For Mantle spot, derive the real receive amount and price impact from the
+    // live on-chain quote (vs. mark price) instead of the liquidity heuristic.
+    if (isMantleSpot && fxRoute && fxTokenOut && expectedReceive > 0) {
+      const receive = Number(formatUnits(fxRoute.amountOut, fxTokenOut.decimals));
+      const priceImpact = Math.min(100, Math.max(0, ((expectedReceive - receive) / expectedReceive) * 100));
+      return { entry, amountValue, notionalUsd, receive, priceImpact };
+    }
+
     const priceImpact = liquidity > 0 ? Math.min(8, (notionalUsd / liquidity) * 100) : 0;
     const impactMultiplier = Math.max(0, 1 - priceImpact / 100);
-    const receive = side === "buy" && entry > 0 ? (amountValue / entry) * impactMultiplier : notionalUsd * impactMultiplier;
+    const receive = expectedReceive * impactMultiplier;
 
     return {
       entry,
@@ -651,7 +701,7 @@ export function TradePanel({ marketId }: { marketId: string }) {
       receive,
       priceImpact,
     };
-  }, [amount, isPerp, limitPrice, liquidity, markPrice, orderType, side]);
+  }, [amount, isMantleSpot, fxRoute, fxTokenOut, isPerp, limitPrice, liquidity, markPrice, orderType, side]);
 
   const fxAmountOutMin = useMemo(() => {
     if (!fxRoute || !fxTokenOut) return 0n;
@@ -669,7 +719,25 @@ export function TradePanel({ marketId }: { marketId: string }) {
 
     setSwapError(null);
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 20 * 60);
-    if (fxRoute.v3Path) {
+    if (fxRoute.lbBinSteps && fxRoute.lbVersions) {
+      writeFxSwap({
+        address: fxRoute.routerAddress,
+        abi: LB_ROUTER_ABI,
+        functionName: "swapExactTokensForTokens",
+        args: [
+          fxAmountIn,
+          fxAmountOutMin,
+          {
+            pairBinSteps: fxRoute.lbBinSteps,
+            versions: fxRoute.lbVersions,
+            tokenPath: fxRoute.path,
+          },
+          address,
+          deadline,
+        ],
+        chainId: FUSIONX_CHAIN_ID,
+      });
+    } else if (fxRoute.v3Path) {
       writeFxSwap({
         address: fxRoute.routerAddress,
         abi: FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,

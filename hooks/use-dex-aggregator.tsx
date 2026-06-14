@@ -21,6 +21,7 @@ import {
   quoteFusionXBestTier,
   quoteFusionXMultiHop,
 } from "@/lib/dex/fusionx";
+import { LB_ROUTER_ABI, quoteLBBestPath } from "@/lib/dex/liquidity-book";
 import { useTransactionStore } from "@/store/transaction-store";
 
 const OMESWAP_DEX_ID = "omeswap" as const;
@@ -102,59 +103,6 @@ const V1_ROUTER_ABI = [
     outputs: [
       { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-] as const;
-
-// TraderJoe V2 Quoter ABI
-const TJ_V2_QUOTER_ABI = [
-  {
-    inputs: [
-      { internalType: "address[]", name: "route", type: "address[]" },
-      { internalType: "uint128", name: "amountIn", type: "uint128" },
-    ],
-    name: "findBestPathFromAmountIn",
-    outputs: [
-      {
-        name: "quote",
-        type: "tuple",
-        components: [
-          { name: "route", type: "address[]" },
-          { name: "pairs", type: "address[]" },
-          { name: "binSteps", type: "uint256[]" },
-          { name: "versions", type: "uint8[]" },
-          { name: "amounts", type: "uint128[]" },
-          { name: "virtualAmountsWithoutSlippage", type: "uint128[]" },
-          { name: "fees", type: "uint256[]" },
-        ],
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
-
-// TraderJoe V2 Router ABI
-const TJ_V2_ROUTER_ABI = [
-  {
-    inputs: [
-      { internalType: "uint256", name: "amountIn", type: "uint256" },
-      { internalType: "uint256", name: "amountOutMinShares", type: "uint256" },
-      {
-        name: "path",
-        type: "tuple",
-        components: [
-          { name: "pairBinSteps", type: "uint256[]" },
-          { name: "versions", type: "uint8[]" },
-          { name: "tokenPath", type: "address[]" },
-        ],
-      },
-      { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-    ],
-    name: "swapExactTokensForTokens",
-    outputs: [{ internalType: "uint256", name: "amountOut", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -393,32 +341,26 @@ export function useDexAggregator(
         }
       }
 
-      // --- TraderJoe V2 quote ---
+      // --- TraderJoe V2 (Merchant Moe) quote — searches direct + hub-token paths ---
       if (hasConfiguredTjV2 && tjV2?.quoterAddress) {
-        try {
-          const quote = (await publicClient.readContract({
-            address: tjV2.quoterAddress,
-            abi: TJ_V2_QUOTER_ABI,
-            functionName: "findBestPathFromAmountIn",
-            args: [[tokenIn.address, tokenOut.address], BigInt(amountIn)],
-          })) as any;
-
-          const amounts: bigint[] = quote.amounts;
-          const amountOut = amounts[amounts.length - 1];
-          if (amountOut > 0n) {
-            newQuotes.push({
-              dex: tjV2.id,
-              dexName: tjV2.name,
-              amountOut,
-              amountOutFormatted: formatUnits(amountOut, tokenOut.decimals),
-              path: quote.route as Address[],
-              v2BinSteps: quote.binSteps as bigint[],
-              v2Versions: quote.versions as number[],
-              isBest: false,
-            });
-          }
-        } catch {
-          // No V2 liquidity
+        const lb = await quoteLBBestPath(publicClient, {
+          tokenIn: tokenIn.address,
+          tokenOut: tokenOut.address,
+          amountIn,
+          hubTokens: chainConfig.hubTokens,
+          quoter: tjV2.quoterAddress,
+        });
+        if (lb) {
+          newQuotes.push({
+            dex: tjV2.id,
+            dexName: tjV2.name,
+            amountOut: lb.amountOut,
+            amountOutFormatted: formatUnits(lb.amountOut, tokenOut.decimals),
+            path: lb.route,
+            v2BinSteps: lb.pairBinSteps,
+            v2Versions: lb.versions,
+            isBest: false,
+          });
         }
       }
 
@@ -600,7 +542,7 @@ export function useDexAggregator(
     ) {
       writeSwap({
         address: tjV2.routerAddress,
-        abi: TJ_V2_ROUTER_ABI,
+        abi: LB_ROUTER_ABI,
         functionName: "swapExactTokensForTokens",
         args: [
           amountIn,
