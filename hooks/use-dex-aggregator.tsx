@@ -9,14 +9,17 @@ import {
   useReadContract,
   useChainId,
 } from "wagmi";
-import { parseUnits, formatUnits, Address } from "viem";
+import { parseUnits, formatUnits, Address, Hex } from "viem";
 import { MAINNET_TOKENS } from "@/contracts/config";
 import { ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
 import {
   FUSIONX_DEX_ID,
   FUSIONX_V3_ROUTER_ABI,
+  FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
+  isPlaceholderAddress,
   quoteFusionXBestTier,
+  quoteFusionXMultiHop,
 } from "@/lib/dex/fusionx";
 import { useTransactionStore } from "@/store/transaction-store";
 
@@ -168,16 +171,14 @@ export interface DexQuote {
   // V2-specific — used to build the Path struct for the swap
   v2BinSteps?: bigint[];
   v2Versions?: number[];
-  // V3-specific — the fee tier (hundredths of a bip) the swap must use
+  // V3-specific — the fee tier (hundredths of a bip) the swap must use for a
+  // single-hop `exactInputSingle`. Unset when `v3Path` is set instead.
   v3Fee?: number;
+  // V3-specific — packed-bytes multi-hop path for `exactInput`, set when a
+  // route through a hub token (e.g. tokenIn -> WMNT -> tokenOut) beats the
+  // direct pool.
+  v3Path?: Hex;
   isBest: boolean;
-}
-
-function isPlaceholderAddress(address: Address | undefined) {
-  if (!address) return true;
-  const lower = address.toLowerCase();
-  if (lower === "0x0000000000000000000000000000000000000000") return true;
-  return /^0x0{20,}[0-9a-f]{1,20}$/i.test(lower);
 }
 
 export function useDexAggregator(
@@ -341,27 +342,51 @@ export function useDexAggregator(
       const newQuotes: DexQuote[] = [];
 
       // --- Uniswap-V3-shaped "custom" router quotes (FusionX V3, Agni Finance, ...) ---
+      // For each router, compare the direct pool against the best two-hop route
+      // through a hub token (WMNT/USDC/USDT) and keep whichever is better.
       if (hasV3CustomRouters) {
         for (const { dex, dexName, quoter } of v3CustomDexConfig) {
           try {
-            const best = await quoteFusionXBestTier(publicClient, {
-              tokenIn: tokenIn.address,
-              tokenOut: tokenOut.address,
-              amountIn,
-              quoter,
-            });
+            const [direct, multiHop] = await Promise.all([
+              quoteFusionXBestTier(publicClient, {
+                tokenIn: tokenIn.address,
+                tokenOut: tokenOut.address,
+                amountIn,
+                quoter,
+              }),
+              quoteFusionXMultiHop(publicClient, {
+                tokenIn: tokenIn.address,
+                tokenOut: tokenOut.address,
+                amountIn,
+                hubTokens: chainConfig.hubTokens,
+                quoter,
+              }),
+            ]);
 
-            if (best && best.amountOut > 0n) {
-              newQuotes.push({
+            let quote: DexQuote | null = null;
+            if (direct && direct.amountOut > 0n) {
+              quote = {
                 dex,
                 dexName,
-                amountOut: best.amountOut,
-                amountOutFormatted: formatUnits(best.amountOut, tokenOut.decimals),
+                amountOut: direct.amountOut,
+                amountOutFormatted: formatUnits(direct.amountOut, tokenOut.decimals),
                 path: [tokenIn.address, tokenOut.address],
-                v3Fee: best.fee,
+                v3Fee: direct.fee,
                 isBest: false,
-              });
+              };
             }
+            if (multiHop && multiHop.amountOut > 0n && (!quote || multiHop.amountOut > quote.amountOut)) {
+              quote = {
+                dex,
+                dexName,
+                amountOut: multiHop.amountOut,
+                amountOutFormatted: formatUnits(multiHop.amountOut, tokenOut.decimals),
+                path: multiHop.path,
+                v3Path: multiHop.encodedPath,
+                isBest: false,
+              };
+            }
+            if (quote) newQuotes.push(quote);
           } catch {
             /* no pool for this pair on this router */
           }
@@ -530,6 +555,22 @@ export function useDexAggregator(
         abi: OMESWAP_ROUTER_ABI,
         functionName: "swapSingleHop",
         args: [tokenIn.address, tokenOut.address, amountIn, amountOutMin, address],
+        chainId,
+      });
+    } else if (selectedV3CustomDex && selectedQuote.v3Path) {
+      writeSwap({
+        address: selectedV3CustomDex.router,
+        abi: FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
+        functionName: "exactInput",
+        args: [
+          {
+            path: selectedQuote.v3Path,
+            recipient: address,
+            deadline,
+            amountIn,
+            amountOutMinimum: amountOutMin,
+          },
+        ],
         chainId,
       });
     } else if (selectedV3CustomDex) {

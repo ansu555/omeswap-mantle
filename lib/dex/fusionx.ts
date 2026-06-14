@@ -18,9 +18,11 @@
 import {
   createPublicClient,
   createWalletClient,
+  encodePacked,
   http,
   type Address,
   type Chain,
+  type Hex,
   type PublicClient,
 } from 'viem'
 import type { PrivateKeyAccount } from 'viem/accounts'
@@ -37,6 +39,14 @@ export const FUSIONX_DEX_ID = 'fusionx_v3'
 export const FUSIONX_DEX_NAME = 'FusionX V3'
 export const FUSIONX_SWAP_URL = 'https://fusionx.finance/swap'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as const
+
+/** True for unset/zero/burn-style placeholder addresses (chain registry entries pending deployment). */
+export function isPlaceholderAddress(address: Address | undefined): boolean {
+  if (!address) return true
+  const lower = address.toLowerCase()
+  if (lower === ZERO_ADDRESS) return true
+  return /^0x0{20,}[0-9a-f]{1,20}$/i.test(lower)
+}
 
 /**
  * Candidate fee tiers, probed lowest→highest. Includes both the Uniswap-V3
@@ -133,6 +143,48 @@ export const FUSIONX_V3_ROUTER_ABI = [
   },
 ] as const
 
+/** QuoterV2.quoteExactInput — multi-hop, packed-bytes path (verified selector 0xcdca1753). */
+export const FUSIONX_QUOTER_V2_PATH_ABI = [
+  {
+    inputs: [
+      { name: 'path', type: 'bytes' },
+      { name: 'amountIn', type: 'uint256' },
+    ],
+    name: 'quoteExactInput',
+    outputs: [
+      { name: 'amountOut', type: 'uint256' },
+      { name: 'sqrtPriceX96AfterList', type: 'uint160[]' },
+      { name: 'initializedTicksCrossedList', type: 'uint32[]' },
+      { name: 'gasEstimate', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
+/** SwapRouter.exactInput — multi-hop, packed-bytes path (verified selector 0xc04b8d59). */
+export const FUSIONX_V3_ROUTER_EXACT_INPUT_ABI = [
+  {
+    inputs: [
+      {
+        components: [
+          { name: 'path', type: 'bytes' },
+          { name: 'recipient', type: 'address' },
+          { name: 'deadline', type: 'uint256' },
+          { name: 'amountIn', type: 'uint256' },
+          { name: 'amountOutMinimum', type: 'uint256' },
+        ],
+        name: 'params',
+        type: 'tuple',
+      },
+    ],
+    name: 'exactInput',
+    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+] as const
+
 // ── Types ───────────────────────────────────────────────────────────────────
 
 export type FusionXToken = {
@@ -197,6 +249,112 @@ export async function quoteFusionXBestTier(
       best = { amountOut: r.amountOut, fee: r.fee }
     }
   }
+  return best
+}
+
+// ── Multi-hop routing ───────────────────────────────────────────────────────
+
+/**
+ * Encodes a Uniswap V3 swap path as the packed `address-fee-address-...-address`
+ * bytes string expected by `exactInput` / `quoteExactInput`.
+ */
+export function encodeV3Path(tokens: Address[], fees: number[]): Hex {
+  if (tokens.length !== fees.length + 1) {
+    throw new Error('encodeV3Path: expected fees.length === tokens.length - 1')
+  }
+  const types: ('address' | 'uint24')[] = []
+  const values: (Address | number)[] = []
+  tokens.forEach((token, i) => {
+    types.push('address')
+    values.push(token)
+    if (i < fees.length) {
+      types.push('uint24')
+      values.push(fees[i])
+    }
+  })
+  return encodePacked(types, values)
+}
+
+export type FusionXMultiHopQuote = {
+  amountOut: bigint
+  /** Token addresses along the route, e.g. [tokenIn, hub, tokenOut]. */
+  path: Address[]
+  /** Fee tier for each hop, parallel to `path` (length = path.length - 1). */
+  fees: number[]
+  /** Packed-bytes path ready for `exactInput`. */
+  encodedPath: Hex
+}
+
+/**
+ * Finds the best two-hop route `tokenIn -> hub -> tokenOut` through any of the
+ * given hub tokens (e.g. WMNT/USDC/USDT), probing each hop's best fee tier
+ * independently and then re-quoting the assembled path end-to-end via
+ * `quoteExactInput` for an accurate combined-slippage estimate.
+ *
+ * Returns `null` if no two-hop route has any liquidity.
+ */
+export async function quoteFusionXMultiHop(
+  publicClient: PublicClient,
+  params: {
+    tokenIn: Address
+    tokenOut: Address
+    amountIn: bigint
+    hubTokens: Address[]
+    quoter?: Address
+    feeTiers?: readonly number[]
+  },
+): Promise<FusionXMultiHopQuote | null> {
+  const { tokenIn, tokenOut, amountIn, hubTokens, feeTiers } = params
+  const quoter = params.quoter ?? (FUSIONX_V3_QUOTER_V2 as Address)
+  if (amountIn <= 0n) return null
+
+  const hubs = hubTokens.filter(
+    (hub) =>
+      hub.toLowerCase() !== tokenIn.toLowerCase() &&
+      hub.toLowerCase() !== tokenOut.toLowerCase(),
+  )
+
+  let best: FusionXMultiHopQuote | null = null
+
+  for (const hub of hubs) {
+    const leg1 = await quoteFusionXBestTier(publicClient, {
+      tokenIn,
+      tokenOut: hub,
+      amountIn,
+      feeTiers,
+      quoter,
+    })
+    if (!leg1 || leg1.amountOut <= 0n) continue
+
+    const leg2 = await quoteFusionXBestTier(publicClient, {
+      tokenIn: hub,
+      tokenOut,
+      amountIn: leg1.amountOut,
+      feeTiers,
+      quoter,
+    })
+    if (!leg2 || leg2.amountOut <= 0n) continue
+
+    const path = [tokenIn, hub, tokenOut]
+    const fees = [leg1.fee, leg2.fee]
+    const encodedPath = encodeV3Path(path, fees)
+
+    try {
+      const { result } = await publicClient.simulateContract({
+        address: quoter,
+        abi: FUSIONX_QUOTER_V2_PATH_ABI,
+        functionName: 'quoteExactInput',
+        args: [encodedPath, amountIn],
+      })
+      const amountOut = (result as readonly [bigint, readonly bigint[], readonly number[], bigint])[0]
+      if (amountOut > 0n && (!best || amountOut > best.amountOut)) {
+        best = { amountOut, path, fees, encodedPath }
+      }
+    } catch {
+      // Combined path not viable end-to-end — skip.
+    }
+  }
+
   return best
 }
 
