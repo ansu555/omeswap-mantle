@@ -427,10 +427,14 @@ export function TradePanel({ marketId }: { marketId: string }) {
   const isEthSpot = market?.network === "eth" && market?.kind === "spot";
   const isMantleSpot = market?.network === "mantle" && market?.kind === "spot";
 
-  // Resolve the spot pair (base asset + quote stable) + the FusionX router from
-  // the chain registry. `base` is the market's asset, `quote` is the funding stable.
+  // Resolve the spot pair (base asset + quote stable) + the Uniswap-V3-shaped
+  // "custom" router for this market's DEX from the chain registry. `base` is
+  // the market's asset, `quote` is the funding stable. Falls back to the first
+  // "custom" router (FusionX V3) if the market's DEX isn't a registered router.
   const activeChain = getChainConfig(getDefaultChainId());
-  const fusionxRouter = activeChain.dexRouters.find((r) => r.type === "custom");
+  const marketDexRouter =
+    activeChain.dexRouters.find((r) => r.type === "custom" && r.name === market?.dex) ??
+    activeChain.dexRouters.find((r) => r.type === "custom");
   const baseTok: SpotToken | null =
     market && activeChain.tokens[market.symbol]
       ? {
@@ -487,9 +491,9 @@ export function TradePanel({ marketId }: { marketId: string }) {
     address: fxTokenIn?.address,
     abi: FUSIONX_ERC20_ABI,
     functionName: "allowance",
-    args: [address ?? ZERO_ADDRESS, (fusionxRouter?.routerAddress ?? ZERO_ADDRESS) as Address],
+    args: [address ?? ZERO_ADDRESS, (marketDexRouter?.routerAddress ?? ZERO_ADDRESS) as Address],
     chainId: FUSIONX_CHAIN_ID,
-    query: { enabled: !!address && isMantleSpot && !!fxTokenIn && !!fusionxRouter, refetchInterval: 30000 },
+    query: { enabled: !!address && isMantleSpot && !!fxTokenIn && !!marketDexRouter, refetchInterval: 30000 },
   });
 
   // Live QuoterV2 quote — drives both the best fee tier and amountOutMinimum.
@@ -504,12 +508,12 @@ export function TradePanel({ marketId }: { marketId: string }) {
       tokenIn: fxTokenIn.address,
       tokenOut: fxTokenOut.address,
       amountIn: fxAmountIn,
-      quoter: fusionxRouter?.quoterAddress as Address,
+      quoter: marketDexRouter?.quoterAddress as Address,
     })
       .then((q) => { if (!cancelled) setFxQuote(q); })
       .catch(() => { if (!cancelled) setFxQuote(null); });
     return () => { cancelled = true; };
-  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, fusionxRouter?.quoterAddress]);
+  }, [isMantleSpot, publicClient, fxTokenIn, fxTokenOut, fxAmountIn, marketDexRouter?.quoterAddress]);
 
   const {
     writeContract: writeFxApproval,
@@ -584,11 +588,11 @@ export function TradePanel({ marketId }: { marketId: string }) {
     (fxAllowance === undefined || fxAmountIn > (fxAllowance as bigint));
 
   const executeFxSwap = useCallback(() => {
-    if (!address || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountOutMin <= 0n || !fusionxRouter) return;
+    if (!address || !fxTokenIn || !fxTokenOut || !fxAmountIn || fxAmountOutMin <= 0n || !marketDexRouter) return;
 
     setSwapError(null);
     writeFxSwap({
-      address: fusionxRouter.routerAddress as Address,
+      address: marketDexRouter.routerAddress as Address,
       abi: FUSIONX_V3_ROUTER_ABI,
       functionName: "exactInputSingle",
       args: [
@@ -612,7 +616,7 @@ export function TradePanel({ marketId }: { marketId: string }) {
     fxAmountIn,
     fxAmountOutMin,
     fxQuote,
-    fusionxRouter,
+    marketDexRouter,
     writeFxSwap,
   ]);
 
@@ -634,14 +638,14 @@ export function TradePanel({ marketId }: { marketId: string }) {
       return;
     }
 
-    if (needsFxApproval && fxTokenIn && fusionxRouter) {
+    if (needsFxApproval && fxTokenIn && marketDexRouter) {
       setSwapError(null);
       setPendingSwapAfterApprove(true);
       writeFxApproval({
         address: fxTokenIn.address,
         abi: FUSIONX_ERC20_ABI,
         functionName: "approve",
-        args: [fusionxRouter.routerAddress as Address, fxAmountIn],
+        args: [marketDexRouter.routerAddress as Address, fxAmountIn],
         chainId: FUSIONX_CHAIN_ID,
       });
       return;
