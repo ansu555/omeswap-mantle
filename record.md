@@ -64,3 +64,7 @@ changes: integrated Agni Finance (UniV3 fork) and Merchant Moe (LB v2.2) into Ma
 user: manovHacksaw
 branch: feat/terminal
 changes: added Agni Finance WMNT/USDT terminal market, generalized TradePanel quoting/execution to use each market's DEX router
+[2026-06-14 23:40]
+user: manovHacksaw
+branch: feat/terminal
+changes: added multi-DEX + 2-hop swap routing (FusionX V3 + Agni Finance, via WMNT/USDC/USDT hubs) to terminal TradePanel and swap aggregator
