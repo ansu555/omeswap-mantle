@@ -184,8 +184,8 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     try {
       console.log("Calling addLiquidity with params:", {
         poolId: poolId.toString(),
-        amount0: parseEther(amount0).toString(),
-        amount1: parseEther(amount1).toString(),
+        amount0: parseUnits(amount0, dec0).toString(),
+        amount1: parseUnits(amount1, dec1).toString(),
       });
 
       writeContract({

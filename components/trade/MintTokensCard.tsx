@@ -2,7 +2,7 @@
 
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { Coins, ExternalLink, RefreshCw } from "lucide-react";
-import { useBatchMint, useTokenMint } from "@/hooks/use-token-mint";
+import { useBatchMint, useTokenMint, MINTABLE_TOKENS } from "@/hooks/use-token-mint";
 import { useWallet } from "@/hooks/use-wallet";
 import { TOKENS } from "@/contracts/config";
 import WalletConnect from "@/components/features/wallet/wallet-connect";
@@ -146,7 +146,7 @@ export function MintTokensCard() {
         </div>
 
         <div className="space-y-2">
-          {Object.keys(TOKENS).map((key) => (
+          {MINTABLE_TOKENS.map((key) => (
             <TokenMintRow
               key={key}
               tokenSymbol={key}

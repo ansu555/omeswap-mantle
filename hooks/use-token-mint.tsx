@@ -90,6 +90,8 @@ export function useTokenMint(tokenSymbol: string) {
   };
 }
 
+export const MINTABLE_TOKENS = ["OmE", "USDO"];
+
 // Hook to mint all tokens at once
 export function useBatchMint() {
   const { address } = useAccount();
@@ -113,7 +115,9 @@ export function useBatchMint() {
   const mintAll = async (amount: string = "10000") => {
     if (!address) return;
 
-    for (const token of Object.values(TOKENS)) {
+    for (const symbol of MINTABLE_TOKENS) {
+      const token = TOKENS[symbol];
+      if (!token) continue;
       const decimals = token.decimals ?? 18;
       await writeContractAsync({
         address: token.address as Address,

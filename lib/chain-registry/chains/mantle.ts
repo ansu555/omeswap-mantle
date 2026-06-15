@@ -197,18 +197,18 @@ export const mantleSepoliaConfig: ChainConfig = {
       coingeckoId: "ethereum",
     },
     OmE: {
-      address: "0x0A5443365ddf3445B09A0569B38B87335ebcf436" as Address,
+      address: "0x2735D13B1C0C15B82cdbAcA6Eeff5afd23A87040" as Address,
       name: "OmE Token",
       symbol: "OmE",
       decimals: 18,
     },
     USDO: {
-      address: "0x32e3108B94cDb16F6aef566143cA8E721d3D3139" as Address,
+      address: "0xeeD4609D5661bcd7B8F6C5BF0e1c3507E435D2E2" as Address,
       name: "OmeSwap USD",
       symbol: "USDO",
       decimals: 6,
     },
   },
-  omeswapPools: "0x400c04160E025743c8C67Be52f52c630842C714b" as Address,
-  omeswapRouter: "0x170611f2D1aC34B7e8968C6783741e33a15bAe4F" as Address,
+  omeswapPools: "0xA07c89A5072979B13755D3bd9018ba812E399e3f" as Address,
+  omeswapRouter: "0x74e112c5b68a8CCF72c032aD5758889f330be519" as Address,
 };
