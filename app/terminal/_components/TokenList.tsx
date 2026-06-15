@@ -107,7 +107,7 @@ export function TokenList({
               <TokenIcon symbol={market.symbol} color={market.color} />
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-medium truncate">{market.symbol}</span>
+                  <span className="font-medium truncate">{market.pairLabel}</span>
                   <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
                     {market.kind === "perp" && market.leverage ? `${market.leverage}x` : market.networkName}
                   </span>
