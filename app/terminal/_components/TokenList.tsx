@@ -104,7 +104,7 @@ export function TokenList({
                 isActive ? "bg-panel" : ""
               }`}
             >
-              <TokenIcon symbol={market.symbol} color={market.color} />
+              <TokenIcon symbol={market.symbol} color={market.color} size={28} />
               <div className="min-w-0 text-left">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-medium truncate">{market.pairLabel}</span>
