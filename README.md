@@ -206,4 +206,4 @@ This project includes on-chain execution paths. Before production usage, perform
 - Issues: GitHub Issues
 - Mantle Explorer: https://explorer.mantle.xyz
 
-Built for the Mantle ecosystem.
+Built for the Mantle ecosystem
