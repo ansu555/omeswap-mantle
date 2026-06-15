@@ -77,3 +77,8 @@ changes: added Merchant Moe (LB v2.2) to terminal/aggregator multi-routing, debo
 user: ansu555
 branch: service
 changes: swept frontend UI text/branding from 0G to Mantle (page copy, labels, placeholders, system prompts) across ~18 files; build green
+
+[2026-06-15 00:00]
+user: ansu555
+branch: ai
+changes: removed floating "Ask AI" chat toggle button; consolidated WalletProvider/ThemeProvider into root layout so wallet stays connected across all route groups
