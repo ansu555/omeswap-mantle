@@ -97,3 +97,8 @@ changes: applied Research radial-gradient background to agent-builder page; rede
 user: ansu555
 branch: main
 changes: integrated market-data poller & REST caching server into realtime-service, wired Next.js app geckoterminal.ts to hit cache with 2s timeout and graceful fallback, added root docs/env.example, verified end-to-end performance improvement from ~13s to ~26ms; added chart loading spinner overlay for fallback/loading state, updated TokenList to display full pair labels instead of just base token symbols, hid redundant Mantle network badges in spot markets list to prevent label truncation, explicitly aligned DEX names and labels to the left inside the grid column buttons, and increased the TokenIcon size slightly to 28px
+
+[2026-06-15 13:06]
+user: ansu555
+branch: main
+changes: compiled, tested (39/39 passing), and deployed custom OmeSwap AMM MultiTokenLiquidityPools and MultiHopSwapRouter contracts to local Hardhat node; seeded mock OmE/USDO pool with liquidity; updated Mantle Sepolia network configurations in Next.js registry with deployed contract addresses and mock token info
