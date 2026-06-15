@@ -108,9 +108,11 @@ export function TokenList({
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-medium truncate">{market.pairLabel}</span>
-                  <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
-                    {market.kind === "perp" && market.leverage ? `${market.leverage}x` : market.networkName}
-                  </span>
+                  {market.kind === "perp" && market.leverage && (
+                    <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded shrink-0">
+                      {market.leverage}x
+                    </span>
+                  )}
                 </div>
                 <div className="text-[10px] text-muted-foreground truncate">{market.dex}</div>
               </div>
