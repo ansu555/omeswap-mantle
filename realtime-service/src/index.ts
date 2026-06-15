@@ -10,7 +10,7 @@
  * routing on top of the same state + subscriber.
  */
 
-import { HTTP_PORT, MANTLE_CHAIN_ID, MANTLE_NETWORK, MANTLE_WSS, WS_PORT } from "./config.js";
+import { PORT, MANTLE_CHAIN_ID, MANTLE_NETWORK, MANTLE_WSS } from "./config.js";
 import { loadPools } from "./pool-registry.js";
 import { allPools } from "./price-state.js";
 import { startSubscriber, stopSubscriber, swapEvents, type SwapUpdate } from "./subscriber.js";
@@ -57,8 +57,8 @@ async function main(): Promise<void> {
   });
 
   startSubscriber();
-  startWsServer(WS_PORT);
-  startRestServer(HTTP_PORT);
+  const server = startRestServer(PORT);
+  startWsServer(server);
   startMarketDataPolling();
 
   // Periodic resync: re-read pool state to correct any events missed during a

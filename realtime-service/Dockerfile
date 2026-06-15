@@ -11,11 +11,11 @@ RUN npm install --no-audit --no-fund
 COPY tsconfig.json ./
 COPY src ./src
 
-# WS_PORT (broadcast) and HTTP_PORT (REST). Override via env at deploy time.
-EXPOSE 8080 8081
+# PORT (REST + WS). Override via env at deploy time.
+EXPOSE 8080
 
 # Liveness: REST /health returns 200 when subscriptions are up.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD node -e "fetch('http://localhost:'+(process.env.HTTP_PORT||8081)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://localhost:'+(process.env.PORT||8080)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["npm", "start"]

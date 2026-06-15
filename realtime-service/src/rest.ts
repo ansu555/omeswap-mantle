@@ -113,10 +113,11 @@ function handleSafe(req: IncomingMessage, res: ServerResponse): void {
 
 let server: ReturnType<typeof createServer> | null = null;
 
-export function startRestServer(port: number): void {
+export function startRestServer(port: number) {
   server = createServer(handleSafe);
   server.listen(port, () => console.log(`[rest] listening on http://0.0.0.0:${port}`));
   server.on("error", (err) => console.error("[rest] error:", err.message));
+  return server;
 }
 
 export function stopRestServer(): void {
