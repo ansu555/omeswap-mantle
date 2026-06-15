@@ -252,12 +252,12 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
 
   // Check if approvals are needed
   const needsApproval0 = () => {
-    if (!amount0 || !allowance0) return true;
+    if (!amount0 || parseFloat(amount0) <= 0 || allowance0 === undefined) return false;
     return parseUnits(amount0, dec0) > (allowance0 as bigint);
   };
 
   const needsApproval1 = () => {
-    if (!amount1 || !allowance1) return true;
+    if (!amount1 || parseFloat(amount1) <= 0 || allowance1 === undefined) return false;
     return parseUnits(amount1, dec1) > (allowance1 as bigint);
   };
 

@@ -50,7 +50,11 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
 
   const handleAmount0Change = (value: string) => {
     setAmount0(value);
-    if (value && poolInfo) {
+    if (!value) {
+      setAmount1("");
+      return;
+    }
+    if (poolInfo) {
       const quoted = getQuote(value, true);
       setAmount1(quoted);
     }
@@ -58,7 +62,11 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
 
   const handleAmount1Change = (value: string) => {
     setAmount1(value);
-    if (value && poolInfo) {
+    if (!value) {
+      setAmount0("");
+      return;
+    }
+    if (poolInfo) {
       const quoted = getQuote(value, false);
       setAmount0(quoted);
     }
