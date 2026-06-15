@@ -92,3 +92,8 @@ changes: polished agent-builder UI to match Research page — redesigned empty s
 user: ansu555
 branch: ai
 changes: applied Research radial-gradient background to agent-builder page; redesigned AgentSidebar chat (premium header/input, violet palette) + added clickable starter-prompt chips; fixed prompt-chip overflow (flex-col + concise descriptions)
+
+[2026-06-15 12:45]
+user: ansu555
+branch: main
+changes: integrated market-data poller & REST caching server into realtime-service, wired Next.js app geckoterminal.ts to hit cache with 2s timeout and graceful fallback, added root docs/env.example, verified end-to-end performance improvement from ~13s to ~26ms
