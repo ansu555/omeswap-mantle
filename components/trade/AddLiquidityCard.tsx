@@ -91,7 +91,7 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4 text-destructive">Wrong Network</h3>
         <p className="text-muted-foreground mb-6">
-          Please switch to Mantle Mainnet
+          Please switch to Mantle Sepolia Testnet
         </p>
       </div>
     );

@@ -24,7 +24,7 @@ const REGISTRY: Record<number, ChainConfig> = {
   [mantleSepoliaConfig.chain.id]: mantleSepoliaConfig,
 }
 
-export const DEFAULT_CHAIN_ID: number = mantleMainnetConfig.chain.id
+export const DEFAULT_CHAIN_ID: number = mantleSepoliaConfig.chain.id
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
 
