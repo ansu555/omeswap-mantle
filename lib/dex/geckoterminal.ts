@@ -77,7 +77,7 @@ const CACHE_SECONDS = 10;
 const REALTIME_HTTP_URL =
   process.env.REALTIME_HTTP_URL?.trim() ||
   process.env.NEXT_PUBLIC_REALTIME_HTTP_URL?.trim() ||
-  "http://localhost:8081";
+  "http://localhost:8080";
 
 async function fetchFromRealtimeService<T>(path: string): Promise<T | null> {
   try {
