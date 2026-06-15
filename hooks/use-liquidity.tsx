@@ -30,15 +30,39 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const [amount0, setAmount0] = useState<string>("");
   const [amount1, setAmount1] = useState<string>("");
 
+  // Token 0 approval hook
   const {
-    writeContract,
-    data: hash,
-    isPending: isWritePending,
-    error: writeError,
+    writeContract: writeApprove0,
+    data: approveHash0,
+    isPending: isApprovePending0,
+    error: approveError0,
   } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash,
+  const { isLoading: isConfirmingApprove0, isSuccess: isApproveSuccess0 } = useWaitForTransactionReceipt({
+    hash: approveHash0,
   });
+
+  // Token 1 approval hook
+  const {
+    writeContract: writeApprove1,
+    data: approveHash1,
+    isPending: isApprovePending1,
+    error: approveError1,
+  } = useWriteContract();
+  const { isLoading: isConfirmingApprove1, isSuccess: isApproveSuccess1 } = useWaitForTransactionReceipt({
+    hash: approveHash1,
+  });
+
+  // Liquidity (add/remove) hook
+  const {
+    writeContract: writeLiquidity,
+    data: liquidityHash,
+    isPending: isLiquidityPending,
+    error: liquidityError,
+  } = useWriteContract();
+  const { isLoading: isConfirmingLiquidity, isSuccess: isLiquiditySuccess } = useWaitForTransactionReceipt({
+    hash: liquidityHash,
+  });
+
   const [error, setError] = useState<string | null>(null);
 
   const token0 = TOKENS[token0Symbol];
@@ -140,7 +164,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const approveToken0 = async () => {
     if (!amount0) return;
 
-    writeContract({
+    writeApprove0({
       address: token0.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
@@ -153,7 +177,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const approveToken1 = async () => {
     if (!amount1) return;
 
-    writeContract({
+    writeApprove1({
       address: token1.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
@@ -188,7 +212,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
         amount1: parseUnits(amount1, dec1).toString(),
       });
 
-      writeContract({
+      writeLiquidity({
         address: poolsAddress,
         abi: MultiTokenLiquidityPoolsABI,
         functionName: "addLiquidity",
@@ -210,7 +234,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const removeLiquidity = async (liquidityAmount: string) => {
     if (!poolId) return;
 
-    writeContract({
+    writeLiquidity({
       address: poolsAddress,
       abi: MultiTokenLiquidityPoolsABI,
       functionName: "removeLiquidity",
@@ -263,36 +287,35 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
 
   // Handle write errors
   useEffect(() => {
+    const writeError = approveError0 || approveError1 || liquidityError;
     if (writeError) {
       setError(writeError.message || "Transaction failed");
       console.error("Write contract error:", writeError);
     }
-  }, [writeError]);
+  }, [approveError0, approveError1, liquidityError]);
 
   // Clear error on success
   useEffect(() => {
-    if (isSuccess) {
+    if (isApproveSuccess0 || isApproveSuccess1 || isLiquiditySuccess) {
       setError(null);
     }
-  }, [isSuccess]);
+  }, [isApproveSuccess0, isApproveSuccess1, isLiquiditySuccess]);
 
   // Record transaction in store
   const addTransaction = useTransactionStore((s) => s.addTransaction);
   const lastActionRef = { current: "" as "add" | "remove" | "" };
 
-  const origAddLiquidity = addLiquidity;
   const wrappedAddLiquidity = async () => {
     lastActionRef.current = "add";
-    return origAddLiquidity();
+    return addLiquidity();
   };
-  const origRemoveLiquidity = removeLiquidity;
   const wrappedRemoveLiquidity = async (amt: string) => {
     lastActionRef.current = "remove";
-    return origRemoveLiquidity(amt);
+    return removeLiquidity(amt);
   };
 
   useEffect(() => {
-    if (isSuccess && hash && address) {
+    if (isLiquiditySuccess && liquidityHash && address) {
       const txType =
         lastActionRef.current === "remove"
           ? ("REMOVE_LIQUIDITY" as const)
@@ -303,29 +326,43 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
         toToken: token1Symbol,
         fromAmount: parseFloat(amount0) || 0,
         toAmount: parseFloat(amount1) || 0,
-        txHash: hash,
+        txHash: liquidityHash,
         walletAddress: address,
         timestamp: Date.now(),
         source: "liquidity",
       });
     }
-  }, [isSuccess, hash]);
+  }, [isLiquiditySuccess, liquidityHash, address, amount0, amount1, token0Symbol, token1Symbol]);
 
-  // Refetch data after transaction
+  // Refetch allowance 0 after approval 0
   useEffect(() => {
-    if (isSuccess) {
+    if (isApproveSuccess0) {
+      refetchAllowance0();
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+    }
+  }, [isApproveSuccess0, refetchAllowance0, queryClient]);
+
+  // Refetch allowance 1 after approval 1
+  useEffect(() => {
+    if (isApproveSuccess1) {
+      refetchAllowance1();
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+    }
+  }, [isApproveSuccess1, refetchAllowance1, queryClient]);
+
+  // Refetch all data after liquidity transaction
+  useEffect(() => {
+    if (isLiquiditySuccess) {
       refetchBalance0();
       refetchBalance1();
       refetchAllowance0();
       refetchAllowance1();
       refetchPoolInfo();
       refetchPosition();
-      // Invalidate all wagmi read queries so sibling components (e.g. PoolComparisonPanel)
-      // also pick up the updated on-chain state immediately.
       queryClient.invalidateQueries({ queryKey: ["readContract"] });
     }
   }, [
-    isSuccess,
+    isLiquiditySuccess,
     refetchBalance0,
     refetchBalance1,
     refetchAllowance0,
@@ -334,6 +371,14 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     refetchPosition,
     queryClient,
   ]);
+
+  const isLoading =
+    isApprovePending0 ||
+    isConfirmingApprove0 ||
+    isApprovePending1 ||
+    isConfirmingApprove1 ||
+    isLiquidityPending ||
+    isConfirmingLiquidity;
 
   return {
     amount0,
@@ -365,9 +410,9 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     addLiquidity: wrappedAddLiquidity,
     removeLiquidity: wrappedRemoveLiquidity,
     getQuote,
-    isLoading: isWritePending || isConfirming,
-    isSuccess,
-    hash,
+    isLoading,
+    isSuccess: isLiquiditySuccess,
+    hash: liquidityHash,
     error,
   };
 }
