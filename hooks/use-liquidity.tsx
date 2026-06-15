@@ -9,7 +9,7 @@ import {
   useChainId,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
-import { parseEther, formatEther, Address } from "viem";
+import { parseUnits, formatUnits, Address } from "viem";
 import { TOKENS } from "@/contracts/config";
 import { MultiTokenLiquidityPoolsABI, ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
@@ -44,7 +44,9 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const token0 = TOKENS[token0Symbol];
   const token1 = TOKENS[token1Symbol];
 
-  // Determine token ordering (token0 < token1 by address)
+  const dec0 = token0.decimals ?? 18;
+  const dec1 = token1.decimals ?? 18;
+
   const token0Addr =
     token0.address.toLowerCase() < token1.address.toLowerCase()
       ? (token0.address as Address)
@@ -142,7 +144,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
       address: token0.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
-      args: [poolsAddress, parseEther(amount0)],
+      args: [poolsAddress, parseUnits(amount0, dec0)],
       chainId,
     });
   };
@@ -155,7 +157,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
       address: token1.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
-      args: [poolsAddress, parseEther(amount1)],
+      args: [poolsAddress, parseUnits(amount1, dec1)],
       chainId,
     });
   };
@@ -192,8 +194,8 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
         functionName: "addLiquidity",
         args: [
           poolId as bigint,
-          parseEther(amount0),
-          parseEther(amount1),
+          parseUnits(amount0, dec0),
+          parseUnits(amount1, dec1),
           BigInt(0), // min amount0
           BigInt(0), // min amount1
         ],
@@ -214,7 +216,7 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
       functionName: "removeLiquidity",
       args: [
         poolId as bigint,
-        parseEther(liquidityAmount),
+        parseUnits(liquidityAmount, 18),
         BigInt(0), // min amount0
         BigInt(0), // min amount1
       ],
@@ -238,25 +240,25 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
       return inputAmount; // Initial liquidity, can be any ratio
     }
 
-    const input = parseEther(inputAmount);
+    const input = parseUnits(inputAmount, isToken0 ? dec0 : dec1);
     if (isToken0) {
       const output = (input * reserve1) / reserve0;
-      return formatEther(output);
+      return formatUnits(output, dec1);
     } else {
       const output = (input * reserve0) / reserve1;
-      return formatEther(output);
+      return formatUnits(output, dec0);
     }
   };
 
   // Check if approvals are needed
   const needsApproval0 = () => {
     if (!amount0 || !allowance0) return true;
-    return parseEther(amount0) > (allowance0 as bigint);
+    return parseUnits(amount0, dec0) > (allowance0 as bigint);
   };
 
   const needsApproval1 = () => {
     if (!amount1 || !allowance1) return true;
-    return parseEther(amount1) > (allowance1 as bigint);
+    return parseUnits(amount1, dec1) > (allowance1 as bigint);
   };
 
   // Handle write errors
@@ -338,22 +340,22 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     setAmount0,
     amount1,
     setAmount1,
-    balance0: balance0 ? formatEther(balance0 as bigint) : "0",
-    balance1: balance1 ? formatEther(balance1 as bigint) : "0",
+    balance0: balance0 ? formatUnits(balance0 as bigint, dec0) : "0",
+    balance1: balance1 ? formatUnits(balance1 as bigint, dec1) : "0",
     poolInfo: poolInfo
       ? {
           token0: (poolInfo as any)[0],
           token1: (poolInfo as any)[1],
-          reserve0: formatEther((poolInfo as any)[2]),
-          reserve1: formatEther((poolInfo as any)[3]),
-          totalSupply: formatEther((poolInfo as any)[4]),
+          reserve0: formatUnits((poolInfo as any)[2], dec0),
+          reserve1: formatUnits((poolInfo as any)[3], dec1),
+          totalSupply: formatUnits((poolInfo as any)[4], 18),
         }
       : null,
     userPosition: userPosition
       ? {
-          liquidity: formatEther((userPosition as any)[0]),
-          token0Amount: formatEther((userPosition as any)[1]),
-          token1Amount: formatEther((userPosition as any)[2]),
+          liquidity: formatUnits((userPosition as any)[0], 18),
+          token0Amount: formatUnits((userPosition as any)[1], dec0),
+          token1Amount: formatUnits((userPosition as any)[2], dec1),
         }
       : null,
     needsApproval0: needsApproval0(),

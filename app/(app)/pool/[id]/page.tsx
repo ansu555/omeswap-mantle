@@ -25,18 +25,9 @@ import {
 import { cn } from "@/lib/utils";
 import { FUSIONX_SWAP_URL } from "@/lib/dex/fusionx";
 
-// Map pool IDs to token pairs (based on deployment)
+// Map pool IDs to token pairs — matches actual deployment on Mantle Sepolia
 const POOL_PAIRS: { [key: string]: { token0: string; token1: string } } = {
-  "0": { token0: "USDC", token1: "USDTe" },
-  "1": { token0: "WETHe", token1: "USDC" },
-  "2": { token0: "WBTCe", token1: "WETHe" },
-  "3": { token0: "DAIe", token1: "USDC" },
-  "4": { token0: "LINKe", token1: "WETHe" },
-  "5": { token0: "JOE", token1: "WETHe" },
-  "6": { token0: "AAVEe", token1: "WETHe" },
-  "7": { token0: "PNG", token1: "DAIe" },
-  "8": { token0: "WBTCe", token1: "USDC" },
-  "9": { token0: "WAVAX", token1: "USDC" },
+  "1": { token0: "OmE", token1: "USDO" },
 };
 
 export default function PoolPage() {

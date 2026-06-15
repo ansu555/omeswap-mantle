@@ -8,7 +8,7 @@ import {
   useReadContract,
   useChainId,
 } from "wagmi";
-import { parseEther, formatEther, Address } from "viem";
+import { parseUnits, formatUnits, Address } from "viem";
 import { TOKENS } from "@/contracts/config";
 import { ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
@@ -52,12 +52,12 @@ export function useTokenMint(tokenSymbol: string) {
   const mint = async (amount: string) => {
     if (!address) return;
     mintAmountRef.current = amount;
-
+    const decimals = token.decimals ?? 18;
     return writeContractAsync({
       address: token.address as Address,
       abi: ERC20ABI,
       functionName: "mint",
-      args: [address, parseEther(amount)],
+      args: [parseUnits(amount, decimals)],
       chainId,
     });
   };
@@ -81,7 +81,7 @@ export function useTokenMint(tokenSymbol: string) {
   }, [addTransaction, address, hash, isSuccess, tokenSymbol]);
 
   return {
-    balance: balance ? formatEther(balance as bigint) : "0",
+    balance: balance ? formatUnits(balance as bigint, token.decimals ?? 18) : "0",
     mint,
     isLoading: isWritePending || isConfirming,
     isSuccess,
@@ -114,11 +114,12 @@ export function useBatchMint() {
     if (!address) return;
 
     for (const token of Object.values(TOKENS)) {
+      const decimals = token.decimals ?? 18;
       await writeContractAsync({
         address: token.address as Address,
         abi: ERC20ABI,
         functionName: "mint",
-        args: [address, parseEther(amount)],
+        args: [parseUnits(amount, decimals)],
         chainId,
       });
     }
