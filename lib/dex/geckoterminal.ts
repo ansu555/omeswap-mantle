@@ -68,13 +68,43 @@ const GECKO_BASE_URL = "https://api.geckoterminal.com/api/v2";
 const BINANCE_BASE_URL = "https://api.binance.com/api/v3";
 const CACHE_SECONDS = 10;
 
+/**
+ * The realtime-service polls GeckoTerminal/Binance for the whole market list
+ * on a shared interval and caches the results, so prefer it over hitting the
+ * upstream APIs directly from every request. Falls back to the logic below
+ * (direct fetch with per-request fallback data) if the service is unreachable.
+ */
+const REALTIME_HTTP_URL =
+  process.env.REALTIME_HTTP_URL?.trim() ||
+  process.env.NEXT_PUBLIC_REALTIME_HTTP_URL?.trim() ||
+  "http://localhost:8081";
+
+async function fetchFromRealtimeService<T>(path: string): Promise<T | null> {
+  try {
+    const res = await fetch(`${REALTIME_HTTP_URL}${path}`, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(2000),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export async function getDexMarkets(): Promise<DexMarket[]> {
+  const cached = await fetchFromRealtimeService<{ markets: DexMarket[] }>("/markets");
+  if (cached?.markets?.length) return cached.markets;
+
   const markets = await Promise.all(DEX_MARKETS.map((market) => getDexMarket(market.id)));
   return markets;
 }
 
 export async function getDexMarket(id: string | null | undefined): Promise<DexMarket> {
   const config = getDexMarketConfig(id);
+
+  const cached = await fetchFromRealtimeService<{ market: DexMarket }>(`/markets?id=${encodeURIComponent(config.id)}`);
+  if (cached?.market) return cached.market;
 
   if (config.kind === "perp") {
     return getBinanceMarket(config);
@@ -140,6 +170,11 @@ export async function getDexCandles(
 ): Promise<DexCandle[]> {
   const config = getDexMarketConfig(id);
 
+  const cached = await fetchFromRealtimeService<{ candles: DexCandle[] }>(
+    `/candles?market=${encodeURIComponent(config.id)}&interval=${interval}`,
+  );
+  if (cached?.candles?.length) return cached.candles;
+
   if (config.chartSymbol) {
     const candles = await getBinanceCandles(config, interval, limit);
     if (candles.length) return candles;
@@ -182,6 +217,9 @@ export async function getDexCandles(
 
 export async function getDexTrades(id: string | null | undefined): Promise<DexTrade[]> {
   const config = getDexMarketConfig(id);
+
+  const cached = await fetchFromRealtimeService<{ trades: DexTrade[] }>(`/trades?market=${encodeURIComponent(config.id)}`);
+  if (cached?.trades?.length) return cached.trades;
 
   if (config.kind === "perp") {
     return fallbackTrades(config);
@@ -239,6 +277,11 @@ export async function getDexTrades(id: string | null | undefined): Promise<DexTr
 }
 
 export async function getDexDepth(id: string | null | undefined): Promise<DexDepth> {
+  const config = getDexMarketConfig(id);
+
+  const cached = await fetchFromRealtimeService<DexDepth>(`/depth?market=${encodeURIComponent(config.id)}`);
+  if (cached?.asks?.length) return cached;
+
   const market = await getDexMarket(id);
   return generateAmmDepth(market.priceUsd, market.liquidityUsd);
 }

@@ -19,6 +19,7 @@ A decentralized exchange and agent-driven trading app built for the Mantle netwo
 
 ```bash
 npm install
+cd realtime-service && npm install && cd ..
 ```
 
 2. Create local env file
@@ -41,7 +42,24 @@ NEXT_PUBLIC_MANTLE_RPC=https://rpc.mantle.xyz
 NEXT_PUBLIC_MANTLE_WSS=wss://wss.mantle.xyz
 ```
 
-4. Start the app
+Realtime Service overrides (points the frontend to the realtime service cache server):
+
+```bash
+REALTIME_HTTP_URL=http://localhost:8081
+NEXT_PUBLIC_REALTIME_HTTP_URL=http://localhost:8081
+NEXT_PUBLIC_REALTIME_WS_URL=ws://localhost:8080
+```
+
+4. Start the services
+
+Start the realtime service (watches on-chain events, polls prices, and caches market data):
+
+```bash
+cd realtime-service
+npm run dev
+```
+
+Start the Next.js app (in a separate terminal):
 
 ```bash
 npm run dev
