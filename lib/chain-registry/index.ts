@@ -15,15 +15,16 @@
  */
 
 import type { ChainConfig, DexRouter, TokenInfo } from './types'
-import { mantleConfig } from './chains/mantle'
+import { mantleMainnetConfig, mantleSepoliaConfig } from './chains/mantle'
 
 // ── Registry ─────────────────────────────────────────────────────────────────
 
 const REGISTRY: Record<number, ChainConfig> = {
-  [mantleConfig.chain.id]: mantleConfig,
+  [mantleMainnetConfig.chain.id]: mantleMainnetConfig,
+  [mantleSepoliaConfig.chain.id]: mantleSepoliaConfig,
 }
 
-export const DEFAULT_CHAIN_ID: number = mantleConfig.chain.id
+export const DEFAULT_CHAIN_ID: number = mantleMainnetConfig.chain.id
 
 // ── Lookup helpers ────────────────────────────────────────────────────────────
 
