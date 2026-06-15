@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowLeftRight,
+  Coins,
   Compass,
   Cpu,
   Droplets,
@@ -33,6 +34,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     icon: ArrowLeftRight,
     children: [
       { name: "Liquidity", url: "/liquidity", icon: Droplets },
+      { name: "Mint Tokens", url: "/mint", icon: Coins },
       { name: "Terminal", url: "/terminal", icon: FlaskConical },
     ],
   },
