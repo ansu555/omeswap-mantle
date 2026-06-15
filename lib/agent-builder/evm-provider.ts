@@ -1,7 +1,7 @@
 /**
  * Generic EVM wallet provider — connects MetaMask to any chain registered in
  * lib/chain-registry. Pass a chainId to target a specific chain, or omit it
- * to use the default chain (0G Newton Testnet, chainId 16600).
+ * to use the default chain (Mantle, chainId 5000 mainnet / 5003 testnet).
  */
 import { ethers } from 'ethers'
 import { getChainConfig, getDefaultChainId } from '@/lib/chain-registry'

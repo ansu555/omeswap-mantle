@@ -1,16 +1,16 @@
-# OmeSwap on 0G Chain
+# OmeSwap on Mantle
 
-A decentralized exchange and agent-driven trading app built for the 0G ecosystem.
+A decentralized exchange and agent-driven trading app built for the Mantle network.
 
-![0G](https://img.shields.io/badge/Chain-0G-00bcd4) ![Next.js](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue)
+![Mantle](https://img.shields.io/badge/Chain-Mantle-00bcd4) ![Next.js](https://img.shields.io/badge/Next.js-15-black) ![React](https://img.shields.io/badge/React-19-blue)
 
 ## Features
 
-- Uniswap-style swap and liquidity primitives
-- 0G-native chain registry and wallet switching
-- 0G Mainnet + Galileo Testnet support
+- Multi-DEX swap aggregation (FusionX V3, Agni Finance, Merchant Moe) + liquidity primitives
+- Mantle-native chain registry and wallet switching
+- Mantle Mainnet + Sepolia Testnet support
 - Agent wallet + ATS research/execution flows
-- Integration points for 0G Storage, Compute, and DA
+- Integration points for 0G Storage, Compute, and DA (external AI/data infra)
 - Next.js + wagmi/viem frontend with modern UI
 
 ## Quick Start
@@ -36,9 +36,9 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_project_id
 Optional network overrides (defaults come from chain registry):
 
 ```bash
-NEXT_PUBLIC_0G_NETWORK=mainnet
-NEXT_PUBLIC_0G_RPC=https://evmrpc.0g.ai
-NEXT_PUBLIC_0G_WSS=wss://evmws.0g.ai
+NEXT_PUBLIC_MANTLE_NETWORK=mainnet            # or testnet
+NEXT_PUBLIC_MANTLE_RPC=https://rpc.mantle.xyz
+NEXT_PUBLIC_MANTLE_WSS=wss://wss.mantle.xyz
 ```
 
 4. Start the app
@@ -53,7 +53,7 @@ Open `http://localhost:3000`.
 
 - Node.js 18+
 - MetaMask or compatible EVM wallet
-- 0G token balance for gas on your selected 0G network
+- MNT balance for gas on your selected Mantle network
 
 ## Tech Stack
 
@@ -62,36 +62,40 @@ Open `http://localhost:3000`.
 - Contracts: Solidity + Hardhat (under `0g-contract/`)
 - Agents: ATS orchestration with optional AXL peer transport
 
-## 0G Network Configuration
+## Mantle Network Configuration
 
-### 0G Mainnet (default)
+### Mantle Mainnet (default)
 
-- Chain ID: `16661`
-- RPC: `https://evmrpc.0g.ai`
-- WSS: `wss://evmws.0g.ai`
-- Explorer: `https://chainscan.0g.ai`
+- Chain ID: `5000`
+- RPC: `https://rpc.mantle.xyz`
+- WSS: `wss://wss.mantle.xyz`
+- Explorer: `https://explorer.mantle.xyz`
 
-### 0G Galileo Testnet
+### Mantle Sepolia Testnet
 
-- Chain ID: `16602`
-- RPC: `https://evmrpc-testnet.0g.ai`
-- WSS: `wss://evmws-testnet.0g.ai`
-- Explorer: `https://chainscan-galileo.0g.ai`
+- Chain ID: `5003`
+- RPC: `https://rpc.sepolia.mantle.xyz`
+- WSS: `wss://wss.sepolia.mantle.xyz`
+- Explorer: `https://explorer.sepolia.mantle.xyz`
 
 Switch between them with:
 
 ```bash
-NEXT_PUBLIC_0G_NETWORK=mainnet  # or testnet
+NEXT_PUBLIC_MANTLE_NETWORK=mainnet  # or testnet
 ```
 
-## Core Contract Addresses (0G Mainnet)
+## Core Addresses (Mantle Mainnet)
 
-From `lib/chain-registry/chains/zerog.ts`:
+From `lib/chain-registry/chains/mantle.ts`:
 
-- OmeSwap Pools: `0xbbC3958B39958ca4a60d06cB62EB2DE7CE5380C0`
-- OmeSwap Router: `0x42a2F8580211654109Bb6e972898FA41e7511918`
-- Wrapped 0G (W0G): `0x1cd0690ff9a693f5ef2dd976660a8dafc81a109c`
-- USDC.e: `0x1f3aa82227281ca364bfb3d253b0f1af1da6473e`
+- WMNT (Wrapped Mantle): `0x78c1b0c915c4faa5fffa6cabf0219da63d7f4cb8`
+- USDC: `0x09bc4e0d864854c6afb6eb9a9cdf58ac190d0df9`
+- USDT: `0x201eba5cc46d216ce6dc03f6a759e8e766e956ae`
+- FusionX V3 Router: `0x5989FB161568b9F133eDf5Cf6787f5597762797F`
+- Agni Finance Router: `0x319B69888b0d11cEC22caA5034e25FfFBDc88421`
+- Merchant Moe LB Router: `0x013e138EF6008ae5FDFDE29700e3f2Bc61d21E3a`
+
+> OmeSwap's own AMM (`omeswapPools` / `omeswapRouter`) is deployed to Mantle Sepolia from `0g-contract/`; mainnet AMM addresses are TBD. See `lib/chain-registry/chains/mantle.ts`.
 
 ## Scripts
 
@@ -101,12 +105,13 @@ npm run build
 npm run start
 npm run lint
 
-npm run hardhat:compile
-npm run hardhat:test
-npm run hardhat:deploy
-npm run hardhat:tokens
-npm run hardhat:liquidity
-npm run hardhat:ome-liquidity
+# Smart contracts (self-contained hardhat project — run inside 0g-contract/)
+cd 0g-contract && npm install
+npx hardhat compile
+npx hardhat test
+npx hardhat run scripts/deployTokens.js --network mantleSepolia
+npx hardhat run scripts/deploy.js       --network mantleSepolia
+npx hardhat run scripts/addLiquidity.js --network mantleSepolia
 
 npm run axl:agent
 npm run axl:demo
@@ -154,6 +159,6 @@ This project includes on-chain execution paths. Before production usage, perform
 ## Support
 
 - Issues: GitHub Issues
-- 0G Explorer: https://chainscan.0g.ai
+- Mantle Explorer: https://explorer.mantle.xyz
 
-Built for the 0G ecosystem.
+Built for the Mantle ecosystem.

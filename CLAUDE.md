@@ -10,14 +10,13 @@ bun run dev          # or: npm run dev
 bun run build
 bun run lint
 
-# Smart contract operations (requires ../Avalanche_contract)
-npm run hardhat:compile
-npm run hardhat:test
-npm run hardhat:mint       # mint test tokens
-npm run hardhat:liquidity  # add liquidity
-npm run hardhat:swap       # execute swap
-npm run hardhat:multihop   # multi-hop swap
-npm run hardhat:quickstart # full setup
+# Smart contract operations (self-contained hardhat project in 0g-contract/)
+cd 0g-contract && npm install
+npx hardhat compile
+npx hardhat test
+npx hardhat run scripts/deployTokens.js  --network mantleSepolia  # deploy test tokens
+npx hardhat run scripts/deploy.js        --network mantleSepolia  # deploy pools + router
+npx hardhat run scripts/addLiquidity.js  --network mantleSepolia  # seed liquidity
 ```
 
 ## Environment
@@ -28,10 +27,10 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=  # required — from cloud.walletconnect.c
 
 ## Architecture
 
-**Omeswap** is a DEX and autonomous agent platform on **0G Chain** (EVM-compatible, chainId 16600) using Next.js 15 App Router. The repo has no tests; validate with `bun run build` and visual inspection.
+**Omeswap** is a DEX and autonomous agent platform on **Mantle** (EVM-compatible L2, chainId 5000 mainnet / 5003 Sepolia testnet) using Next.js 15 App Router. The repo has no tests; validate with `bun run build` and visual inspection.
 
-0G provides four core primitives used throughout this project:
-- **0G Chain** — EVM execution layer (Newton Testnet, chainId 16600)
+The **trading chain is Mantle**; swaps route through Mantle DEXes (FusionX V3, Agni Finance, Merchant Moe). Separately, the app consumes 0G's decentralized AI/data services as **external infrastructure** (independent of the trading chain — see `lib/zerog/config.ts`):
+- **Mantle Chain** — EVM execution layer for all trading (chainId 5000 / 5003), config in `lib/chain-registry/chains/mantle.ts`
 - **0G Storage** — decentralized KV + Log blobs for persistent agent memory (`lib/zerog/storage.ts`)
 - **0G Compute** — decentralized AI inference for agent reasoning (`lib/zerog/compute.ts`), models: `qwen3-8b`, `qwen3.6-plus` (sealed ZK), `GLM-5-FP8`
 - **0G DA** — data availability layer for high-throughput agent output (`lib/zerog/da.ts`)
@@ -45,7 +44,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=  # required — from cloud.walletconnect.c
 | `(landing)` | `/` | Marketing landing page |
 | `(userform)` | `/onboarding` | Wallet-based onboarding |
 
-The `(app)` layout wraps everything in `AvalancheWalletProvider` (connects to 0G Chain) → `OnboardingGuard` → `ChatProvider`. `OnboardingGuard` redirects new wallets to onboarding; `DisconnectOverlay` handles wallet-switch detection.
+The `(app)` layout wraps everything in the wallet provider (`components/providers/wallet-provider.tsx`, connects to Mantle via the chain registry) → `OnboardingGuard` → `ChatProvider`. `OnboardingGuard` redirects new wallets to onboarding; `DisconnectOverlay` handles wallet-switch detection.
 
 ### API Routes (`app/api/`)
 
@@ -70,11 +69,11 @@ Single source of truth for all chain config (RPC URLs, contract addresses, token
 
 To add a new chain: create `lib/chain-registry/chains/<chain>.ts` exporting a `ChainConfig`, import it in `lib/chain-registry/index.ts`, and add to `REGISTRY`. The wallet provider, swap hooks, and agent nodes pick it up automatically.
 
-Currently registered: **0G Newton Testnet** (chainId 16600). Config file: `lib/chain-registry/chains/zerog.ts`.
+Currently registered: **Mantle** (chainId 5000 mainnet / 5003 Sepolia testnet, selected via `NEXT_PUBLIC_MANTLE_NETWORK`). Config file: `lib/chain-registry/chains/mantle.ts`.
 
 ### 0G SDK Layer (`lib/zerog/`)
 
-Three wrappers for the 0G protocol primitives:
+External AI/data infrastructure — **intentionally remains on 0G** regardless of the Mantle trading chain (see `lib/zerog/config.ts`). Three wrappers for the 0G protocol primitives:
 - **`storage.ts`** — `saveAgentMemory()`, `loadAgentMemory()`, `appendLog()` — persistent agent memory on 0G Storage
 - **`compute.ts`** — `computeInference()`, `agentReason()`, `streamComputeInference()` — AI inference via 0G Compute
 - **`da.ts`** — `submitToDA()`, `postSwarmMessage()`, `postInferenceResult()` — data availability via 0G DA
@@ -82,9 +81,9 @@ Three wrappers for the 0G protocol primitives:
 
 ### Contract Layer (`contracts/`)
 
-`contracts/config.ts` is a backward-compatible shim that re-exports from the chain registry. OmeSwap contracts are pending deployment to 0G Chain — update `omeswapPools` and `omeswapRouter` in `lib/chain-registry/chains/zerog.ts` once deployed.
+`contracts/config.ts` is a backward-compatible shim that re-exports from the chain registry. The OmeSwap custom AMM (`MultiTokenLiquidityPools` + `MultiHopSwapRouter`, source in `0g-contract/`) deploys to Mantle Sepolia — set `omeswapPools` and `omeswapRouter` in the testnet branch of `lib/chain-registry/chains/mantle.ts` after deploying. The live app does not require them: swaps route through the third-party Mantle DEX routers below.
 
-0G-native DEX routers are configured in the chain registry (`zerog_dex`, `zerog_dex_v2`).
+Mantle DEX routers are configured in the chain registry (`fusionx_v3`, `agni_v3`, `merchant_moe`).
 
 ### State Management (`store/`)
 
@@ -149,7 +148,7 @@ A knowledge graph of this codebase lives in `graphify-out/`. Before answering ar
 ## Key Conventions
 
 - Path alias `@/` maps to the project root — use it everywhere instead of relative imports.
-- All contract addresses must come from the chain registry (`lib/chain-registry/chains/zerog.ts`), not be hardcoded in components or hooks.
+- All contract addresses must come from the chain registry (`lib/chain-registry/chains/mantle.ts`), not be hardcoded in components or hooks.
 - 0G protocol access (Storage, Compute, DA) must go through `lib/zerog/` — never call 0G endpoints directly in components.
 - Node.js v25+ `localStorage` shim is injected via webpack BannerPlugin in `next.config.ts` — do not add another localStorage polyfill.
 - `export const dynamic = "force-dynamic"` is set on the `(app)` layout to prevent static rendering of wallet-dependent pages.

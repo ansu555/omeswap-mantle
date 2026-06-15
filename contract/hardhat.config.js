@@ -13,10 +13,16 @@ module.exports = {
     },
   },
   networks: {
-    zerog: {
-      url: "https://evmrpc.0g.ai",
+    mantleSepolia: {
+      url: process.env.MANTLE_RPC || "https://rpc.sepolia.mantle.xyz",
       accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
-      chainId: 16661,
+      chainId: 5003,
+      gasPrice: "auto",
+    },
+    mantle: {
+      url: process.env.MANTLE_RPC || "https://rpc.mantle.xyz",
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      chainId: 5000,
       gasPrice: "auto",
     },
   },

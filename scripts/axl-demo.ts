@@ -28,6 +28,7 @@ import {
 } from '@/lib/axl'
 import { runOrchestrator } from '@/lib/ats/orchestrator'
 import type { Mode, RunEvent } from '@/lib/ats/types'
+import { getDefaultChainId } from '@/lib/chain-registry'
 
 type CliArgs = { ticker: string; mode: Mode }
 
@@ -167,7 +168,7 @@ async function main(): Promise<void> {
         ticker,
         mode,
         userWallet: '0x0000000000000000000000000000000000000000',
-        chainId: 16600,
+        chainId: getDefaultChainId(),
         transport: 'axl',
       },
       onEvent,

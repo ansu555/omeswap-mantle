@@ -287,7 +287,7 @@ async function executeV2Swap(
       tx_hash: null, status: 'failed',
       amount_in_usd: amountInUsd, token_in: tokenIn.symbol, token_out: tokenOut.symbol,
       chain_id: chainConfig.chain.id,
-      error: `Insufficient ${tokenIn.symbol} balance on 0G chain.`,
+      error: `Insufficient ${tokenIn.symbol} balance on Mantle chain.`,
     }
   }
 
@@ -339,7 +339,7 @@ async function executeV2Swap(
  * @param decision   "BUY" or "SELL"
  * @param sizing     RiskSizing output from the Risk Agent
  * @param userWallet Authenticated user's wallet address
- * @param chainId    Target chain (default: 0G = 16600)
+ * @param chainId    Target chain (default: Mantle = 5000/5003)
  */
 export async function runExecutionAgent(
   ticker: string,

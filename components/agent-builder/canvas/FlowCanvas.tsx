@@ -65,7 +65,7 @@ export default function FlowCanvas() {
     return last.timestamp.toLocaleTimeString();
   }, [logs]);
 
-  // 0G exposure: sum amountIn from all swap nodes
+  // Mantle exposure: sum amountIn from all swap nodes
   const chainExposure = useMemo(() => {
     let total = 0;
     for (const node of nodes) {

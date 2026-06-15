@@ -15,7 +15,7 @@ export default function TradePage() {
           <section className="space-y-4">
             <div>
               <h1 className="text-2xl font-semibold">Trade</h1>
-              <p className="text-sm text-muted-foreground">Jaine on 0G</p>
+              <p className="text-sm text-muted-foreground">Jaine on Mantle</p>
             </div>
             <SwapCardDex onTokensChange={(i, o) => { setTokenIn(i); setTokenOut(o); }} />
           </section>

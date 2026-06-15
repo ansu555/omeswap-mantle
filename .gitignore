@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 /0g-contract/node_modules
+/contract/node_modules
+/contract/cache
+/contract/artifacts
 /.venv
 /.pnp
 .pnp.js

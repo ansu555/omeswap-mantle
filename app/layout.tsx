@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Omega",
-  description: "The next-generation decentralized exchange on 0G",
+  description: "The next-generation decentralized exchange on Mantle",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",

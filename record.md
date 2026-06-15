@@ -72,3 +72,8 @@ changes: added multi-DEX + 2-hop swap routing (FusionX V3 + Agni Finance, via WM
 user: manovHacksaw
 branch: feat/terminal
 changes: added Merchant Moe (LB v2.2) to terminal/aggregator multi-routing, debounced quote effect, real on-chain price-impact estimate
+
+[2026-06-15 00:00]
+user: ansu555
+branch: service
+changes: swept frontend UI text/branding from 0G to Mantle (page copy, labels, placeholders, system prompts) across ~18 files; build green

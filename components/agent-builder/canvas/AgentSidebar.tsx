@@ -56,7 +56,7 @@ interface ApiMessage {
 }
 
 const WELCOME_MESSAGE =
-  "Hi! I'm your **Omega bot builder agent**.\n\nTell me what 0G trading strategy you want and I'll build it on the canvas.\n\n*For example: \"Build a BTC momentum tracker that marks the chart when price rises\"*";
+  "Hi! I'm your **Omega bot builder agent**.\n\nTell me what Mantle trading strategy you want and I'll build it on the canvas.\n\n*For example: \"Build a BTC momentum tracker that marks the chart when price rises\"*";
 
 // ─── Markdown renderer ────────────────────────────────────────────────────────
 
@@ -596,7 +596,7 @@ export default function AgentSidebar() {
       {
         id: "welcome2",
         role: "assistant",
-        content: "Chat cleared. What 0G strategy would you like to build?",
+        content: "Chat cleared. What Mantle strategy would you like to build?",
       },
     ]);
     apiHistoryRef.current = [];

@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       {
         role: "system",
         content: `You are an expert trading bot builder assistant for a DEX (Decentralized Exchange). 
-Help users create automated trading strategies on Omega and 0G using visual blocks on a flow canvas.
+Help users create automated trading strategies on Omega and Mantle using visual blocks on a flow canvas.
 
 AVAILABLE NODE TYPES (use these exact values for the "type" field):
 DATA SOURCES:

@@ -9,7 +9,7 @@
  *     ticker?           : string  — Asset ticker; if omitted, query must resolve
  *                                   to exactly one primary token
  *     mode?             : Mode    — Trading mode override; falls back to user_settings
- *     chainId?          : number  — Chain override (default: 0G Newton, 16600)
+ *     chainId?          : number  — Chain override (default: Mantle, 5000/5003)
  *     executionApproved?: boolean — Assisted-mode: user has approved execution
  *   }
  *
@@ -137,8 +137,8 @@ function makeRunId(): string {
 
 /**
  * Best-effort estimate of the agent wallet balance in USD.
- * For the 0G chain we don't have a live price oracle, so we use a conservative
- * placeholder ($1 per native token). On Ethereum mainnet we use $3,000/ETH.
+ * For Mantle we don't have a live native-token price oracle here, so we use a
+ * conservative placeholder ($1 per MNT). On Ethereum mainnet we use $3,000/ETH.
  * Failures are swallowed and return 0 so Kelly sizing gracefully falls back.
  */
 async function estimateAgentBalanceUSD(
