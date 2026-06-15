@@ -166,8 +166,11 @@ export async function GET(
     const supabase = tryCreateSupabaseAdminClient()
 
     if (!supabase) {
+      console.error('[onboarding] GET error: Supabase client could not be created. Verify that SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set.')
       return NextResponse.json({ exists: false })
     }
+
+    console.log(`[onboarding] GET: Querying user_risk_profiles for wallet_address=${walletAddress}`)
 
     const { data, error } = await supabase
       .from('user_risk_profiles')
@@ -176,6 +179,7 @@ export async function GET(
       .maybeSingle()
 
     if (error) {
+      console.error(`[onboarding] GET query error for wallet_address=${walletAddress}:`, error)
       if (shouldUseLocalDevFallback(error)) {
         logLocalFallbackOnce()
         const localProfile = await getLocalRiskProfile(walletAddress)
@@ -263,13 +267,16 @@ export async function POST(request: NextRequest) {
     const supabase = tryCreateSupabaseAdminClient()
 
     if (!supabase) {
-      return NextResponse.json({
+      console.error('[onboarding] POST error: Supabase client could not be created. Verify that SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set.')
+       return NextResponse.json({
         success: true,
         riskScore,
         riskCategory,
         storage: 'no-db-fallback',
       })
     }
+
+    console.log(`[onboarding] POST: Inserting user_risk_profile for wallet_address=${walletAddress}`)
 
     const { error } = await supabase.from('user_risk_profiles').insert({
       wallet_address: walletAddress,

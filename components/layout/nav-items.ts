@@ -25,7 +25,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
   { name: "Terminal", url: "/terminal", icon: FlaskConical, disabled: true },
   { name: "Portfolio", url: "/portfolio", icon: Wallet },
   { name: "Marketplace", url: "/marketplace", icon: Store },
-  { name: "Txns", url: "/transactions", icon: Receipt },
+  { name: "Transactions", url: "/transactions", icon: Receipt },
   { name: "Builder", url: "/agent-builder", icon: Cpu },
   { name: "Research", url: "/research", icon: BookOpen },
 ];
