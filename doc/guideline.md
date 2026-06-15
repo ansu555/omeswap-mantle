@@ -1,13 +1,18 @@
-# 0G Chain & Integration Guideline
+# Mantle Chain & 0G Integration Guideline
 
 This guide explains what to create, edit, or delete when you want to:
 
-1. **Work with the 0G chain config** (add DEXes, update tokens, change RPC)
+1. **Work with the Mantle chain config** (add DEXes, update tokens, change RPC)
 2. **Integrate 0G Storage** (persistent agent memory — KV state + Log history)
 3. **Integrate 0G Compute** (decentralized AI inference — qwen3, GLM-5-FP8)
 4. **Integrate 0G DA** (data availability for high-throughput agent output)
-5. **Add a new chain** alongside 0G (multi-chain support)
-6. **Add or remove a DEX** on 0G
+5. **Add a new chain** alongside Mantle (multi-chain support)
+6. **Add or remove a DEX** on Mantle
+
+> **Trading chain vs. AI infra.** The DEX trades on **Mantle** (config in
+> `lib/chain-registry/chains/mantle.ts`). 0G's Storage / Compute / DA are used as
+> **external AI/data services**, independent of the trading chain — their config
+> lives in `lib/zerog/config.ts`, not in the chain registry.
 
 ---
 
@@ -22,10 +27,11 @@ lib/chain-registry/
   types.ts              ← type definitions (rarely touch)
   index.ts              ← registry lookup + DEFAULT_CHAIN_ID (touch to swap default chain)
   chains/
-    zerog.ts            ← ALL 0G addresses, RPC, endpoints (touch to edit 0G)
-    polygon.ts          ← (create this for Polygon, if needed)
+    mantle.ts           ← ALL Mantle addresses, RPC, DEX routers, tokens (touch to edit Mantle)
+    polygon.ts          ← (create this for another chain, if needed)
 
 lib/zerog/
+  config.ts             ← 0G service endpoints (Storage/Compute/DA — independent of trading chain)
   storage.ts            ← 0G Storage SDK wrapper (KV blobs + Log blobs)
   compute.ts            ← 0G Compute inference wrapper (qwen3, GLM-5-FP8)
   da.ts                 ← 0G DA data availability wrapper
@@ -34,20 +40,22 @@ lib/zerog/
 
 ---
 
-## 0G Protocol — Four Core Components
+## Core Components
 
-### 1. 0G Chain (EVM-compatible blockchain)
-- **Chain ID**: 16600 (Newton Testnet)
-- **RPC**: `https://evmrpc-testnet.0g.ai`
-- **Explorer**: `https://chainscan-newton.0g.ai`
-- **Native token**: A0GI (18 decimals)
-- Config file: `lib/chain-registry/chains/zerog.ts`
+### 1. Mantle Chain (EVM-compatible L2 — the trading chain)
+- **Chain ID**: 5000 (Mainnet) / 5003 (Sepolia Testnet)
+- **RPC**: `https://rpc.mantle.xyz` (mainnet) / `https://rpc.sepolia.mantle.xyz` (testnet)
+- **Explorer**: `https://explorer.mantle.xyz` / `https://explorer.sepolia.mantle.xyz`
+- **Native token**: MNT (18 decimals)
+- **DEXes**: FusionX V3, Agni Finance, Merchant Moe
+- Config file: `lib/chain-registry/chains/mantle.ts`
+- Select network with `NEXT_PUBLIC_MANTLE_NETWORK=mainnet|testnet`
 
 ### 2. 0G Storage (decentralized persistent memory)
 - **Use for**: agent KV state (real-time), conversation/decision history (Log)
-- **Indexer**: `https://indexer-storage-testnet-standard.0g.ai`
+- **Indexer**: `https://indexer-storage-turbo.0g.ai` (mainnet)
 - **SDK**: `@0glabs/0g-ts-sdk`
-- Wrapper: `lib/zerog/storage.ts`
+- Wrapper: `lib/zerog/storage.ts` — config in `lib/zerog/config.ts`
 
 ```typescript
 import { saveAgentMemory, loadAgentMemory, appendLog } from '@/lib/zerog'
@@ -90,7 +98,7 @@ for await (const chunk of streamComputeInference({ model: 'qwen3-8b', messages }
 
 ### 4. 0G DA (data availability layer)
 - **Use for**: large inference results, swarm coordination messages, high-volume attestations
-- **RPC**: `https://da-client-testnet.0g.ai`
+- **RPC**: `https://da-client.0g.ai`
 - Wrapper: `lib/zerog/da.ts`
 
 ```typescript
@@ -111,35 +119,36 @@ const isAvailable = await verifyDAAvailability(proof)
 
 ---
 
-## Scenario 1: Edit the 0G Chain Config
+## Scenario 1: Edit the Mantle Chain Config
 
-Everything 0G-specific is in **one file**: `lib/chain-registry/chains/zerog.ts`.
+Everything Mantle-specific is in **one file**: `lib/chain-registry/chains/mantle.ts`.
 
 ### Change the RPC URL
 
 ```typescript
-// lib/chain-registry/chains/zerog.ts
-export const ZEROG_RPC = 'https://your-custom-rpc.0g.ai'   // ← change this
+// lib/chain-registry/chains/mantle.ts (or override via env)
+export const MANTLE_RPC = 'https://your-custom-rpc.mantle.xyz'   // ← change this
+// Env override: NEXT_PUBLIC_MANTLE_RPC
 ```
 
 ### Update DEX router addresses
 
-Once the official 0G DEX is deployed, update the `dexRouters` array:
+Update the `dexRouters` array (FusionX V3, Agni, Merchant Moe are configured by default):
 
 ```typescript
 dexRouters: [
   {
-    id: 'zerog_dex',
-    name: '0G DEX',
-    type: 'uniswapV2',
-    routerAddress: '0xYourLiveRouterAddress...' as Address,
+    id: 'fusionx_v3',
+    name: 'FusionX V3',
+    type: 'custom',
+    routerAddress: '0x5989FB161568b9F133eDf5Cf6787f5597762797F' as Address,
   },
 ],
 ```
 
 ### Update OmeSwap contract addresses
 
-After deploying OmeSwap contracts to 0G Chain:
+After deploying the OmeSwap AMM to Mantle (source in `0g-contract/`):
 
 ```typescript
 omeswapPools:  '0xYourDeployedPoolsAddress...' as Address,
@@ -161,22 +170,22 @@ tokens: {
 },
 ```
 
-### What updates automatically after editing zerog.ts
+### What updates automatically after editing mantle.ts
 
 | What changes automatically | Why |
 |---|---|
-| Wallet provider supports 0G Chain | `WalletProvider` calls `getSupportedChains()` |
-| Swap hooks use 0G DEX routers | `useDexAggregator` calls `getChainConfig(chainId)` |
-| Explorer links point to 0G explorer | `getExplorerLink(chainId, 'tx', hash)` reads from config |
-| Agent builder nodes show 0G tokens | They call `getChainConfig(getDefaultChainId())` |
+| Wallet provider supports Mantle | `WalletProvider` calls `getSupportedChains()` |
+| Swap hooks use Mantle DEX routers | `useDexAggregator` calls `getChainConfig(chainId)` |
+| Explorer links point to Mantle explorer | `getExplorerLink(chainId, 'tx', hash)` reads from config |
+| Agent builder nodes show Mantle tokens | They call `getChainConfig(getDefaultChainId())` |
 
 ---
 
-## Scenario 2: Switch to a Different Chain (Replace 0G)
+## Scenario 2: Switch to a Different Chain (Replace Mantle)
 
 ### Step 1 — Create the chain config file
 
-Create `lib/chain-registry/chains/<your-chain>.ts`. Use `zerog.ts` as your template:
+Create `lib/chain-registry/chains/<your-chain>.ts`. Use `mantle.ts` as your template:
 
 ```typescript
 import { defineChain } from 'viem'        // or: import { polygon } from 'viem/chains'
@@ -207,7 +216,7 @@ Open `lib/chain-registry/index.ts` and make two changes:
 // 1. Import your new config
 import { myChainConfig } from './chains/my-chain'
 
-// 2. Add it to the registry (remove zeroGConfig if replacing entirely)
+// 2. Add it to the registry (remove mantleConfig if replacing entirely)
 const REGISTRY: Record<number, ChainConfig> = {
   [myChainConfig.chain.id]: myChainConfig,
 }
@@ -218,33 +227,33 @@ export const DEFAULT_CHAIN_ID: number = myChainConfig.chain.id
 
 ---
 
-## Scenario 3: Add a New Chain Alongside 0G (Multi-Chain)
+## Scenario 3: Add a New Chain Alongside Mantle (Multi-Chain)
 
-Keep 0G and add another chain. In `lib/chain-registry/index.ts`:
+Keep Mantle and add another chain. In `lib/chain-registry/index.ts`:
 
 ```typescript
-import { zeroGConfig }  from './chains/zerog'
+import { mantleConfig }  from './chains/mantle'
 import { polygonConfig } from './chains/polygon'   // ← new
 
 const REGISTRY: Record<number, ChainConfig> = {
-  [zeroGConfig.chain.id]:  zeroGConfig,
+  [mantleConfig.chain.id]:  mantleConfig,
   [polygonConfig.chain.id]: polygonConfig,   // ← add here
 }
 
-// Keep 0G as the default
-export const DEFAULT_CHAIN_ID: number = zeroGConfig.chain.id
+// Keep Mantle as the default
+export const DEFAULT_CHAIN_ID: number = mantleConfig.chain.id
 ```
 
 ---
 
-## Scenario 4: Add a New DEX to 0G Chain
+## Scenario 4: Add a New DEX to Mantle
 
-Open `lib/chain-registry/chains/zerog.ts` and add an entry to `dexRouters`:
+Open `lib/chain-registry/chains/mantle.ts` and add an entry to `dexRouters`:
 
 ```typescript
 dexRouters: [
-  { id: 'zerog_dex',    name: '0G DEX',    type: 'uniswapV2', routerAddress: '0x...' as Address },
-  { id: 'zerog_dex_v2', name: '0G DEX V2', type: 'uniswapV2', routerAddress: '0x...' as Address },
+  { id: 'fusionx_v3',   name: 'FusionX V3',   type: 'custom',      routerAddress: '0x...' as Address },
+  { id: 'agni_v3',      name: 'Agni Finance', type: 'custom',      routerAddress: '0x...' as Address },
   // ↓ NEW DEX
   {
     id: 'new_dex',
@@ -255,13 +264,14 @@ dexRouters: [
 ],
 ```
 
-`useDexAggregator` picks it up automatically — no hook changes needed.
+`useDexAggregator` picks up UniswapV2-style routers automatically. Custom (V3 /
+Liquidity-Book) routers also need quote logic in `hooks/use-dex-aggregator.tsx`.
 
 ---
 
 ## Scenario 5: Remove a DEX
 
-Delete the entry from `dexRouters` in `lib/chain-registry/chains/zerog.ts`. It
+Delete the entry from `dexRouters` in `lib/chain-registry/chains/mantle.ts`. It
 immediately disappears from all swap UIs, agent nodes, and quote logic.
 
 Also remove the fallback in `contracts/config.ts` if you want to keep it clean.
@@ -330,15 +340,16 @@ export class ZeroGComputeNode extends BaseNode {
 
 | What you want to do | File(s) to edit |
 |---|---|
-| Change 0G RPC URL | `lib/chain-registry/chains/zerog.ts` — edit `ZEROG_RPC` |
-| Update 0G Storage endpoint | `lib/chain-registry/chains/zerog.ts` — edit `ZEROG_STORAGE_RPC` |
-| Update 0G Compute endpoint | `lib/chain-registry/chains/zerog.ts` — edit `ZEROG_COMPUTE_ENDPOINT` |
-| Update 0G DA endpoint | `lib/chain-registry/chains/zerog.ts` — edit `ZEROG_DA_RPC` |
-| Add a DEX (UniswapV2-compatible) | `lib/chain-registry/chains/zerog.ts` — add entry to `dexRouters` |
-| Add a DEX (custom interface) | `lib/chain-registry/chains/zerog.ts` + add quote logic in `hooks/use-dex-aggregator.tsx` |
-| Remove a DEX | `lib/chain-registry/chains/zerog.ts` — remove entry from `dexRouters` |
-| Add/edit a token | `lib/chain-registry/chains/zerog.ts` — add/edit entry in `tokens` |
-| Update OmeSwap contract address | `lib/chain-registry/chains/zerog.ts` — edit `omeswapPools` / `omeswapRouter` |
+| Change Mantle RPC URL | `lib/chain-registry/chains/mantle.ts` — edit `MANTLE_RPC` (or `NEXT_PUBLIC_MANTLE_RPC`) |
+| Switch Mantle mainnet/testnet | env `NEXT_PUBLIC_MANTLE_NETWORK=mainnet\|testnet` |
+| Update 0G Storage endpoint | `lib/zerog/config.ts` — edit `storageIndexerUrl` |
+| Update 0G Compute endpoint | `lib/zerog/config.ts` — edit `ZEROG_COMPUTE_ENDPOINT` |
+| Update 0G DA endpoint | `lib/zerog/config.ts` — edit `daRpcUrl` |
+| Add a DEX (UniswapV2-compatible) | `lib/chain-registry/chains/mantle.ts` — add entry to `dexRouters` |
+| Add a DEX (custom interface) | `lib/chain-registry/chains/mantle.ts` + add quote logic in `hooks/use-dex-aggregator.tsx` |
+| Remove a DEX | `lib/chain-registry/chains/mantle.ts` — remove entry from `dexRouters` |
+| Add/edit a token | `lib/chain-registry/chains/mantle.ts` — add/edit entry in `tokens` |
+| Update OmeSwap contract address | `lib/chain-registry/chains/mantle.ts` — edit `omeswapPools` / `omeswapRouter` |
 | Switch to a different chain entirely | Create `lib/chain-registry/chains/<chain>.ts`, update `lib/chain-registry/index.ts` |
 | Add a second chain | Create `lib/chain-registry/chains/<chain>.ts`, add to registry in `lib/chain-registry/index.ts` |
 | Use 0G Storage in a component/hook | `import { saveAgentMemory, loadAgentMemory } from '@/lib/zerog'` |
@@ -348,21 +359,31 @@ export class ZeroGComputeNode extends BaseNode {
 
 ---
 
-## Environment Variables for 0G
+## Environment Variables
+
+### Mantle (trading chain)
 
 | Variable | Description |
 |---|---|
-| `ZEROG_STORAGE_RPC` | 0G Storage indexer URL |
-| `ZEROG_STORAGE_PRIVATE_KEY` | Wallet key for paying storage fees |
-| `ZEROG_COMPUTE_ENDPOINT` | 0G Compute API base URL |
+| `NEXT_PUBLIC_MANTLE_NETWORK` | `mainnet` (5000) or `testnet` (5003) |
+| `NEXT_PUBLIC_MANTLE_RPC` | Mantle EVM RPC (default: `https://rpc.mantle.xyz`) |
+| `NEXT_PUBLIC_MANTLE_WSS` | Mantle WebSocket RPC (default: `wss://wss.mantle.xyz`) |
+
+### 0G (external AI/data services)
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_0G_NETWORK` | 0G service network for Storage/Compute/DA (`mainnet`/`testnet`) |
+| `ZEROG_STORAGE_PRIVATE_KEY` | Wallet key for paying 0G storage fees |
+| `NEXT_PUBLIC_0G_STORAGE_RPC` | 0G Storage indexer URL |
+| `NEXT_PUBLIC_0G_COMPUTE_ENDPOINT` | 0G Compute API base URL |
 | `ZEROG_COMPUTE_API_KEY` | 0G Compute API key |
 | `ZEROG_COMPUTE_MODEL` | Default model (`qwen3-8b`, `qwen3.6-plus`, `GLM-5-FP8`) |
 | `ZEROG_COMPUTE_SEALED` | `true` to use ZK-verified inference for critical decisions |
-| `ZEROG_DA_RPC` | 0G DA client URL |
-| `RPC_URL` | 0G Chain EVM RPC (default: Newton Testnet) |
+| `NEXT_PUBLIC_0G_DA_RPC` | 0G DA client URL |
 
-All 0G env vars have safe defaults pointing to Newton Testnet — the app works
-out of the box without configuring them for development.
+Both the Mantle chain config and the 0G service config have safe defaults — the
+app works out of the box without configuring them for development.
 
 ---
 
@@ -394,7 +415,7 @@ something is wrong — the data should come from the registry instead.
 - [ ] Import it in `lib/chain-registry/index.ts` and add it to `REGISTRY`
 - [ ] Update `DEFAULT_CHAIN_ID` in `lib/chain-registry/index.ts`
 - [ ] Update `contracts/config.ts` DEX IDs if they differ from the old chain's
-- [ ] Add/update 0G-specific env vars in `.env` (see `.env.example`)
+- [ ] Add/update chain env vars in `.env` (see `.env.example`)
 - [ ] Verify the app runs: `bun run dev`
 - [ ] Connect wallet — the new chain should appear in the RainbowKit chain selector
 - [ ] Test a swap — quotes should come from the DEXes you configured
@@ -412,7 +433,7 @@ For the **Best Agent Frameworks** and **Best Autonomous Agents** tracks:
 - [ ] Critical decisions use `sealed: true` for ZK-verified inference
 - [ ] High-volume outputs posted via `postInferenceResult` (0G DA)
 - [ ] Swarm coordination messages sent via `postSwarmMessage` (0G DA)
-- [ ] Contract deployment addresses committed in `lib/chain-registry/chains/zerog.ts`
+- [ ] Contract deployment addresses committed in `lib/chain-registry/chains/mantle.ts`
 - [ ] Working example agent in the README with inline code or link
 
 ---

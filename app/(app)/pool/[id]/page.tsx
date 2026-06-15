@@ -137,7 +137,7 @@ export default function PoolPage() {
                         </Badge>
                       )}
                       <Badge variant="secondary" className="text-xs">
-                        0G DEX
+                        FusionX DEX
                       </Badge>
                       <Badge variant="secondary" className="text-xs">
                         0.3% Fee
@@ -541,7 +541,7 @@ export default function PoolPage() {
                 </div>
                 <div>
                   <div className="text-muted-foreground mb-1">Network</div>
-                  <div className="font-medium">0G Network</div>
+                  <div className="font-medium">Mantle Network</div>
                 </div>
               </div>
             </Card>

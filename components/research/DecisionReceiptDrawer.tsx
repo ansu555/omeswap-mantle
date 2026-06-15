@@ -342,7 +342,7 @@ export default function DecisionReceiptDrawer() {
             )}
           </Section>
 
-          <Section title="0G Execution">
+          <Section title="Mantle Execution">
             <div
               className="rounded-[20px] p-3"
               style={{

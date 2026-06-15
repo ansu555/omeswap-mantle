@@ -72,7 +72,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
     isLoadingQuotes,
   } = useDexAggregator(tokenIn, tokenOut, amountIn, slippage);
 
-  // tokenIn/tokenOut are object keys in TOKEN_ADDRESSES (e.g. "W0G", "USDC")
+  // tokenIn/tokenOut are object keys in TOKEN_ADDRESSES (e.g. "WMNT", "USDC")
   const payToken = TOKEN_ADDRESSES[tokenIn] ?? TOKEN_LIST[0];
   const receiveToken = TOKEN_ADDRESSES[tokenOut] ?? TOKEN_LIST[1];
 
@@ -185,7 +185,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4">Connect Your Wallet</h3>
         <p className="text-muted-foreground mb-6">
-          Connect your wallet to swap tokens on 0G
+          Connect your wallet to swap tokens on Mantle
         </p>
         <WalletConnect variant="default" />
       </div>
@@ -197,7 +197,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4 text-destructive">Wrong Network</h3>
         <p className="text-muted-foreground mb-6">
-          Please switch to the configured 0G network to use this DEX
+          Please switch to the configured Mantle network to use this DEX
         </p>
         <button
           onClick={() => switchChain({ chainId: DEFAULT_CHAIN_ID })}

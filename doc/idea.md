@@ -43,7 +43,7 @@ The second core innovation is its **chain-agnostic architecture**. The entire pl
 | Decision transparency | Black box — no explanation | Full Decision Receipt per trade at any depth |
 | Agent architecture | Single model or fixed rules | 6 specialized agents with consensus voting |
 | Regime awareness | One model for all conditions | Regime agent classifies market; agents adapt |
-| Blockchain integration | Centralized execution only | 0G Chain (EVM, chainId 16600) via chain registry |
+| Blockchain integration | Centralized execution only | Mantle (EVM L2, chainId 5000/5003) via chain registry |
 | Agent memory | Session-only or centralized DB | Persistent 0G Storage — KV state + Log history |
 | AI inference | Centralized API (OpenAI/Anthropic) | 0G Compute — decentralized, ZK-verifiable inference |
 | High-volume data | Off-chain or plain DB | 0G DA — on-chain availability commitments |
@@ -109,26 +109,26 @@ The entire system is built as a deployable template. All agent logic, data pipel
 3. Register it in `lib/chain-registry/index.ts` and update `DEFAULT_CHAIN_ID`
 4. Deploy — all agent logic, risk rules, and UI remain completely unchanged
 
-> **Current chain: 0G Newton Testnet (chainId 16600)**
-> Config: `lib/chain-registry/chains/zerog.ts` | SDK wrappers: `lib/zerog/`
+> **Current chain: Mantle (chainId 5000 mainnet / 5003 Sepolia testnet)**
+> Config: `lib/chain-registry/chains/mantle.ts` | 0G AI/data SDK wrappers: `lib/zerog/`
 
 ---
 
-## 2.4 0G Protocol Integration — Where Each Component Is Used
+## 2.4 Chain + 0G Protocol Integration — Where Each Component Is Used
 
-The ATS is deployed on **0G Chain** and uses all four 0G protocol primitives. Each one maps directly to a layer of the system.
+The ATS trades on **Mantle** (Layer 3) and uses 0G's three AI/data primitives (Storage, Compute, DA) as external infrastructure. Each maps directly to a layer of the system.
 
-### 0G Chain — Layer 3 (Chain Adapter)
-**File:** `lib/chain-registry/chains/zerog.ts`, `lib/agent-builder/zerog/provider.ts`
+### Mantle Chain — Layer 3 (Chain Adapter)
+**File:** `lib/chain-registry/chains/mantle.ts`, `lib/agent-builder/evm-provider.ts`
 
-0G Chain is the EVM-compatible execution layer where all on-chain actions happen.
+Mantle is the EVM-compatible L2 execution layer where all on-chain actions happen.
 
-| System action | How 0G Chain is used |
+| System action | How Mantle is used |
 |---|---|
-| Agent 6 executes a swap | Signs and submits transaction to 0G DEX router |
+| Agent 6 executes a swap | Signs and submits transaction to a Mantle DEX router (FusionX V3 / Agni / Merchant Moe) |
 | Decision Receipt minting | Mints receipt as on-chain record (ERC-721 or native contract) |
-| Wallet connection | MetaMask connects to chainId 16600 via `wallet_addEthereumChain` |
-| Explorer links | All tx/address links resolve to `chainscan-newton.0g.ai` |
+| Wallet connection | MetaMask connects to chainId 5000/5003 via `wallet_addEthereumChain` |
+| Explorer links | All tx/address links resolve to `explorer.mantle.xyz` |
 
 ---
 

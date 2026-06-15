@@ -618,7 +618,7 @@ export function PublishWizard({ onClose }: PublishWizardProps) {
               </p>
               <p className="mt-0.5 text-[11px] text-violet-400/70">
                 The compiled graph and execution logic will be AES-256-GCM encrypted
-                and stored on 0G Storage. Only the public summary and performance
+                and stored on Mantle Storage. Only the public summary and performance
                 metrics are visible to other users.
               </p>
             </div>
@@ -770,7 +770,7 @@ export function PublishWizard({ onClose }: PublishWizardProps) {
             <Lock className="h-3.5 w-3.5 text-violet-400 shrink-0 mt-0.5" />
             <span>
               The strategy graph will be encrypted with AES-256-GCM and uploaded
-              to 0G Storage. An AI-generated public summary will be created from
+              to Mantle Storage. An AI-generated public summary will be created from
               your strategy without exposing the logic.
             </span>
           </div>
