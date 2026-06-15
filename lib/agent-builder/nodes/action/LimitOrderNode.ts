@@ -38,14 +38,14 @@ export class LimitOrderNode extends BaseNode {
       label: 'Token In',
       type: 'select',
       options: _tokenSymbols,
-      default: 'W0G',
+      default: 'WMNT',
     },
     {
       key: 'tokenOut',
       label: 'Token Out',
       type: 'select',
       options: _tokenSymbols,
-      default: 'USDC.e',
+      default: 'USDC',
     },
   ]
 

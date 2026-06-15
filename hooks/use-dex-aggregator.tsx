@@ -9,21 +9,19 @@ import {
   useReadContract,
   useChainId,
 } from "wagmi";
-import { parseUnits, formatUnits, Address } from "viem";
+import { parseUnits, formatUnits, Address, Hex } from "viem";
 import { MAINNET_TOKENS } from "@/contracts/config";
 import { ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
 import {
-  JAINE_CHAIN_ID,
-  JAINE_DEX_ID,
-  JAINE_DEX_NAME,
-  JAINE_MARKET_ID,
-  JAINE_POOL_FEE,
-  JAINE_V3_ROUTER_ABI,
-  JAINE_V3_ROUTER_ADDRESS,
-  isJaineTokenPair,
-} from "@/lib/dex/jaine";
-import { getDexMarketConfig } from "@/lib/dex/markets";
+  FUSIONX_DEX_ID,
+  FUSIONX_V3_ROUTER_ABI,
+  FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
+  isPlaceholderAddress,
+  quoteFusionXBestTier,
+  quoteFusionXMultiHop,
+} from "@/lib/dex/fusionx";
+import { LB_ROUTER_ABI, quoteLBBestPath } from "@/lib/dex/liquidity-book";
 import { useTransactionStore } from "@/store/transaction-store";
 
 const OMESWAP_DEX_ID = "omeswap" as const;
@@ -110,59 +108,6 @@ const V1_ROUTER_ABI = [
   },
 ] as const;
 
-// TraderJoe V2 Quoter ABI
-const TJ_V2_QUOTER_ABI = [
-  {
-    inputs: [
-      { internalType: "address[]", name: "route", type: "address[]" },
-      { internalType: "uint128", name: "amountIn", type: "uint128" },
-    ],
-    name: "findBestPathFromAmountIn",
-    outputs: [
-      {
-        name: "quote",
-        type: "tuple",
-        components: [
-          { name: "route", type: "address[]" },
-          { name: "pairs", type: "address[]" },
-          { name: "binSteps", type: "uint256[]" },
-          { name: "versions", type: "uint8[]" },
-          { name: "amounts", type: "uint128[]" },
-          { name: "virtualAmountsWithoutSlippage", type: "uint128[]" },
-          { name: "fees", type: "uint256[]" },
-        ],
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
-
-// TraderJoe V2 Router ABI
-const TJ_V2_ROUTER_ABI = [
-  {
-    inputs: [
-      { internalType: "uint256", name: "amountIn", type: "uint256" },
-      { internalType: "uint256", name: "amountOutMinShares", type: "uint256" },
-      {
-        name: "path",
-        type: "tuple",
-        components: [
-          { name: "pairBinSteps", type: "uint256[]" },
-          { name: "versions", type: "uint8[]" },
-          { name: "tokenPath", type: "address[]" },
-        ],
-      },
-      { internalType: "address", name: "to", type: "address" },
-      { internalType: "uint256", name: "deadline", type: "uint256" },
-    ],
-    name: "swapExactTokensForTokens",
-    outputs: [{ internalType: "uint256", name: "amountOut", type: "uint256" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-] as const;
-
 export type DexSource = string;
 
 export interface DexQuote {
@@ -174,34 +119,14 @@ export interface DexQuote {
   // V2-specific — used to build the Path struct for the swap
   v2BinSteps?: bigint[];
   v2Versions?: number[];
+  // V3-specific — the fee tier (hundredths of a bip) the swap must use for a
+  // single-hop `exactInputSingle`. Unset when `v3Path` is set instead.
+  v3Fee?: number;
+  // V3-specific — packed-bytes multi-hop path for `exactInput`, set when a
+  // route through a hub token (e.g. tokenIn -> WMNT -> tokenOut) beats the
+  // direct pool.
+  v3Path?: Hex;
   isBest: boolean;
-}
-
-function isPlaceholderAddress(address: Address | undefined) {
-  if (!address) return true;
-  const lower = address.toLowerCase();
-  if (lower === "0x0000000000000000000000000000000000000000") return true;
-  return /^0x0{20,}[0-9a-f]{1,20}$/i.test(lower);
-}
-
-function decimalString(value: number, decimals: number) {
-  if (!Number.isFinite(value) || value <= 0) return "0";
-  return value.toFixed(Math.min(decimals, 18));
-}
-
-async function fetchJainePriceUsd() {
-  const fallback = getDexMarketConfig(JAINE_MARKET_ID).fallback.priceUsd;
-
-  try {
-    const response = await fetch(`/api/dex/markets?id=${encodeURIComponent(JAINE_MARKET_ID)}`);
-    if (!response.ok) return fallback;
-
-    const payload = (await response.json()) as { market?: { priceUsd?: number } };
-    const price = payload.market?.priceUsd;
-    return typeof price === "number" && Number.isFinite(price) && price > 0 ? price : fallback;
-  } catch {
-    return fallback;
-  }
 }
 
 export function useDexAggregator(
@@ -223,11 +148,18 @@ export function useDexAggregator(
   const publicClient = usePublicClient({ chainId });
   const tokenIn = MAINNET_TOKENS[tokenInSymbol];
   const tokenOut = MAINNET_TOKENS[tokenOutSymbol];
-  const supportsJainePair =
-    chainId === JAINE_CHAIN_ID &&
+  // Uniswap-V3-shaped "custom" routers (FusionX V3, Agni Finance, ...) — all
+  // share the same QuoterV2 / SwapRouter ABI shape, so they're quoted and
+  // executed generically via the FusionX adapter's ABIs.
+  const v3CustomDexConfig = chainConfig.dexRouters
+    .filter((r) => r.type === 'custom' && r.quoterAddress)
+    .map((r) => ({ dex: r.id as DexSource, dexName: r.name, router: r.routerAddress, quoter: r.quoterAddress as Address }))
+    .filter(({ router, quoter }) => !isPlaceholderAddress(router) && !isPlaceholderAddress(quoter));
+  const hasV3CustomRouters =
+    v3CustomDexConfig.length > 0 &&
     !!tokenIn &&
     !!tokenOut &&
-    isJaineTokenPair(tokenIn.address, tokenOut.address);
+    tokenIn.address.toLowerCase() !== tokenOut.address.toLowerCase();
 
   // DEX config derived from registry
   const v1DexConfig = chainConfig.dexRouters
@@ -244,14 +176,14 @@ export function useDexAggregator(
   const hasOmeswapRouter =
     !isPlaceholderAddress(omeswapPoolsAddr) && !isPlaceholderAddress(omeswapRouterAddr);
   const hasConfiguredRouters =
-    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || supportsJainePair || hasOmeswapRouter;
+    activeV1DexConfig.length > 0 || hasConfiguredTjV2 || hasV3CustomRouters || hasOmeswapRouter;
 
   const [quotes, setQuotes] = useState<DexQuote[]>([]);
   const [selectedDex, setSelectedDex] = useState<DexSource>(() => {
-    if (supportsJainePair) return JAINE_DEX_ID;
+    if (hasV3CustomRouters) return v3CustomDexConfig[0].dex;
     if (hasOmeswapRouter) return OMESWAP_DEX_ID;
     if (hasConfiguredTjV2 && tjV2?.id) return tjV2.id as DexSource;
-    return (activeV1DexConfig[0]?.dex ?? v1DexConfig[0]?.dex ?? "zerog_dex") as DexSource;
+    return (activeV1DexConfig[0]?.dex ?? v1DexConfig[0]?.dex ?? FUSIONX_DEX_ID) as DexSource;
   });
   const [isLoadingQuotes, setIsLoadingQuotes] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
@@ -261,15 +193,17 @@ export function useDexAggregator(
   const selectedQuote =
     quotes.find((q) => q.dex === selectedDex) ?? quotes[0] ?? null;
 
+  const selectedV3CustomDex = v3CustomDexConfig.find((d) => d.dex === selectedDex);
+
   const defaultSpender =
-    (supportsJainePair ? JAINE_V3_ROUTER_ADDRESS : undefined) ??
+    (hasV3CustomRouters ? v3CustomDexConfig[0].router : undefined) ??
     (hasOmeswapRouter ? omeswapRouterAddr : undefined) ??
     (hasConfiguredTjV2 ? tjV2?.routerAddress : undefined) ??
     activeV1DexConfig[0]?.router ??
     "0x0000000000000000000000000000000000000000";
   const approvalSpender: Address =
-    selectedDex === JAINE_DEX_ID && supportsJainePair
-      ? JAINE_V3_ROUTER_ADDRESS
+    selectedV3CustomDex
+      ? selectedV3CustomDex.router
       : selectedDex === OMESWAP_DEX_ID && hasOmeswapRouter && omeswapRouterAddr
       ? omeswapRouterAddr
       : selectedDex === tjV2?.id && hasConfiguredTjV2
@@ -355,61 +289,78 @@ export function useDexAggregator(
       const amountIn = parseUnits(amountInRaw, tokenIn.decimals);
       const newQuotes: DexQuote[] = [];
 
-      // --- Jaine CLMM quote (0G W0G/USDC.e) ---
-      if (supportsJainePair) {
-        const priceUsd = await fetchJainePriceUsd();
-        const amount = Number(amountInRaw);
-        const tokenInIsW0G =
-          tokenIn.address.toLowerCase() === chainConfig.nativeWrapped.toLowerCase();
-        const amountOutFloat = tokenInIsW0G ? amount * priceUsd : amount / priceUsd;
+      // --- Uniswap-V3-shaped "custom" router quotes (FusionX V3, Agni Finance, ...) ---
+      // For each router, compare the direct pool against the best two-hop route
+      // through a hub token (WMNT/USDC/USDT) and keep whichever is better.
+      if (hasV3CustomRouters) {
+        for (const { dex, dexName, quoter } of v3CustomDexConfig) {
+          try {
+            const [direct, multiHop] = await Promise.all([
+              quoteFusionXBestTier(publicClient, {
+                tokenIn: tokenIn.address,
+                tokenOut: tokenOut.address,
+                amountIn,
+                quoter,
+              }),
+              quoteFusionXMultiHop(publicClient, {
+                tokenIn: tokenIn.address,
+                tokenOut: tokenOut.address,
+                amountIn,
+                hubTokens: chainConfig.hubTokens,
+                quoter,
+              }),
+            ]);
 
-        try {
-          const amountOut = parseUnits(
-            decimalString(amountOutFloat, tokenOut.decimals),
-            tokenOut.decimals,
-          );
-
-          if (amountOut > 0n) {
-            newQuotes.push({
-              dex: JAINE_DEX_ID,
-              dexName: JAINE_DEX_NAME,
-              amountOut,
-              amountOutFormatted: formatUnits(amountOut, tokenOut.decimals),
-              path: [tokenIn.address, tokenOut.address],
-              isBest: false,
-            });
+            let quote: DexQuote | null = null;
+            if (direct && direct.amountOut > 0n) {
+              quote = {
+                dex,
+                dexName,
+                amountOut: direct.amountOut,
+                amountOutFormatted: formatUnits(direct.amountOut, tokenOut.decimals),
+                path: [tokenIn.address, tokenOut.address],
+                v3Fee: direct.fee,
+                isBest: false,
+              };
+            }
+            if (multiHop && multiHop.amountOut > 0n && (!quote || multiHop.amountOut > quote.amountOut)) {
+              quote = {
+                dex,
+                dexName,
+                amountOut: multiHop.amountOut,
+                amountOutFormatted: formatUnits(multiHop.amountOut, tokenOut.decimals),
+                path: multiHop.path,
+                v3Path: multiHop.encodedPath,
+                isBest: false,
+              };
+            }
+            if (quote) newQuotes.push(quote);
+          } catch {
+            /* no pool for this pair on this router */
           }
-        } catch {
-          /* ignore malformed estimated quote */
         }
       }
 
-      // --- TraderJoe V2 quote ---
+      // --- TraderJoe V2 (Merchant Moe) quote — searches direct + hub-token paths ---
       if (hasConfiguredTjV2 && tjV2?.quoterAddress) {
-        try {
-          const quote = (await publicClient.readContract({
-            address: tjV2.quoterAddress,
-            abi: TJ_V2_QUOTER_ABI,
-            functionName: "findBestPathFromAmountIn",
-            args: [[tokenIn.address, tokenOut.address], BigInt(amountIn)],
-          })) as any;
-
-          const amounts: bigint[] = quote.amounts;
-          const amountOut = amounts[amounts.length - 1];
-          if (amountOut > 0n) {
-            newQuotes.push({
-              dex: tjV2.id,
-              dexName: tjV2.name,
-              amountOut,
-              amountOutFormatted: formatUnits(amountOut, tokenOut.decimals),
-              path: quote.route as Address[],
-              v2BinSteps: quote.binSteps as bigint[],
-              v2Versions: quote.versions as number[],
-              isBest: false,
-            });
-          }
-        } catch {
-          // No V2 liquidity
+        const lb = await quoteLBBestPath(publicClient, {
+          tokenIn: tokenIn.address,
+          tokenOut: tokenOut.address,
+          amountIn,
+          hubTokens: chainConfig.hubTokens,
+          quoter: tjV2.quoterAddress,
+        });
+        if (lb) {
+          newQuotes.push({
+            dex: tjV2.id,
+            dexName: tjV2.name,
+            amountOut: lb.amountOut,
+            amountOutFormatted: formatUnits(lb.amountOut, tokenOut.decimals),
+            path: lb.route,
+            v2BinSteps: lb.pairBinSteps,
+            v2Versions: lb.versions,
+            isBest: false,
+          });
         }
       }
 
@@ -519,7 +470,7 @@ export function useDexAggregator(
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, supportsJainePair, hasOmeswapRouter]);
+  }, [amountInRaw, tokenInSymbol, tokenOutSymbol, publicClient, hasConfiguredRouters, hasConfiguredTjV2, hasV3CustomRouters, hasOmeswapRouter]);
 
   const needsApproval = (): boolean => {
     if (!hasConfiguredRouters) return false;
@@ -529,7 +480,7 @@ export function useDexAggregator(
 
   const executeSwapTx = () => {
     if (!hasConfiguredRouters) {
-      setError("Routers are not configured for this 0G deployment yet.");
+      setError("No DEX routers are configured for this chain yet.");
       return;
     }
     if (!selectedQuote || !address || !amountInRaw || !tokenIn || !tokenOut) return;
@@ -548,16 +499,32 @@ export function useDexAggregator(
         args: [tokenIn.address, tokenOut.address, amountIn, amountOutMin, address],
         chainId,
       });
-    } else if (selectedQuote.dex === JAINE_DEX_ID && supportsJainePair) {
+    } else if (selectedV3CustomDex && selectedQuote.v3Path) {
       writeSwap({
-        address: JAINE_V3_ROUTER_ADDRESS,
-        abi: JAINE_V3_ROUTER_ABI,
+        address: selectedV3CustomDex.router,
+        abi: FUSIONX_V3_ROUTER_EXACT_INPUT_ABI,
+        functionName: "exactInput",
+        args: [
+          {
+            path: selectedQuote.v3Path,
+            recipient: address,
+            deadline,
+            amountIn,
+            amountOutMinimum: amountOutMin,
+          },
+        ],
+        chainId,
+      });
+    } else if (selectedV3CustomDex) {
+      writeSwap({
+        address: selectedV3CustomDex.router,
+        abi: FUSIONX_V3_ROUTER_ABI,
         functionName: "exactInputSingle",
         args: [
           {
             tokenIn: tokenIn.address,
             tokenOut: tokenOut.address,
-            fee: JAINE_POOL_FEE,
+            fee: selectedQuote.v3Fee ?? 3000,
             recipient: address,
             deadline,
             amountIn,
@@ -565,7 +532,7 @@ export function useDexAggregator(
             sqrtPriceLimitX96: 0n,
           },
         ],
-        chainId: JAINE_CHAIN_ID,
+        chainId,
       });
     } else if (
       tjV2 &&
@@ -575,7 +542,7 @@ export function useDexAggregator(
     ) {
       writeSwap({
         address: tjV2.routerAddress,
-        abi: TJ_V2_ROUTER_ABI,
+        abi: LB_ROUTER_ABI,
         functionName: "swapExactTokensForTokens",
         args: [
           amountIn,
@@ -609,7 +576,7 @@ export function useDexAggregator(
 
   const executeSwap = () => {
     if (!hasConfiguredRouters) {
-      setError("Routers are not configured for this 0G deployment yet.");
+      setError("No DEX routers are configured for this chain yet.");
       return;
     }
     if (!selectedQuote || !address || !amountInRaw || !tokenIn) return;

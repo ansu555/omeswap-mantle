@@ -135,9 +135,15 @@ function AgentBuilderContent() {
   }, [setAgentBuilderMode, addNodeToCanvas]);
 
   return (
-    <div className="min-h-screen pt-20 pb-4 px-3 md:px-6">
-      <div className="relative h-[calc(100vh-6rem)] overflow-hidden rounded-2xl border border-primary/20 bg-black/20 backdrop-blur-xl shadow-2xl">
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-25">
+    <div
+      className="min-h-screen pt-20 pb-4 px-3 md:px-6"
+      style={{
+        background:
+          "radial-gradient(circle at 24% 18%, rgba(139,92,246,0.13), transparent 30%), radial-gradient(circle at 78% 4%, rgba(45,212,191,0.08), transparent 26%), linear-gradient(135deg, rgba(5,7,13,0.98), rgba(10,10,18,0.98))",
+      }}
+    >
+      <div className="relative h-[calc(100vh-6rem)] overflow-hidden rounded-[28px] border border-white/10 bg-[#07080f]/80 backdrop-blur-xl shadow-2xl shadow-black/[0.45]">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.15]">
           <LiquidEther
             colors={["#2d9eff", "#34d399", "#7c3aed"]}
             mouseForce={12}

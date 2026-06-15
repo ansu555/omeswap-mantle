@@ -45,3 +45,50 @@ changes: added Jaine/Omega tabs to PoolComparisonPanel; Omega tab now reflects s
 user: ansu555
 branch: main
 changes: made chain layer agnostic — terminal store/TradePanel/InfoTile now read from chain registry; migrated callers off Avalanche* aliases; deleted dead avalanche.ts/ethereum.ts configs + shim files; cleaned AVAX UI copy
+
+[2026-06-08 14:55]
+user: ansu555
+branch: main
+changes: built realtime-service/ (Node+viem+ws) for true real-time Mantle data — multi-factory V3 pool discovery, eth_subscribe Swap listener, USD price engine, own WS broadcast + REST /price//pools//route, Dockerfile/resync; added mantle.ts chain config, lib/realtime/client.ts, use-realtime-feed hook (wired into terminal), /api/realtime/price; validated on Mantle mainnet, build green
+
+[2026-06-09 12:40]
+user: ansu555
+branch: service
+changes: removed dead weight — avax-agent/ (Avalanche prototype), Python ats/, 0g-contract/ + hardhat scripts + Avalanche hardhat.config.js (263 files); kept TS lib/ats; deferred 0G→Mantle flip (0G still live default — jaine/lib/zerog have no Mantle replacement yet), build green
+
+[2026-06-14 22:12]
+user: manovHacksaw
+branch: feat/terminal
+changes: integrated Agni Finance (UniV3 fork) and Merchant Moe (LB v2.2) into Mantle chain registry; generalized swap aggregator's V3-custom path beyond FusionX-only
+[2026-06-14 23:05]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Agni Finance WMNT/USDT terminal market, generalized TradePanel quoting/execution to use each market's DEX router
+[2026-06-14 23:40]
+user: manovHacksaw
+branch: feat/terminal
+changes: added multi-DEX + 2-hop swap routing (FusionX V3 + Agni Finance, via WMNT/USDC/USDT hubs) to terminal TradePanel and swap aggregator
+[2026-06-14 23:58]
+user: manovHacksaw
+branch: feat/terminal
+changes: added Merchant Moe (LB v2.2) to terminal/aggregator multi-routing, debounced quote effect, real on-chain price-impact estimate
+
+[2026-06-15 00:00]
+user: ansu555
+branch: service
+changes: swept frontend UI text/branding from 0G to Mantle (page copy, labels, placeholders, system prompts) across ~18 files; build green
+
+[2026-06-15 00:00]
+user: ansu555
+branch: ai
+changes: removed floating "Ask AI" chat toggle button; consolidated WalletProvider/ThemeProvider into root layout so wallet stays connected across all route groups
+
+[2026-06-15 10:34]
+user: ansu555
+branch: ai
+changes: polished agent-builder UI to match Research page — redesigned empty state (hero + Start Fast preset cards), added canvas depth blobs, refined NodePalette chips/headers, made Run Bot dominant + receded secondary toolbar actions
+
+[2026-06-15 11:01]
+user: ansu555
+branch: ai
+changes: applied Research radial-gradient background to agent-builder page; redesigned AgentSidebar chat (premium header/input, violet palette) + added clickable starter-prompt chips; fixed prompt-chip overflow (flex-col + concise descriptions)

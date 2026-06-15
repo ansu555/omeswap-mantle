@@ -269,7 +269,7 @@ export function MultiStepForm() {
 
         {/* Branding */}
         <p className="text-center text-xs text-muted-foreground/50 mt-4">
-          Omega · Powered by 0G
+          Omega · Powered by Mantle
         </p>
       </div>
     </div>

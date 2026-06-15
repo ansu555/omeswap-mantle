@@ -54,13 +54,13 @@ export function TokenList({
   }, []);
 
   const totalVolume = useMemo(
-    () => markets.filter((m) => m.network === "0g" && m.kind === "spot").reduce((sum, m) => sum + m.volume24hUsd, 0),
+    () => markets.filter((m) => m.network === "mantle" && m.kind === "spot").reduce((sum, m) => sum + m.volume24hUsd, 0),
     [markets],
   );
   const visibleMarkets = useMemo(() => {
-    return markets.filter((market) => market.network === "0g" && market.kind === "spot");
+    return markets.filter((market) => market.network === "mantle" && market.kind === "spot");
   }, [markets]);
-  const sectionLabel = "0G Spot markets";
+  const sectionLabel = "Mantle Spot markets";
   const footerLabel = "24h spot volume";
 
   return (

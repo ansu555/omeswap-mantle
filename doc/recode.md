@@ -177,3 +177,19 @@ All upgrades and changes made to this repository are logged here.
 ### [2026-05-04 20:24:00 +0530] agent=codex user=ansu555 branch=main
 - upgrade_paths: components/agent-builder/canvas/AgentSidebar.tsx, lib/agent-builder/agent/systemPrompt.ts, app/api/agent-builder/chat/route.ts, components/agent-builder/canvas/FlowCanvas.tsx, lib/agent-builder/templates.ts, components/agent-builder/canvas/ChartPanel.tsx, components/agent-builder/canvas/BacktestConfigStrip.tsx, store/agent-builder.ts, lib/agent-builder/nodes/action/AddChartMarkerNode.ts, lib/agent-builder/nodes/data/DEXPriceNode.ts, lib/agent-builder/nodes/action/LimitOrderNode.ts, doc/recode.md
 - upgrade_summary: Removed stale AVAX/Avalanche user-facing copy from the Agent Builder sidebar, prompts, templates, exposure display, chart/backtest defaults, and node defaults so the builder presents as Omeswap/0G with W0G-oriented defaults.
+
+### [2026-06-15 12:00:00 Z] agent=codex user=anik branch=ai
+- upgrade_paths: components/layout/nav-items.ts, doc/recode.md
+- upgrade_summary: Enabled the Terminal nav item in the app header by removing its disabled flag so users can navigate to /terminal from the navbar.
+
+### [2026-06-15 12:30:00 Z] agent=codex user=anik branch=ai
+- upgrade_paths: components/layout/nav-items.ts, components/ui/nav-bar.tsx, doc/recode.md
+- upgrade_summary: Reordered navbar tabs (Explore, Trade, Research, Builder, Marketplace, Txns, Portfolio) and grouped Liquidity and Terminal under a Trade dropdown.
+
+### [2026-06-15 13:00:00 Z] agent=codex user=anik branch=ai
+- upgrade_paths: .gitignore, doc/recode.md
+- upgrade_summary: Added /contract/node_modules to .gitignore so Hardhat dependencies in contract/ are not tracked by git.
+
+### [2026-06-15 13:15:00 Z] agent=codex user=anik branch=ai
+- upgrade_paths: .gitignore, contract/.gitignore, doc/recode.md
+- upgrade_summary: Added contract/.gitignore and root ignores for contract cache/artifacts so node_modules and Hardhat build output no longer appear in source control.

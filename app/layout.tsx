@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { WalletProvider } from "@/components/providers/wallet-provider";
 
 export const metadata: Metadata = {
   title: "Omega",
-  description: "The next-generation decentralized exchange on 0G",
+  description: "The next-generation decentralized exchange on Mantle",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
@@ -17,7 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <WalletProvider>{children}</WalletProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

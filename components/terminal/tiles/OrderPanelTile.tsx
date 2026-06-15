@@ -89,7 +89,7 @@ export function OrderPanelTile() {
               : "bg-red-500/80 text-white hover:bg-red-500",
           )}
         >
-          {side === "buy" ? "Buy" : "Sell"} W0G
+          {side === "buy" ? "Buy" : "Sell"} {activeSymbol.symbol}
         </Link>
       </div>
     </div>

@@ -60,7 +60,7 @@ function normalise(addr: string): string {
  * Returns the agent wallet for `userWallet`, creating it if it doesn't exist.
  *
  * @param userWallet — The authenticated user's EVM address.
- * @param chainId    — Chain to associate with this wallet (default: 0G, 16600).
+ * @param chainId    — Chain to associate with this wallet (default: Mantle, 5000/5003).
  */
 export async function getOrCreateAgentWallet(
   userWallet: string,

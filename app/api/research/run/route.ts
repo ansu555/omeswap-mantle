@@ -9,7 +9,7 @@
  *     ticker?           : string  — Asset ticker; if omitted, query must resolve
  *                                   to exactly one primary token
  *     mode?             : Mode    — Trading mode override; falls back to user_settings
- *     chainId?          : number  — Chain override (default: 0G Newton, 16600)
+ *     chainId?          : number  — Chain override (default: Mantle, 5000/5003)
  *     executionApproved?: boolean — Assisted-mode: user has approved execution
  *   }
  *
@@ -47,7 +47,7 @@ const VALID_TRANSPORTS: AxlTransport[] = ['local', 'axl', 'auto']
  * the caller doesn't pass one explicitly.
  */
 const TOKEN_ALIASES: Array<{ canonical: string; terms: string[] }> = [
-  { canonical: 'W0G', terms: ['W0G', '0G', 'ZEROG'] },
+  { canonical: 'WMNT', terms: ['WMNT', 'MNT', 'MANTLE'] },
   { canonical: 'BTC', terms: ['BTC', 'BITCOIN'] },
   { canonical: 'ETH', terms: ['ETH', 'ETHEREUM'] },
   { canonical: 'SOL', terms: ['SOL', 'SOLANA'] },
@@ -121,7 +121,7 @@ function resolveRequestedTicker(
   if (matches.length === 0) {
     return {
       ok: false,
-      message: 'Your research prompt must mention exactly one token, for example BTC, ETH, SOL, or W0G.',
+      message: 'Your research prompt must mention exactly one token, for example BTC, ETH, SOL, or WMNT.',
     }
   }
 
@@ -137,8 +137,8 @@ function makeRunId(): string {
 
 /**
  * Best-effort estimate of the agent wallet balance in USD.
- * For the 0G chain we don't have a live price oracle, so we use a conservative
- * placeholder ($1 per native token). On Ethereum mainnet we use $3,000/ETH.
+ * For Mantle we don't have a live native-token price oracle here, so we use a
+ * conservative placeholder ($1 per MNT). On Ethereum mainnet we use $3,000/ETH.
  * Failures are swallowed and return 0 so Kelly sizing gracefully falls back.
  */
 async function estimateAgentBalanceUSD(
@@ -153,8 +153,8 @@ async function estimateAgentBalanceUSD(
     })
     const raw = await client.getBalance({ address: agentAddress as `0x${string}` })
     const native = parseFloat(formatEther(raw))
-    // ETH mainnet: rough $3k/ETH; 0G testnet: $1 placeholder
-    const priceUSD = chainId === 1 ? 3000 : 1
+    // ETH mainnet: rough $3k/ETH; Mantle mainnet: $0.80 MNT; others: $1 placeholder
+    const priceUSD = chainId === 1 ? 3000 : chainId === 5000 ? 0.8 : 1
     return native * priceUSD
   } catch {
     return 0

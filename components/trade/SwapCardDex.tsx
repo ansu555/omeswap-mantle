@@ -20,7 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getExplorerLink, getDexRouters, getDefaultChainId, getChainConfig } from "@/lib/chain-registry";
-import { JAINE_DEX_ID } from "@/lib/dex/jaine";
+import { FUSIONX_DEX_ID } from "@/lib/dex/fusionx";
 
 type SwapMode = "swap" | "limit" | "buy" | "sell";
 
@@ -29,9 +29,7 @@ interface SwapCardDexProps {
 }
 
 const DEX_LABEL_COLORS: Record<string, string> = {
-  [JAINE_DEX_ID]: "text-primary",
-  zerog_dex: "text-violet-300",
-  zerog_dex_v2: "text-violet-200",
+  [FUSIONX_DEX_ID]: "text-primary",
 };
 
 const DEX_LABELS: Record<string, { name: string; color: string }> =
@@ -49,8 +47,8 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
   const { isConnected, chain, address, switchChain } = useWallet();
 
   const [mode, setMode] = useState<SwapMode>("swap");
-  const [tokenIn, setTokenIn] = useState<string>("OmE");
-  const [tokenOut, setTokenOut] = useState<string>("USDO");
+  const [tokenIn, setTokenIn] = useState<string>("WMNT");
+  const [tokenOut, setTokenOut] = useState<string>("USDC");
   const [amountIn, setAmountIn] = useState<string>("");
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isPayTokenOpen, setIsPayTokenOpen] = useState(false);
@@ -74,7 +72,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
     isLoadingQuotes,
   } = useDexAggregator(tokenIn, tokenOut, amountIn, slippage);
 
-  // tokenIn/tokenOut are object keys in TOKEN_ADDRESSES (e.g. "W0G", "USDC")
+  // tokenIn/tokenOut are object keys in TOKEN_ADDRESSES (e.g. "WMNT", "USDC")
   const payToken = TOKEN_ADDRESSES[tokenIn] ?? TOKEN_LIST[0];
   const receiveToken = TOKEN_ADDRESSES[tokenOut] ?? TOKEN_LIST[1];
 
@@ -142,7 +140,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
         </div>
         <div className="grid gap-1 max-h-96 overflow-y-auto">
           {Object.entries(TOKEN_ADDRESSES)
-            .filter(([key]) => ['W0G', 'USDC', 'OmE', 'USDO'].includes(key))
+            .filter(([key]) => ['WMNT', 'USDC', 'USDT', 'WETH'].includes(key))
             .sort(([keyA], [keyB]) => {
               // Sort tokens with non-zero balance to the top
               const balA = parseFloat(walletBalances[keyA] ?? '0');
@@ -187,7 +185,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4">Connect Your Wallet</h3>
         <p className="text-muted-foreground mb-6">
-          Connect your wallet to swap tokens on 0G
+          Connect your wallet to swap tokens on Mantle
         </p>
         <WalletConnect variant="default" />
       </div>
@@ -199,7 +197,7 @@ export function SwapCardDex({ onTokensChange }: SwapCardDexProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4 text-destructive">Wrong Network</h3>
         <p className="text-muted-foreground mb-6">
-          Please switch to the configured 0G network to use this DEX
+          Please switch to the configured Mantle network to use this DEX
         </p>
         <button
           onClick={() => switchChain({ chainId: DEFAULT_CHAIN_ID })}

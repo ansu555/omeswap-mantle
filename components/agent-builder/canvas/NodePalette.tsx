@@ -35,6 +35,22 @@ const CATEGORY_HEADER_COLORS: Record<NodeCategory, string> = {
   flow: 'text-purple-400/60',
 }
 
+// Category accent dots for the section headers
+const CATEGORY_DOT: Record<NodeCategory, string> = {
+  data: 'rgba(59,130,246,0.9)',
+  logic: 'rgba(234,179,8,0.9)',
+  action: 'rgba(34,197,94,0.9)',
+  flow: 'rgba(168,85,247,0.9)',
+}
+
+// Tinted icon-chip backgrounds per category (premium, Research-style)
+const CATEGORY_CHIP: Record<NodeCategory, { bg: string; border: string }> = {
+  data: { bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.22)' },
+  logic: { bg: 'rgba(234,179,8,0.12)', border: 'rgba(234,179,8,0.22)' },
+  action: { bg: 'rgba(34,197,94,0.12)', border: 'rgba(34,197,94,0.22)' },
+  flow: { bg: 'rgba(168,85,247,0.12)', border: 'rgba(168,85,247,0.22)' },
+}
+
 type ImportRow = {
   id: string
   name: string
@@ -118,16 +134,16 @@ export default function NodePalette() {
         initial={{ width: 240 }}
         animate={{ width: 44 }}
         transition={{ duration: 0.22, ease: 'easeOut' }}
-        className="shrink-0 bg-gradient-to-b from-[#1a1a2e]/80 to-[#0d0d1a]/80 backdrop-blur-xl border-r border-purple-500/20 flex flex-col items-center py-3 gap-2.5 overflow-hidden"
+        className="shrink-0 bg-gradient-to-b from-[#10101c]/95 to-[#08090f]/95 backdrop-blur-xl border-r border-white/[0.07] flex flex-col items-center py-3 gap-2.5 overflow-hidden"
       >
         <button
           onClick={() => setSidebarCollapsed(false)}
-          className="text-white/35 hover:text-white/70 transition-colors p-1"
+          className="text-white/35 hover:text-white/70 transition-colors p-1 rounded-md focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40"
           title="Expand panel"
         >
           <PanelLeftOpen size={15} />
         </button>
-        <div className="w-5 h-px bg-purple-500/20" />
+        <div className="w-5 h-px bg-white/10" />
         {PALETTE_NODES.map((node) => {
           const Icon = ICONS[node.icon]
           return Icon ? (
@@ -143,7 +159,7 @@ export default function NodePalette() {
               }
               title={node.label}
               className={clsx(
-                'p-1.5 rounded-lg hover:bg-purple-500/15 transition-all cursor-grab active:cursor-grabbing',
+                'p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors cursor-grab active:cursor-grabbing focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40',
                 CATEGORY_COLORS[node.category]
               )}
             >
@@ -160,14 +176,14 @@ export default function NodePalette() {
       initial={{ opacity: 0, x: -16 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.35, ease: 'easeOut', delay: 0.05 }}
-      className="w-60 shrink-0 bg-gradient-to-b from-[#1a1a2e]/80 to-[#0d0d1a]/80 backdrop-blur-xl border-r border-purple-500/20 overflow-y-auto flex flex-col"
+      className="w-60 shrink-0 bg-gradient-to-b from-[#10101c]/95 to-[#08090f]/95 backdrop-blur-xl border-r border-white/[0.07] overflow-y-auto flex flex-col"
     >
       {/* Header */}
-      <div className="px-3 py-2.5 border-b border-purple-500/20 flex items-center gap-2">
-        <p className="text-[10px] font-semibold text-white/40 uppercase tracking-wider flex-1">Blocks</p>
+      <div className="px-3 py-2.5 border-b border-white/[0.07] flex items-center gap-2">
+        <p className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.2em] flex-1">Blocks</p>
         <button
           onClick={() => setSidebarCollapsed(true)}
-          className="text-white/25 hover:text-white/60 transition-colors"
+          className="text-white/25 hover:text-white/60 transition-colors rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40"
           title="Collapse panel"
         >
           <PanelLeftClose size={13} />
@@ -175,7 +191,7 @@ export default function NodePalette() {
       </div>
 
       {/* Search */}
-      <div className="px-2.5 py-2 border-b border-purple-500/10">
+      <div className="px-2.5 py-2 border-b border-white/[0.05]">
         <div className="relative">
           <Search
             size={11}
@@ -186,7 +202,7 @@ export default function NodePalette() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search nodes…"
-            className="w-full bg-white/5 border border-purple-500/15 rounded-lg pl-7 pr-2.5 py-1.5 text-[11px] text-white/70 placeholder-white/20 focus:outline-none focus:border-purple-500/40 transition-colors"
+            className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg pl-7 pr-2.5 py-1.5 text-[11px] text-white/70 placeholder-white/20 focus:outline-none focus:border-violet-400/40 focus-visible:ring-1 focus-visible:ring-violet-300/25 transition-colors"
           />
         </div>
         <AnimatePresence>
@@ -215,17 +231,21 @@ export default function NodePalette() {
               {/* Category header */}
               <button
                 onClick={() => toggleCat(cat)}
-                className="w-full flex items-center gap-1.5 px-3 py-1 hover:bg-white/[0.02] transition-colors group"
+                className="w-full flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-white/[0.03] transition-colors group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/30"
               >
                 <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ background: CATEGORY_DOT[cat] }}
+                />
+                <span
                   className={clsx(
-                    'text-[9px] font-bold uppercase tracking-widest flex-1 text-left',
+                    'text-[9px] font-bold uppercase tracking-[0.18em] flex-1 text-left',
                     CATEGORY_HEADER_COLORS[cat]
                   )}
                 >
                   {CATEGORY_LABELS[cat]}
                 </span>
-                <span className="text-white/20 group-hover:text-white/40 transition-colors">
+                <span className="text-white/20 group-hover:text-white/45 transition-colors">
                   {isCatCollapsed ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
                 </span>
               </button>
@@ -258,19 +278,28 @@ export default function NodePalette() {
                             onMouseEnter={() => handleMouseEnter(node.type)}
                             onMouseLeave={handleMouseLeave}
                             className={clsx(
-                              'flex items-center gap-2 px-2 py-1.5 rounded-xl cursor-grab active:cursor-grabbing',
-                              'border border-transparent hover:border-purple-500/25',
-                              'hover:bg-purple-500/10 transition-all'
+                              'flex items-center gap-2.5 px-2 py-1.5 rounded-xl cursor-grab active:cursor-grabbing',
+                              'border border-transparent hover:border-white/10',
+                              'hover:bg-white/[0.045] transition-colors'
                             )}
                           >
                             {Icon && (
-                              <div className={clsx('shrink-0', CATEGORY_COLORS[node.category])}>
+                              <div
+                                className={clsx(
+                                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border',
+                                  CATEGORY_COLORS[node.category]
+                                )}
+                                style={{
+                                  background: CATEGORY_CHIP[node.category].bg,
+                                  borderColor: CATEGORY_CHIP[node.category].border,
+                                }}
+                              >
                                 <Icon size={13} />
                               </div>
                             )}
                             <div className="min-w-0 flex-1">
-                              <p className="text-[11px] font-medium text-white/80 truncate">{node.label}</p>
-                              <p className="text-[9px] text-white/30 truncate leading-tight">{node.description}</p>
+                              <p className="text-[11px] font-medium text-white/[0.82] truncate">{node.label}</p>
+                              <p className="text-[9px] text-white/[0.34] truncate leading-tight">{node.description}</p>
                             </div>
                           </div>
 
@@ -284,7 +313,7 @@ export default function NodePalette() {
                                 transition={{ duration: 0.13 }}
                                 className="absolute left-full top-0 ml-2 z-50 w-52 pointer-events-none"
                               >
-                                <div className="bg-[#1a1a35] border border-purple-500/30 rounded-xl p-3 shadow-xl shadow-black/60">
+                                <div className="bg-[#10101c] border border-white/10 rounded-2xl p-3 shadow-xl shadow-black/60">
                                   <div className="flex items-center gap-1.5 mb-1.5">
                                     {Icon && (
                                       <Icon size={11} className={CATEGORY_COLORS[node.category]} />
@@ -331,10 +360,13 @@ export default function NodePalette() {
         )}
 
         {importList.some((i) => i.current_version_id) && (
-          <div className="mt-2 border-t border-cyan-500/20 px-2.5 py-2">
-            <p className="text-[9px] font-bold uppercase tracking-widest text-cyan-400/70 mb-1.5">
-              Marketplace indicators
-            </p>
+          <div className="mt-2 border-t border-white/[0.06] px-2.5 py-2">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400/90" />
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-cyan-400/70">
+                Marketplace indicators
+              </p>
+            </div>
             <div className="space-y-0.5 max-h-40 overflow-y-auto">
               {importList
                 .filter((i) => i.current_version_id)
@@ -351,10 +383,18 @@ export default function NodePalette() {
                         displayLabel: ind.name,
                       })
                     }
-                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all text-left"
+                    className="w-full flex items-center gap-2.5 px-2 py-1.5 rounded-xl border border-transparent hover:border-cyan-400/25 hover:bg-cyan-500/[0.08] transition-colors text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-300/30"
                   >
-                    <Layers size={13} className="text-cyan-400 shrink-0" />
-                    <span className="text-[11px] text-white/80 truncate">{ind.name}</span>
+                    <span
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-cyan-300"
+                      style={{
+                        background: 'rgba(34,211,238,0.10)',
+                        borderColor: 'rgba(34,211,238,0.22)',
+                      }}
+                    >
+                      <Layers size={13} />
+                    </span>
+                    <span className="text-[11px] text-white/[0.82] truncate">{ind.name}</span>
                   </button>
                 ))}
             </div>

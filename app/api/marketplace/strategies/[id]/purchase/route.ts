@@ -6,7 +6,7 @@
  * Flow:
  *   1. Client sends { tx_hash } after broadcasting a payment tx to the treasury.
  *   2. Server fetches the strategy to confirm it is paid + get expected price.
- *   3. viem verifies the tx on 0G Chain:
+ *   3. viem verifies the tx on the app's default chain:
  *        – receipt.status must be 'success'
  *        – receipt.to must match NEXT_PUBLIC_TREASURY_WALLET (case-insensitive)
  *   4. Row inserted into strategy_purchases with verified_at = now().
@@ -21,7 +21,7 @@ import { createPublicClient, http, isAddressEqual, type Address } from 'viem'
 import { requireWallet } from '@/lib/marketplace/wallet-header'
 import { createSupabaseAdminClient } from '@/lib/supabase/server'
 import { isSupabaseSchemaUnavailableError } from '@/lib/marketplace/supabase-read-fallback'
-import { zeroGChain, ZEROG_RPC, ZEROG_CHAIN_ID } from '@/lib/chain-registry/chains/zerog'
+import { getChainConfig, getDefaultChainId } from '@/lib/chain-registry'
 
 const TREASURY_WALLET = process.env.NEXT_PUBLIC_TREASURY_WALLET as Address | undefined
 
@@ -85,10 +85,11 @@ export async function POST(
       return NextResponse.json({ access: true, alreadyRecorded: true })
     }
 
-    // Verify the transaction on-chain via viem.
+    // Verify the transaction on-chain via viem (on the app's default chain).
+    const chainCfg = getChainConfig(getDefaultChainId())
     const client = createPublicClient({
-      chain: zeroGChain,
-      transport: http(ZEROG_RPC),
+      chain: chainCfg.chain,
+      transport: http(chainCfg.chain.rpcUrls.default.http[0]),
     })
 
     let receipt: Awaited<ReturnType<typeof client.getTransactionReceipt>>
@@ -133,7 +134,7 @@ export async function POST(
       tx_hash: txHash,
       amount_paid: strategy.price_amount ?? null,
       token_paid: strategy.price_token ?? null,
-      chain_id: ZEROG_CHAIN_ID,
+      chain_id: chainCfg.chain.id,
       verified_at: new Date().toISOString(),
     })
 

@@ -5,9 +5,15 @@ import { useTerminalStore } from "@/store/terminal";
 import { useChartStore } from "@/store/chart";
 import { subscribeBinanceKlines } from "@/lib/terminal/data/binanceStream";
 import { fetchCoingeckoOhlc } from "@/lib/terminal/data/coingeckoOhlc";
+import { useRealtimeTerminalFeed } from "@/hooks/use-realtime-feed";
 
 export function useChartData() {
   const activeSymbol = useTerminalStore((s) => s.activeSymbol);
+
+  // Live pool reserves + trades for the active market, pushed from the
+  // realtime-service (block-time on Mantle). Feeds DepthTile / TradesTile via
+  // the chart store. Candles below still come from Binance/CoinGecko.
+  useRealtimeTerminalFeed(activeSymbol.symbol);
   const interval = useChartStore((s) => s.interval);
   const setCandles = useChartStore((s) => s.setCandles);
   const upsertCandle = useChartStore((s) => s.upsertCandle);

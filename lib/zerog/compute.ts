@@ -18,7 +18,7 @@
  * Endpoint: https://compute-api.0g.ai/v1
  */
 
-import { ZEROG_COMPUTE_ENDPOINT } from '@/lib/chain-registry/chains/zerog'
+import { ZEROG_COMPUTE_ENDPOINT } from './config'
 
 export type ZeroGModel =
   | 'qwen3-8b'
