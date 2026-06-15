@@ -16,6 +16,7 @@ export type AppNavChildItem = {
   name: string;
   url: string;
   icon: LucideIcon;
+  badge?: string;
 };
 
 export type AppNavItem = {
@@ -34,7 +35,7 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     icon: ArrowLeftRight,
     children: [
       { name: "Liquidity", url: "/liquidity", icon: Droplets },
-      { name: "Mint Tokens", url: "/mint", icon: Coins },
+      { name: "Mint Tokens", url: "/mint", icon: Coins, badge: "test" },
       { name: "Terminal", url: "/terminal", icon: FlaskConical },
     ],
   },
