@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 
-import { WalletProvider } from "@/components/providers/wallet-provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-
 import "./terminal.css";
 
 export const dynamic = "force-dynamic";
@@ -18,16 +15,5 @@ export default function TerminalLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="dark"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <WalletProvider>
-        <div className="terminal-page">{children}</div>
-      </WalletProvider>
-    </ThemeProvider>
-  );
+  return <div className="terminal-page">{children}</div>;
 }
