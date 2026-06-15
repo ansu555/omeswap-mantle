@@ -312,10 +312,10 @@ export default function TopBar({
         transition={{ duration: 0.4, ease: "easeOut" }}
         className={clsx(
           "flex flex-col border-b backdrop-blur-xl",
-          "bg-background/50",
+          "bg-[#08090f]/70",
           backtestMode
             ? "border-b-2 border-b-amber-500/70"
-            : "border-b border-border/60",
+            : "border-b border-white/[0.07]",
         )}
       >
         {/* Main toolbar row */}
@@ -323,14 +323,14 @@ export default function TopBar({
           {/* ── ZONE 1: Brand + Mode ── */}
           <div className="flex items-center">
             {/* Mode toggle */}
-            <div className="flex rounded-full border border-border/50 overflow-hidden">
+            <div className="flex rounded-full border border-white/[0.08] overflow-hidden">
               <button
                 onClick={() => setBacktestMode(false)}
                 className={clsx(
-                  "px-3 py-1.5 text-xs font-medium transition-colors",
+                  "px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-success/50",
                   !backtestMode
                     ? "bg-success/20 text-success"
-                    : "text-muted-foreground hover:text-foreground/60",
+                    : "text-white/45 hover:text-white/75",
                 )}
               >
                 Live
@@ -338,10 +338,10 @@ export default function TopBar({
               <button
                 onClick={() => setBacktestMode(true)}
                 className={clsx(
-                  "px-3 py-1.5 text-xs font-medium transition-colors",
+                  "px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-warning/50",
                   backtestMode
                     ? "bg-warning/20 text-warning"
-                    : "text-muted-foreground hover:text-foreground/60",
+                    : "text-white/45 hover:text-white/75",
                 )}
               >
                 Backtest
@@ -358,10 +358,10 @@ export default function TopBar({
               onClick={handleBacktest}
               disabled={nodes.length === 0}
               className={clsx(
-                "flex items-center gap-2 px-5 py-1.5 rounded-full text-sm font-semibold transition-all disabled:opacity-40",
+                "flex items-center gap-2 px-5 py-1.5 rounded-full text-sm font-semibold transition active:translate-y-px disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08090f]",
                 botRunning
-                  ? "bg-destructive hover:bg-destructive/90 text-foreground"
-                  : "bg-warning hover:bg-warning/90 text-foreground",
+                  ? "bg-destructive hover:bg-destructive/90 text-foreground shadow-lg shadow-destructive/30 focus-visible:ring-destructive/50"
+                  : "bg-warning hover:bg-warning/90 text-foreground shadow-lg shadow-warning/30 focus-visible:ring-warning/50",
               )}
             >
               {botRunning ? (
@@ -379,12 +379,12 @@ export default function TopBar({
               onClick={handleRun}
               disabled={nodes.length === 0}
               className={clsx(
-                "flex items-center gap-2 px-5 py-1.5 rounded-full text-xs font-semibold transition-all disabled:opacity-40",
+                "flex items-center gap-2 px-5 py-1.5 rounded-full text-xs font-semibold transition active:translate-y-px disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08090f]",
                 botRunning
-                  ? "bg-destructive hover:bg-destructive/90 text-foreground"
+                  ? "bg-destructive hover:bg-destructive/90 text-foreground shadow-lg shadow-destructive/30 focus-visible:ring-destructive/50"
                   : isScheduled
-                    ? "bg-warning hover:bg-warning/90 text-foreground"
-                    : "bg-primary hover:bg-primary/90 text-primary-foreground",
+                    ? "bg-warning hover:bg-warning/90 text-foreground shadow-lg shadow-warning/30 focus-visible:ring-warning/50"
+                    : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/40 focus-visible:ring-primary/50",
               )}
             >
               {botRunning ? (
@@ -412,10 +412,10 @@ export default function TopBar({
             <button
               onClick={() => setChartOpen(!chartOpen)}
               className={clsx(
-                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all",
+                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40",
                 chartOpen
                   ? "bg-primary/20 border-primary/40 text-primary"
-                  : "text-muted-foreground hover:text-foreground border-border/50 hover:border-primary/40 hover:bg-primary/10",
+                  : "text-white/55 hover:text-white/85 border-white/[0.07] hover:border-white/15 hover:bg-white/[0.05]",
               )}
             >
               <LineChart size={14} />
@@ -426,10 +426,10 @@ export default function TopBar({
             <button
               onClick={() => setShowLogs((v) => !v)}
               className={clsx(
-                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all",
+                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40",
                 showLogs
                   ? "bg-primary/20 border-primary/40 text-primary"
-                  : "text-muted-foreground hover:text-foreground border-border/50 hover:border-primary/40 hover:bg-primary/10",
+                  : "text-white/55 hover:text-white/85 border-white/[0.07] hover:border-white/15 hover:bg-white/[0.05]",
               )}
             >
               Logs
@@ -453,7 +453,7 @@ export default function TopBar({
             {/* Workflows */}
             <button
               onClick={() => setWorkflowsOpen(true)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-border/50 hover:border-primary/40 text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-white/[0.07] hover:border-white/15 text-white/55 hover:text-white/85 hover:bg-white/[0.05] transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
             >
               <FolderOpen size={14} />
               Workflows
@@ -462,7 +462,7 @@ export default function TopBar({
             <button
               type="button"
               onClick={() => setPublishOpen(true)}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-border/50 hover:border-emerald-500/40 text-muted-foreground hover:text-foreground hover:bg-emerald-500/10 transition-all"
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-white/[0.07] hover:border-emerald-400/40 text-white/55 hover:text-white/85 hover:bg-emerald-500/[0.08] transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400/40"
             >
               <Upload size={14} />
               Marketplace
@@ -472,10 +472,10 @@ export default function TopBar({
             <button
               onClick={() => setAgentOpen(!agentOpen)}
               className={clsx(
-                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all",
+                "flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40",
                 agentOpen
                   ? "bg-primary/20 border-primary/40 text-primary"
-                  : "text-muted-foreground hover:text-foreground border-border/50 hover:border-primary/40 hover:bg-primary/10",
+                  : "text-white/55 hover:text-white/85 border-white/[0.07] hover:border-white/15 hover:bg-white/[0.05]",
               )}
             >
               <Bot size={14} />

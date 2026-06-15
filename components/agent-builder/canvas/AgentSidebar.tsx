@@ -14,6 +14,12 @@ import {
   CircleHelp,
   Loader2,
   Zap,
+  Sparkles,
+  TrendingUp,
+  Repeat2,
+  Bell,
+  Activity,
+  ArrowUpRight,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -57,6 +63,40 @@ interface ApiMessage {
 
 const WELCOME_MESSAGE =
   "Hi! I'm your **Omega bot builder agent**.\n\nTell me what Mantle trading strategy you want and I'll build it on the canvas.\n\n*For example: \"Build a BTC momentum tracker that marks the chart when price rises\"*";
+
+// Starter prompts — one click builds the strategy on the canvas
+const QUICK_PROMPTS: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  desc: string;
+  prompt: string;
+}[] = [
+  {
+    icon: TrendingUp,
+    label: "Momentum tracker",
+    desc: "Mark the chart on BTC upmoves",
+    prompt:
+      "Build a BTC momentum tracker that marks the chart when price rises",
+  },
+  {
+    icon: Repeat2,
+    label: "DCA bot",
+    desc: "Buy WMNT every hour",
+    prompt: "Create a DCA bot that buys WMNT every hour",
+  },
+  {
+    icon: Bell,
+    label: "Price alert",
+    desc: "Notify on a 5% ETH drop",
+    prompt: "Alert me when ETH drops 5% within an hour",
+  },
+  {
+    icon: Activity,
+    label: "MA crossover",
+    desc: "Classic MA-cross signal",
+    prompt: "Make a moving-average crossover strategy for BTC",
+  },
+];
 
 // ─── Markdown renderer ────────────────────────────────────────────────────────
 
@@ -605,59 +645,67 @@ export default function AgentSidebar() {
     setLoading(false);
   }
 
+  const hasUserMessage = messages.some((m) => m.role === "user");
+
   return (
     <aside
       className="w-[340px] shrink-0 flex flex-col"
       style={{
-        background: "linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%)",
-        borderLeft: "1px solid rgba(82,39,255,0.2)",
+        background:
+          "linear-gradient(180deg, rgba(17,17,27,0.98) 0%, rgba(8,9,16,0.99) 100%)",
+        borderLeft: "1px solid rgba(255,255,255,0.07)",
       }}
     >
       {/* Header */}
       <div
-        className="flex items-center gap-2.5 px-4 py-3.5"
-        style={{ borderBottom: "1px solid rgba(82,39,255,0.2)" }}
+        className="flex items-center gap-3 px-4 py-3.5"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
       >
         <div
-          className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0"
-          style={{ background: "linear-gradient(135deg, #7c3aed, #2563eb)" }}
+          className="flex h-10 w-10 items-center justify-center rounded-2xl shrink-0"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(139,92,246,0.92), rgba(59,130,246,0.85))",
+            boxShadow: "0 4px 16px rgba(124,58,237,0.35)",
+          }}
         >
-          <Bot size={14} className="text-white" />
+          <Bot size={18} className="text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-xs font-semibold leading-none">
+          <p className="text-[13px] font-semibold text-white/[0.92] leading-none">
             AI Agent
           </p>
-          <p className="text-white/30 text-[10px] mt-0.5 leading-none">
+          <p className="mt-1 text-[10px] text-white/[0.34] leading-none">
             Omega Bot Builder
           </p>
         </div>
         {loading && (
           <div
-            className="flex items-center gap-1 px-2 py-1 rounded-full"
+            className="flex items-center gap-1.5 px-2 py-1 rounded-full"
             style={{
-              background: "rgba(124,58,237,0.15)",
-              border: "1px solid rgba(124,58,237,0.25)",
+              background: "rgba(139,92,246,0.14)",
+              border: "1px solid rgba(139,92,246,0.22)",
             }}
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-            <span className="text-[9px] text-purple-400 font-medium">
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-300 animate-pulse" />
+            <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-violet-200">
               thinking
             </span>
           </div>
         )}
         <button
           onClick={clearChat}
-          className="text-white/20 hover:text-white/50 transition-colors p-1 rounded"
+          className="rounded-lg p-1.5 text-white/25 hover:text-white/70 hover:bg-white/[0.05] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40"
           title="Clear chat"
         >
-          <Trash2 size={12} />
+          <Trash2 size={13} />
         </button>
         <button
           onClick={() => setAgentOpen(false)}
-          className="text-white/20 hover:text-white/50 transition-colors p-1 rounded"
+          className="rounded-lg p-1.5 text-white/25 hover:text-white/70 hover:bg-white/[0.05] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40"
+          title="Close"
         >
-          <X size={13} />
+          <X size={14} />
         </button>
       </div>
 
@@ -675,10 +723,11 @@ export default function AgentSidebar() {
             return (
               <div key={msg.id} className="flex justify-end">
                 <div
-                  className="max-w-[85%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-[11px] text-white leading-relaxed whitespace-pre-wrap"
+                  className="max-w-[85%] px-3.5 py-2.5 rounded-[18px] rounded-tr-sm text-[11px] leading-relaxed text-white/[0.92] whitespace-pre-wrap"
                   style={{
-                    background: "rgba(124,58,237,0.2)",
-                    border: "1px solid rgba(124,58,237,0.25)",
+                    background:
+                      "linear-gradient(135deg, rgba(139,92,246,0.24), rgba(59,130,246,0.18))",
+                    border: "1px solid rgba(139,92,246,0.20)",
                   }}
                 >
                   {msg.content}
@@ -696,11 +745,11 @@ export default function AgentSidebar() {
                 <div
                   className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
                   style={{
-                    background: "linear-gradient(135deg, #7c3aed55, #2563eb55)",
-                    border: "1px solid rgba(124,58,237,0.3)",
+                    background: "rgba(139,92,246,0.16)",
+                    border: "1px solid rgba(139,92,246,0.26)",
                   }}
                 >
-                  <Bot size={9} className="text-purple-300" />
+                  <Bot size={9} className="text-violet-200" />
                 </div>
                 <div className="flex-1 min-w-0">
                   {m.isThinking && m.streaming && (
@@ -811,21 +860,71 @@ export default function AgentSidebar() {
 
           return null;
         })}
+
+        {/* Starter prompts — shown until the first user message */}
+        {!hasUserMessage && (
+          <div className="pt-1">
+            <div className="mb-2 flex items-center justify-between px-0.5">
+              <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/30">
+                Try one
+              </p>
+              <span className="text-[10px] text-white/[0.28]">4 ideas</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {QUICK_PROMPTS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => sendMessage(item.prompt)}
+                    disabled={loading}
+                    className="group flex w-full min-w-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition hover:-translate-y-0.5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/50"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.07)",
+                    }}
+                  >
+                    <span
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg"
+                      style={{
+                        background: "rgba(139,92,246,0.12)",
+                        border: "1px solid rgba(139,92,246,0.16)",
+                      }}
+                    >
+                      <Icon className="h-3.5 w-3.5 text-violet-200" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[11px] font-medium text-white/[0.86]">
+                        {item.label}
+                      </span>
+                      <span className="block truncate text-[9.5px] text-white/[0.36]">
+                        {item.desc}
+                      </span>
+                    </span>
+                    <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-white/[0.22] transition-colors group-hover:text-white/[0.6]" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
       {/* Input */}
       <div
         className="px-3 pb-3 pt-2.5"
-        style={{ borderTop: "1px solid rgba(82,39,255,0.2)" }}
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
       >
         <div
-          className="flex gap-2 items-end rounded-2xl px-3 py-2"
+          className="flex items-end gap-2 rounded-[18px] px-3 py-2.5 transition-colors focus-within:border-violet-400/30"
           style={{
-            background: "rgba(82,39,255,0.08)",
-            border: "1px solid rgba(82,39,255,0.25)",
+            background: "rgba(11,12,20,0.9)",
+            border: "1px solid rgba(255,255,255,0.10)",
           }}
         >
+          <Sparkles className="mb-1.5 h-4 w-4 shrink-0 text-white/25" />
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -833,27 +932,27 @@ export default function AgentSidebar() {
             disabled={loading}
             placeholder="Describe your trading strategy…"
             rows={2}
-            className="flex-1 bg-transparent text-[11px] text-white placeholder-white/20 focus:outline-none resize-none leading-relaxed disabled:opacity-50"
+            className="flex-1 resize-none bg-transparent text-[11px] leading-relaxed text-white placeholder-white/25 focus:outline-none disabled:opacity-50"
           />
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading}
-            className="shrink-0 w-7 h-7 rounded-xl flex items-center justify-center disabled:opacity-20 transition-all hover:scale-105"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition hover:scale-105 disabled:opacity-25 disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/40"
             style={{
               background:
                 input.trim() && !loading
-                  ? "linear-gradient(135deg, #7c3aed, #2563eb)"
-                  : "rgba(255,255,255,0.08)",
+                  ? "linear-gradient(135deg, rgba(139,92,246,0.95), rgba(59,130,246,0.95))"
+                  : "rgba(255,255,255,0.06)",
             }}
           >
             {loading ? (
-              <Loader2 size={12} className="text-white/50 animate-spin" />
+              <Loader2 size={13} className="animate-spin text-white/60" />
             ) : (
-              <Send size={11} className="text-white" />
+              <Send size={12} className="text-white" />
             )}
           </button>
         </div>
-        <p className="text-[9px] text-white/15 mt-1.5 text-center">
+        <p className="mt-2 text-center text-[9px] text-white/25">
           ↵ send · shift+↵ newline
         </p>
       </div>
@@ -898,7 +997,7 @@ function AskUserInput({ onAnswer }: { onAnswer: (answer: string) => void }) {
           }
         }}
         placeholder="Type your answer…"
-        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[11px] text-white placeholder-white/25 focus:outline-none focus:border-purple-500/50"
+        className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-3 py-1.5 text-[11px] text-white placeholder-white/25 focus:outline-none focus:border-violet-400/50 focus-visible:ring-1 focus-visible:ring-violet-300/25"
         autoFocus
       />
       <button
@@ -908,10 +1007,10 @@ function AskUserInput({ onAnswer }: { onAnswer: (answer: string) => void }) {
             setVal("");
           }
         }}
-        className="px-3 py-1.5 rounded-xl text-[10px] text-purple-300 font-medium transition-colors hover:text-white"
+        className="px-3 py-1.5 rounded-xl text-[10px] text-violet-200 font-medium transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/40"
         style={{
-          background: "rgba(124,58,237,0.2)",
-          border: "1px solid rgba(124,58,237,0.3)",
+          background: "rgba(139,92,246,0.2)",
+          border: "1px solid rgba(139,92,246,0.3)",
         }}
       >
         Send
