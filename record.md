@@ -82,3 +82,13 @@ changes: swept frontend UI text/branding from 0G to Mantle (page copy, labels, p
 user: ansu555
 branch: ai
 changes: removed floating "Ask AI" chat toggle button; consolidated WalletProvider/ThemeProvider into root layout so wallet stays connected across all route groups
+
+[2026-06-15 10:34]
+user: ansu555
+branch: ai
+changes: polished agent-builder UI to match Research page — redesigned empty state (hero + Start Fast preset cards), added canvas depth blobs, refined NodePalette chips/headers, made Run Bot dominant + receded secondary toolbar actions
+
+[2026-06-15 11:01]
+user: ansu555
+branch: ai
+changes: applied Research radial-gradient background to agent-builder page; redesigned AgentSidebar chat (premium header/input, violet palette) + added clickable starter-prompt chips; fixed prompt-chip overflow (flex-col + concise descriptions)
