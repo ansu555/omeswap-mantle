@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const interval = allowedIntervals.includes(intervalParam as AllowedInterval)
     ? (intervalParam as AllowedInterval)
     : "5m";
-  const candles = await getDexCandles(marketId, interval);
+  const { candles, isFallback } = await getDexCandles(marketId, interval);
 
-  return NextResponse.json({ candles });
+  return NextResponse.json({ candles, isFallback });
 }

@@ -84,8 +84,8 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       const market = url.searchParams.get("market");
       const intervalParam = url.searchParams.get("interval");
       const interval = allowedIntervals.includes(intervalParam as AllowedInterval) ? (intervalParam as AllowedInterval) : "5m";
-      const candles = await getCachedCandles(market, interval);
-      return send(res, 200, { candles });
+      const { candles, isFallback } = await getCachedCandles(market, interval);
+      return send(res, 200, { candles, isFallback });
     }
 
     case "/trades": {

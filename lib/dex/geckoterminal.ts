@@ -167,21 +167,26 @@ export async function getDexCandles(
   id: string | null | undefined,
   interval: DexInterval,
   limit = 240,
-): Promise<DexCandle[]> {
+): Promise<{ candles: DexCandle[]; isFallback: boolean }> {
   const config = getDexMarketConfig(id);
 
-  const cached = await fetchFromRealtimeService<{ candles: DexCandle[] }>(
+  const cached = await fetchFromRealtimeService<{ candles: DexCandle[]; isFallback: boolean }>(
     `/candles?market=${encodeURIComponent(config.id)}&interval=${interval}`,
   );
-  if (cached?.candles?.length) return cached.candles;
+  if (cached?.candles) {
+    return {
+      candles: cached.candles,
+      isFallback: !!cached.isFallback,
+    };
+  }
 
   if (config.chartSymbol) {
     const candles = await getBinanceCandles(config, interval, limit);
-    if (candles.length) return candles;
+    if (candles.length) return { candles, isFallback: false };
   }
 
   if (config.kind === "perp") {
-    return fallbackCandles(config, interval, limit);
+    return { candles: fallbackCandles(config, interval, limit), isFallback: true };
   }
 
   const { timeframe, aggregate } = intervalToGecko(interval);
@@ -209,9 +214,11 @@ export async function getDexCandles(
       .filter((candle) => candle.time > 0 && candle.close > 0);
     const deduped = dedupeCandles(candles);
 
-    return deduped.length ? deduped : fallbackCandles(config, interval, limit);
+    return deduped.length
+      ? { candles: deduped, isFallback: false }
+      : { candles: fallbackCandles(config, interval, limit), isFallback: true };
   } catch {
-    return fallbackCandles(config, interval, limit);
+    return { candles: fallbackCandles(config, interval, limit), isFallback: true };
   }
 }
 

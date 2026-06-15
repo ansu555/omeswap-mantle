@@ -56,6 +56,7 @@ type MarketResponse = {
 
 type ChartResponse = {
   candles: DexCandle[];
+  isFallback?: boolean;
 };
 
 const HISTORY_LIMIT = 240;
@@ -397,7 +398,11 @@ export function Chart({ marketId }: { marketId: string }) {
           fundingRate: 0,
           nextFundingTime: 0,
         });
-        setStatus("live");
+        if (chart.isFallback || candles.length === 0) {
+          setStatus("loading");
+        } else {
+          setStatus("live");
+        }
 
         // Seed a fresh aggregator from the reloaded history and restart live ticker
         aggrRef.current = new CandleAggregator(interval);
@@ -597,6 +602,13 @@ export function Chart({ marketId }: { marketId: string }) {
           </div>
         </div>
 
+        {status === "loading" && (
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-md flex flex-col items-center justify-center gap-3 z-10">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <span className="text-sm font-medium text-foreground">Loading chart data...</span>
+            <span className="text-xs text-muted-foreground">Fetching live token details from Mantle</span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3 px-3 h-10 border-t border-border text-xs text-muted-foreground">

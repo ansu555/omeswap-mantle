@@ -55,7 +55,7 @@ const CANDLE_TTL_MS = 10_000;
 const TRADE_TTL_MS = 10_000;
 
 const tickerCache = new Map<string, DexMarket>();
-const candleCache = new Map<string, { data: DexCandle[]; fetchedAt: number }>();
+const candleCache = new Map<string, { data: { candles: DexCandle[]; isFallback: boolean }; fetchedAt: number }>();
 const tradeCache = new Map<string, { data: DexTrade[]; fetchedAt: number }>();
 
 // ── Public cache reads ───────────────────────────────────────────────────────
@@ -69,7 +69,11 @@ export function getCachedMarket(id: string | null | undefined): DexMarket {
   return tickerCache.get(config.id) ?? fallbackMarket(config);
 }
 
-export async function getCachedCandles(id: string | null | undefined, interval: DexInterval, limit = 240): Promise<DexCandle[]> {
+export async function getCachedCandles(
+  id: string | null | undefined,
+  interval: DexInterval,
+  limit = 240,
+): Promise<{ candles: DexCandle[]; isFallback: boolean }> {
   const config = getDexMarketConfig(id);
   const key = `${config.id}:${interval}:${limit}`;
   const cached = candleCache.get(key);
@@ -214,13 +218,17 @@ async function refreshBinanceMarket(config: MarketConfig): Promise<void> {
 
 // ── On-demand candles/trades ────────────────────────────────────────────────
 
-async function fetchCandles(config: MarketConfig, interval: DexInterval, limit: number): Promise<DexCandle[]> {
+async function fetchCandles(
+  config: MarketConfig,
+  interval: DexInterval,
+  limit: number,
+): Promise<{ candles: DexCandle[]; isFallback: boolean }> {
   if (config.chartSymbol) {
     const candles = await fetchBinanceCandles(config, interval, limit);
-    if (candles.length) return candles;
+    if (candles.length) return { candles, isFallback: false };
   }
 
-  if (config.kind === "perp") return fallbackCandles(config, interval, limit);
+  if (config.kind === "perp") return { candles: fallbackCandles(config, interval, limit), isFallback: true };
 
   const { timeframe, aggregate } = intervalToGecko(interval);
   const token = config.geckoBaseToken ?? "base";
@@ -232,16 +240,20 @@ async function fetchCandles(config: MarketConfig, interval: DexInterval, limit: 
     );
     if (!res.ok) throw new Error(`GeckoTerminal OHLCV failed: ${res.status}`);
 
-    const json = (await res.json()) as { data?: { attributes?: { ohlcv_list?: Array<[number, number, number, number, number, number]> } } };
+    const json = (await res.json()) as {
+      data?: { attributes?: { ohlcv_list?: Array<[number, number, number, number, number, number]> } };
+    };
     const rows = json.data?.attributes?.ohlcv_list ?? [];
     const candles = rows
       .map(([time, open, high, low, close, volume]) => ({ time, open, high, low, close, volume }))
       .filter((c) => c.time > 0 && c.close > 0);
     const deduped = dedupeCandles(candles);
 
-    return deduped.length ? deduped : fallbackCandles(config, interval, limit);
+    return deduped.length
+      ? { candles: deduped, isFallback: false }
+      : { candles: fallbackCandles(config, interval, limit), isFallback: true };
   } catch {
-    return fallbackCandles(config, interval, limit);
+    return { candles: fallbackCandles(config, interval, limit), isFallback: true };
   }
 }
 
