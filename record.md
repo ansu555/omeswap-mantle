@@ -82,3 +82,33 @@ changes: swept frontend UI text/branding from 0G to Mantle (page copy, labels, p
 user: ansu555
 branch: ai
 changes: removed floating "Ask AI" chat toggle button; consolidated WalletProvider/ThemeProvider into root layout so wallet stays connected across all route groups
+
+[2026-06-16 10:47]
+user: ansu555
+branch: ai
+changes: P0 deep-research intake — replaced regex ticker gate with lib/research/{intake,stub,types}.ts (LLM understanding + regex fallback); free-form prompts now route single-asset deep dives to ATS, others to a graceful stub; build green
+
+[2026-06-16 11:05]
+user: ansu555
+branch: ai
+changes: P1 deep-research tooling — added callLLMTools (tool-calling) to lib/ats/llm; lib/research/tools/* registry (price_snapshot, ohlcv, technical_indicators, crypto_news, asset_decision=ATS) normalized to Evidence; generic subagent-runtime ReAct loop → FindingsReport; new subagent/tool/evidence RunEvent types; tsc+lint green
+
+[2026-06-16 12:40]
+user: ansu555
+branch: ai
+changes: P2 deep-research brain — lib/research/lead.ts (plan→parallel subagents→eval gate→synthesis, frontier-model w/ graceful fallback) + 6 specialist subagents in lib/research/subagents/*; new plan.created/round.evaluated/synthesis.draft RunEvents; route now sends non-single-asset queries to runDeepResearch (removed stub.ts); build+tsc+lint green
+
+[2026-06-16 14:05]
+user: ansu555
+branch: ai
+changes: P3 hybrid retrieval — new tools web_search/read_url (provider-agnostic + injection sanitize), defillama (TVL/yields), onchain_reader+dex_liquidity (viem/FusionX quoter), token_audit (Kryll X-Ray), correlation (reuses graph-agent); lib/research/retrieval.ts RetrievalOrchestrator (dedupe/rank + LLM cross-verify w/ heuristic fallback) wired into lead synthesis; registered all tools; tsc+lint+build green
+
+[2026-06-16 15:53]
+user: ansu555
+branch: ai
+changes: P4 deep-research document — lib/research/citation.ts (claim→evidence mapping, LLM+heuristic) + report.ts (ResearchReport: recommendation/allocation/methodology) wired into lead (citation.attached/report.done events); P5 durability — run-manager.ts (detached background run + seq'd buffer/subscribe) + run-store.ts (Supabase research_runs/research_events) + route GET reconnect/replay + client resume-on-refresh; migration 20260616_research_runs.sql; build+lint green
+
+[2026-06-16 21:00]
+user: ansu555
+branch: ai
+changes: P6 deep-research — lib/research/attestation.ts (0G sealed ZK via computeInference sealed:true, sha256 fallback); lead.ts wired attestReport → proof_ref; store/research.ts deepRun slice (subagent/tool/evidence/plan/citation events, DeepPhase stepper, reportOpen); DeepResearchGraph.tsx + DeepNode.tsx dynamic React Flow graph; ResearchReportDrawer.tsx full cited report UI; ResearchChat.tsx wired drawer + Report button + empty-state copy; build green

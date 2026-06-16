@@ -175,6 +175,17 @@ export interface DecisionReceipt {
 /** Event types emitted by the orchestrator via SSE */
 export type RunEventType =
   | 'run.start'
+  | 'intake.parsed'     // Deep Research: free-form query understood (lib/research/intake)
+  | 'clarify.needed'    // Deep Research: intake wants clarification before proceeding
+  | 'plan.created'      // Deep Research: lead researcher published its plan (lib/research/lead)
+  | 'subagent.spawned'  // Deep Research: a specialist subagent started (lib/research/subagent-runtime)
+  | 'subagent.progress' // Deep Research: subagent reasoning/step update
+  | 'tool.called'       // Deep Research: a research tool was invoked
+  | 'evidence.found'    // Deep Research: a tool produced normalised evidence
+  | 'round.evaluated'   // Deep Research: evaluation gate verdict after a round (lib/research/lead)
+  | 'synthesis.draft'   // Deep Research: lead began composing the final document
+  | 'citation.attached' // Deep Research: citation pass mapped claims → evidence (lib/research/citation)
+  | 'report.done'       // Deep Research: full ResearchReport composed (payload.report)
   | 'agent.thinking'
   | 'agent.done'
   | 'agent.vetoed'
@@ -203,6 +214,13 @@ export interface RunEvent {
   payload?: Record<string, unknown>
   /** Attached when type === 'run.done' */
   receipt?: DecisionReceipt
+  /**
+   * Monotonic per-run sequence number, assigned by the Deep Research run
+   * manager (lib/research/run-manager) for durable, replayable streaming.
+   * Absent on legacy ATS events that are not persisted. The client tracks the
+   * highest seq seen so a reconnect can resume from `?afterSeq=`.
+   */
+  seq?: number
 }
 
 // ── OHLCV Candle ─────────────────────────────────────────────────────────────

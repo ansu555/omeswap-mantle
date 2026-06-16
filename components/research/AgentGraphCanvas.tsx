@@ -12,6 +12,7 @@ import { Activity, CheckCircle2, Radar, ShieldAlert } from "lucide-react";
 import "@xyflow/react/dist/style.css";
 import { useResearchStore } from "@/store/research";
 import { AgentNode } from "@/components/research/nodes/AgentNode";
+import DeepResearchGraph from "@/components/research/DeepResearchGraph";
 
 // ── Node type registry ────────────────────────────────────────────────────────
 
@@ -28,7 +29,9 @@ export default function AgentGraphCanvas() {
   const isRunning = useResearchStore((s) => s.isRunning);
   const currentRun = useResearchStore((s) => s.currentRun);
   const currentTicker = useResearchStore((s) => s.currentTicker);
+  const deepActive = useResearchStore((s) => s.deepRun.active);
 
+  // Always call hooks before any conditional return (Rules of Hooks).
   const graphStatus = useMemo(() => {
     const active = nodes.find((node) => node.data.state === "thinking");
     const complete = nodes.filter((node) => node.data.state === "done").length;
@@ -40,6 +43,9 @@ export default function AgentGraphCanvas() {
       vetoed,
     };
   }, [isRunning, nodes]);
+
+  // Deep Research runs render a dynamic graph; fixed ATS graph is for single-asset runs.
+  if (deepActive) return <DeepResearchGraph />;
 
   return (
     <div className="relative h-full w-full overflow-hidden">

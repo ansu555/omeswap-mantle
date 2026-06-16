@@ -26,6 +26,7 @@ import clsx from "clsx";
 import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import DecisionReceiptDrawer from "@/components/research/DecisionReceiptDrawer";
+import ResearchReportDrawer from "@/components/research/ResearchReportDrawer";
 import { useResearchStore, type ChatMessage, type PendingApproval } from "@/store/research";
 import type { RunEvent } from "@/lib/ats/types";
 
@@ -51,6 +52,44 @@ async function* parseSSE(body: ReadableStream<Uint8Array>) {
         // Ignore malformed stream payloads.
       }
     }
+  }
+}
+
+// ── Durable deep-run reconnect (P5) ───────────────────────────────────────────
+// Deep Research runs continue in the background even if the tab closes. We track
+// the active run's id + last sequence seen in localStorage so a reload can
+// reconnect via `GET /api/research/run?runId=&afterSeq=` and replay/resume.
+
+const ACTIVE_RUN_KEY = "omeswap_research_active_run";
+
+interface ActiveRun {
+  runId: string;
+  seq: number;
+  wallet: string;
+}
+
+function readActiveRun(): ActiveRun | null {
+  try {
+    const raw = localStorage.getItem(ACTIVE_RUN_KEY);
+    return raw ? (JSON.parse(raw) as ActiveRun) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeActiveRun(active: ActiveRun): void {
+  try {
+    localStorage.setItem(ACTIVE_RUN_KEY, JSON.stringify(active));
+  } catch {
+    // ignore quota / unavailable storage
+  }
+}
+
+function clearActiveRun(): void {
+  try {
+    localStorage.removeItem(ACTIVE_RUN_KEY);
+  } catch {
+    // ignore
   }
 }
 
@@ -473,21 +512,107 @@ export default function ResearchChat() {
   const mode = useResearchStore((state) => state.mode);
   const currentTicker = useResearchStore((state) => state.currentTicker);
   const currentReceipt = useResearchStore((state) => state.currentReceipt);
+  const currentReport = useResearchStore((state) => state.currentReport);
   const pendingApproval = useResearchStore((state) => state.pendingApproval);
   const addUserMessage = useResearchStore((state) => state.addUserMessage);
   const startAssistantDraft = useResearchStore((state) => state.startAssistantDraft);
   const applyEvent = useResearchStore((state) => state.applyEvent);
   const setReceiptOpen = useResearchStore((state) => state.setReceiptOpen);
+  const setReportOpen = useResearchStore((state) => state.setReportOpen);
   const clearPendingApproval = useResearchStore((state) => state.clearPendingApproval);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const lastQueryRef = useRef<string>("");
+  const activeRunRef = useRef<{ runId: string; seq: number } | null>(null);
+  const didResumeRef = useRef(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, pendingApproval]);
+
+  // Apply an SSE event stream, tracking durable deep runs for reconnect (P5).
+  const consumeStream = useCallback(
+    async (body: ReadableStream<Uint8Array>) => {
+      for await (const evt of parseSSE(body)) {
+        applyEvent(evt);
+
+        if (evt.type === "run.start" && evt.payload?.deep === true) {
+          const seq = typeof evt.seq === "number" ? evt.seq : 0;
+          activeRunRef.current = { runId: evt.run_id, seq };
+          writeActiveRun({ runId: evt.run_id, seq, wallet: address ?? "" });
+        } else if (activeRunRef.current && typeof evt.seq === "number") {
+          activeRunRef.current = { runId: activeRunRef.current.runId, seq: evt.seq };
+          writeActiveRun({
+            runId: activeRunRef.current.runId,
+            seq: evt.seq,
+            wallet: address ?? "",
+          });
+        }
+
+        if (evt.type === "run.done" || evt.type === "run.error") {
+          activeRunRef.current = null;
+          clearActiveRun();
+          break;
+        }
+      }
+    },
+    [applyEvent, address],
+  );
+
+  // Reconnect to an in-progress deep run after a reload / tab switch.
+  const resumeRun = useCallback(
+    async (runId: string, fromSeq: number) => {
+      if (!address) return;
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      activeRunRef.current = { runId, seq: fromSeq };
+      startAssistantDraft("Reconnecting to your in-progress research run…");
+
+      try {
+        const res = await fetch(
+          `/api/research/run?runId=${encodeURIComponent(runId)}&afterSeq=${fromSeq}`,
+          {
+            signal: abortRef.current.signal,
+            headers: { "x-wallet-address": address },
+          },
+        );
+
+        if (!res.ok || !res.body) {
+          clearActiveRun();
+          activeRunRef.current = null;
+          applyEvent({
+            type: "run.error",
+            run_id: runId,
+            ts: new Date().toISOString(),
+            agent: "orchestrator",
+            message: "Could not reconnect to the previous research run.",
+          });
+          return;
+        }
+
+        await consumeStream(res.body);
+      } catch (error) {
+        if ((error as Error).name === "AbortError") return;
+        // Leave the active marker so a later mount can retry the reconnect.
+      }
+    },
+    [address, applyEvent, consumeStream, startAssistantDraft],
+  );
+
+  // On load, resume a durable deep run that belongs to this wallet (once).
+  useEffect(() => {
+    if (!address || didResumeRef.current || isRunning) return;
+    const active = readActiveRun();
+    if (!active || !active.runId) return;
+    if (active.wallet?.toLowerCase() !== address.toLowerCase()) {
+      clearActiveRun();
+      return;
+    }
+    didResumeRef.current = true;
+    resumeRun(active.runId, active.seq ?? 0);
+  }, [address, isRunning, resumeRun]);
 
   const sendQuery = useCallback(
     async (query: string, executionApproved = false) => {
@@ -555,10 +680,7 @@ export default function ResearchChat() {
           return;
         }
 
-        for await (const evt of parseSSE(res.body)) {
-          applyEvent(evt);
-          if (evt.type === "run.done" || evt.type === "run.error") break;
-        }
+        await consumeStream(res.body);
       } catch (error) {
         if ((error as Error).name === "AbortError") return;
         applyEvent({
@@ -570,7 +692,7 @@ export default function ResearchChat() {
         });
       }
     },
-    [address, addUserMessage, applyEvent, isRunning, mode, startAssistantDraft],
+    [address, addUserMessage, applyEvent, consumeStream, isRunning, mode, startAssistantDraft],
   );
 
   const handleApprove = useCallback(() => {
@@ -662,6 +784,20 @@ export default function ResearchChat() {
               Brief
             </button>
           )}
+          {currentReport && !isRunning && (
+            <button
+              type="button"
+              onClick={() => setReportOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-[10px] font-medium text-violet-100 transition-colors hover:text-white"
+              style={{
+                background: "rgba(139,92,246,0.15)",
+                border: "1px solid rgba(139,92,246,0.22)",
+              }}
+            >
+              <FileText className="h-3.5 w-3.5" />
+              Report
+            </button>
+          )}
           {isRunning && (
             <button
               type="button"
@@ -706,12 +842,13 @@ export default function ResearchChat() {
               </div>
 
               <h2 className="mt-5 text-[26px] font-semibold leading-tight text-white/[0.94]">
-                Research a token before you size the trade.
+                Deep research before you size the trade.
               </h2>
               <p className="mt-3 text-[13px] leading-relaxed text-white/[0.48]">
-                Ask for one ticker. The ATS agents gather market data, stress
-                the setup, size risk, and return a brief you can review before
-                acting.
+                Ask about any token, basket, or market theme. Multi-agent deep
+                research decomposes your query, gathers cross-verified evidence,
+                and returns a cited report with allocation guidance you can act
+                on — attested on 0G.
               </p>
             </div>
 
@@ -738,9 +875,9 @@ export default function ResearchChat() {
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                ["1 token", "No basket prompts"],
+                ["Multi-asset", "Baskets & themes ok"],
                 ["Risk first", "Max loss included"],
-                ["Evidence", "Agent trail saved"],
+                ["0G attested", "Proof on every report"],
               ].map(([title, body]) => (
                 <div
                   key={title}
@@ -812,7 +949,7 @@ export default function ResearchChat() {
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={handleKeyDown}
               disabled={isRunning || !address}
-              placeholder="Example: Is WMNT worth entering this week? Include risks and size."
+              placeholder="Ask anything — e.g. Is WMNT worth entering this week? or I have 50 USDC, where should I invest?"
               rows={3}
               className="min-h-[104px] w-full resize-none bg-transparent px-11 py-4 pr-12 text-[13px] leading-relaxed text-white placeholder:text-white/[0.28] focus:outline-none disabled:opacity-45"
             />
@@ -842,7 +979,7 @@ export default function ResearchChat() {
             className="flex items-center justify-between px-4 py-3 text-[10px] text-white/[0.34]"
             style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
           >
-            <span>Single-token prompts only.</span>
+            <span>Ask anything · single-token prompts get a full agent brief.</span>
             <span>Enter to send · Shift+Enter newline</span>
           </div>
         </form>
@@ -853,6 +990,7 @@ export default function ResearchChat() {
       </div>
 
       <DecisionReceiptDrawer />
+      <ResearchReportDrawer />
     </aside>
   );
 }

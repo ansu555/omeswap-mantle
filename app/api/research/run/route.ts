@@ -1,24 +1,21 @@
 /**
  * /api/research/run
  *
- * POST — Starts an ATS research run and streams RunEvents as Server-Sent Events.
+ * POST — Starts a research run and streams RunEvents as Server-Sent Events.
  *
- * Request body (JSON):
- *   {
- *     query             : string  — User's natural-language query (required)
- *     ticker?           : string  — Asset ticker; if omitted, query must resolve
- *                                   to exactly one primary token
- *     mode?             : Mode    — Trading mode override; falls back to user_settings
- *     chainId?          : number  — Chain override (default: Mantle, 5000/5003)
- *     executionApproved?: boolean — Assisted-mode: user has approved execution
- *   }
+ *   • Explicit ticker / single-asset deep dive  → the ATS pipeline (fast path),
+ *     run inline and streamed for the life of the request.
+ *   • Any other free-form query                 → the Deep Research brain, run as
+ *     a DURABLE BACKGROUND JOB via the run manager (P5). The job survives a
+ *     client disconnect; this request just subscribes and streams its events. A
+ *     client can later reconnect with `GET ?runId=&afterSeq=` to replay/resume.
  *
- * Response: text/event-stream
- *   Each event is a JSON-serialised RunEvent (lib/ats/types.ts) on a `data:` line.
- *   Stream closes after `run.done` or `run.error`.
+ * GET — Reconnect to an in-flight or recent deep run and replay its event stream
+ *   from a sequence cursor (`?runId=<id>&afterSeq=<n>`). Serves live events when
+ *   the run is held in this process, else replays from the persisted event log.
  *
- * Post-run: receipt blob is uploaded to 0G Storage (best-effort);
- *   storage_root_hash is back-filled in ats_receipts if upload succeeds.
+ * Response: text/event-stream — each event is a JSON-serialised RunEvent
+ * (lib/ats/types.ts) on a `data:` line. Deep events carry a monotonic `seq`.
  *
  * Auth: x-wallet-address header (requireWallet helper).
  */
@@ -30,6 +27,10 @@ import { requireWallet } from '@/lib/marketplace/wallet-header'
 import { createSupabaseAdminClient } from '@/lib/supabase/server'
 import { getOrCreateAgentWallet } from '@/lib/agent-wallet/manager'
 import { runOrchestrator } from '@/lib/ats/orchestrator'
+import { runIntake, canonicalizeTicker } from '@/lib/research/intake'
+import * as runManager from '@/lib/research/run-manager'
+import * as runStore from '@/lib/research/run-store'
+import type { ResearchRequest } from '@/lib/research/types'
 import { saveAgentMemory } from '@/lib/zerog'
 import { getChainConfig, DEFAULT_CHAIN_ID } from '@/lib/chain-registry'
 import type { RunEvent, Mode } from '@/lib/ats/types'
@@ -42,97 +43,36 @@ export const dynamic = 'force-dynamic'
 const VALID_MODES: Mode[] = ['autonomous', 'assisted', 'solo']
 const VALID_TRANSPORTS: AxlTransport[] = ['local', 'axl', 'auto']
 
-/**
- * Known token aliases used to resolve a single primary ticker from a query when
- * the caller doesn't pass one explicitly.
- */
-const TOKEN_ALIASES: Array<{ canonical: string; terms: string[] }> = [
-  { canonical: 'WMNT', terms: ['WMNT', 'MNT', 'MANTLE'] },
-  { canonical: 'BTC', terms: ['BTC', 'BITCOIN'] },
-  { canonical: 'ETH', terms: ['ETH', 'ETHEREUM'] },
-  { canonical: 'SOL', terms: ['SOL', 'SOLANA'] },
-  { canonical: 'BNB', terms: ['BNB', 'BINANCE'] },
-  { canonical: 'XRP', terms: ['XRP', 'RIPPLE'] },
-  { canonical: 'ADA', terms: ['ADA', 'CARDANO'] },
-  { canonical: 'AVAX', terms: ['AVAX', 'AVALANCHE'] },
-  { canonical: 'DOGE', terms: ['DOGE', 'DOGECOIN'] },
-  { canonical: 'DOT', terms: ['DOT', 'POLKADOT'] },
-  { canonical: 'MATIC', terms: ['MATIC', 'POLYGON'] },
-  { canonical: 'LINK', terms: ['LINK', 'CHAINLINK'] },
-  { canonical: 'UNI', terms: ['UNI', 'UNISWAP'] },
-  { canonical: 'ATOM', terms: ['ATOM', 'COSMOS'] },
-  { canonical: 'LTC', terms: ['LTC', 'LITECOIN'] },
-  { canonical: 'BCH', terms: ['BCH', 'BITCOIN CASH'] },
-  { canonical: 'NEAR', terms: ['NEAR'] },
-  { canonical: 'APT', terms: ['APT', 'APTOS'] },
-  { canonical: 'ARB', terms: ['ARB', 'ARBITRUM'] },
-  { canonical: 'OP', terms: ['OP', 'OPTIMISM'] },
-  { canonical: 'INJ', terms: ['INJ', 'INJECTIVE'] },
-  { canonical: 'SUI', terms: ['SUI'] },
-  { canonical: 'SEI', terms: ['SEI'] },
-  { canonical: 'TIA', terms: ['TIA', 'CELESTIA'] },
-  { canonical: 'RNDR', terms: ['RNDR', 'RENDER'] },
-  { canonical: 'PEPE', terms: ['PEPE'] },
-  { canonical: 'WIF', terms: ['WIF'] },
-  { canonical: 'BONK', terms: ['BONK'] },
-  { canonical: 'JUP', terms: ['JUP', 'JUPITER'] },
-  { canonical: 'PYTH', terms: ['PYTH'] },
-  { canonical: 'SHIB', terms: ['SHIB', 'SHIBA'] },
-  { canonical: 'TRX', terms: ['TRX', 'TRON'] },
-  { canonical: 'TON', terms: ['TON', 'TONCOIN'] },
-  { canonical: 'FTM', terms: ['FTM', 'FANTOM'] },
-  { canonical: 'CRV', terms: ['CRV', 'CURVE'] },
-  { canonical: 'AAVE', terms: ['AAVE'] },
-]
+/** Reconnect guardrails (P5) — bound how long a tailing reconnect stays open. */
+const MAX_RECONNECT_MS = 12 * 60_000
+const POLL_INTERVAL_MS = 1500
+
+const SSE_HEADERS = {
+  'Content-Type': 'text/event-stream',
+  'Cache-Control': 'no-cache, no-transform',
+  Connection: 'keep-alive',
+  'X-Accel-Buffering': 'no', // Disable Nginx proxy buffering
+} as const
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function extractTickers(query: string): string[] {
-  const upper = query.toUpperCase()
-  const matches = new Set<string>()
-
-  for (const { canonical, terms } of TOKEN_ALIASES) {
-    for (const term of terms) {
-      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const re = new RegExp(`(?<![A-Z0-9])${escaped}(?![A-Z0-9])`)
-      if (re.test(upper)) {
-        matches.add(canonical)
-        break
-      }
-    }
-  }
-
-  return Array.from(matches)
-}
-
-function resolveRequestedTicker(
-  query: string,
-  explicitTicker?: string,
-): { ok: true; ticker: string } | { ok: false; message: string } {
-  if (explicitTicker?.trim()) {
-    return { ok: true, ticker: explicitTicker.trim().toUpperCase() }
-  }
-
-  const matches = extractTickers(query)
-  if (matches.length === 1) {
-    return { ok: true, ticker: matches[0] }
-  }
-
-  if (matches.length === 0) {
-    return {
-      ok: false,
-      message: 'Your research prompt must mention exactly one token, for example BTC, ETH, SOL, or WMNT.',
-    }
-  }
-
-  return {
-    ok: false,
-    message: `Your prompt mentions multiple tokens (${matches.join(', ')}). Ask about exactly one primary token per run.`,
-  }
-}
-
 function makeRunId(): string {
   return `run_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+}
+
+function isTerminal(evt: RunEvent): boolean {
+  return evt.type === 'run.done' || evt.type === 'run.error'
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function jsonError(status: number, error: string): Response {
+  return new Response(JSON.stringify({ error }), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
 }
 
 /**
@@ -141,10 +81,7 @@ function makeRunId(): string {
  * conservative placeholder ($1 per MNT). On Ethereum mainnet we use $3,000/ETH.
  * Failures are swallowed and return 0 so Kelly sizing gracefully falls back.
  */
-async function estimateAgentBalanceUSD(
-  agentAddress: string,
-  chainId: number,
-): Promise<number> {
+async function estimateAgentBalanceUSD(agentAddress: string, chainId: number): Promise<number> {
   try {
     const config = getChainConfig(chainId)
     const client = createPublicClient({
@@ -165,7 +102,7 @@ function formatSSE(event: RunEvent): Uint8Array {
   return new TextEncoder().encode(`data: ${JSON.stringify(event)}\n\n`)
 }
 
-// ── Route handler ─────────────────────────────────────────────────────────────
+// ── POST: start a run ───────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   // ── Auth ────────────────────────────────────────────────────────────────────
@@ -188,26 +125,16 @@ export async function POST(req: NextRequest) {
   }
 
   const query = body.query?.trim()
-  if (!query) {
-    return new Response(
-      JSON.stringify({ error: '`query` is required' }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
+  if (!query) return jsonError(400, '`query` is required')
 
-  const tickerResolution = resolveRequestedTicker(query, body.ticker)
-  if (!tickerResolution.ok) {
-    return new Response(
-      JSON.stringify({ error: tickerResolution.message }),
-      { status: 400, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
+  // Explicit ticker (e.g. Terminal approval re-run) short-circuits intake and
+  // goes straight to the ATS. Free-form queries are understood below.
+  const explicitTicker = body.ticker?.trim()
+    ? canonicalizeTicker(body.ticker) ?? body.ticker.trim().toUpperCase()
+    : null
 
-  const ticker = tickerResolution.ticker
   const chainId =
-    typeof body.chainId === 'number' && Number.isFinite(body.chainId)
-      ? body.chainId
-      : DEFAULT_CHAIN_ID
+    typeof body.chainId === 'number' && Number.isFinite(body.chainId) ? body.chainId : DEFAULT_CHAIN_ID
 
   // ── Load user settings (mode fallback) ──────────────────────────────────────
   const supabase = createSupabaseAdminClient()
@@ -220,27 +147,19 @@ export async function POST(req: NextRequest) {
   const modeFromBody = body.mode as Mode | undefined
   const mode: Mode =
     (modeFromBody && VALID_MODES.includes(modeFromBody) ? modeFromBody : null) ??
-    (settings?.mode && VALID_MODES.includes(settings.mode as Mode)
-      ? (settings.mode as Mode)
-      : null) ??
+    (settings?.mode && VALID_MODES.includes(settings.mode as Mode) ? (settings.mode as Mode) : null) ??
     'solo'
 
   // Optional per-request transport override (defaults to ATS_AGENT_TRANSPORT in orchestrator)
   const transportFromBody = body.transport?.toLowerCase() as AxlTransport | undefined
   const transport: AxlTransport | undefined =
-    transportFromBody && VALID_TRANSPORTS.includes(transportFromBody)
-      ? transportFromBody
-      : undefined
+    transportFromBody && VALID_TRANSPORTS.includes(transportFromBody) ? transportFromBody : undefined
 
-  // ── Agent wallet: init (idempotent) + estimate USD balance ──────────────────
   const run_id = makeRunId()
-  let agentBalanceUSD = 0
-  try {
-    const { address } = await getOrCreateAgentWallet(userWallet, chainId)
-    agentBalanceUSD = await estimateAgentBalanceUSD(address, chainId)
-  } catch (walletErr) {
-    console.warn('[ATS run] Agent wallet init failed (non-fatal):', walletErr)
-  }
+
+  // Lets cancel()/disconnect tear down the live subscription without killing the
+  // detached background run (assigned inside start() for the deep path).
+  let detach: () => void = () => {}
 
   // ── SSE stream ──────────────────────────────────────────────────────────────
   const stream = new ReadableStream<Uint8Array>({
@@ -254,11 +173,66 @@ export async function POST(req: NextRequest) {
       }
 
       try {
+        // ── [0] Intake & understanding ──────────────────────────────────────
+        let atsTicker = explicitTicker
+        if (!atsTicker) {
+          const request: ResearchRequest = await runIntake({ query, userWallet })
+          send({
+            type: 'intake.parsed',
+            run_id,
+            ts: new Date().toISOString(),
+            agent: 'orchestrator',
+            message: `Understood: ${request.queryType.replace(/_/g, ' ')}${
+              request.tokens.length ? ` (${request.tokens.join(', ')})` : ''
+            }.`,
+            payload: {
+              query_type: request.queryType,
+              tokens: request.tokens,
+              amount_usd: request.amountUsd,
+              primary_ticker: request.primaryTicker,
+              source: request.source,
+            },
+          })
+
+          // Single-asset deep dive over a covered token → drill the full ATS
+          // (the legacy fast path). Everything else routes to the Deep Research
+          // brain, run as a DURABLE BACKGROUND JOB (P5): the run survives this
+          // request closing, and this stream just tails it.
+          if (!request.primaryTicker) {
+            runManager.startRun({ request, run_id, chainId, userWallet })
+            let unsubscribe: () => void = () => {}
+            await new Promise<void>((resolve) => {
+              const sub = runManager.subscribe(run_id, 0, (evt) => {
+                send(evt)
+                if (isTerminal(evt)) resolve()
+              })
+              unsubscribe = sub.unsubscribe
+              detach = () => {
+                sub.unsubscribe()
+                resolve()
+              }
+              if (sub.done) resolve()
+            })
+            unsubscribe()
+            return
+          }
+          atsTicker = request.primaryTicker
+        }
+
+        // ── ATS path: agent wallet init (idempotent) + Kelly-sizing balance ──
+        let agentBalanceUSD = 0
+        try {
+          const { address } = await getOrCreateAgentWallet(userWallet, chainId)
+          agentBalanceUSD = await estimateAgentBalanceUSD(address, chainId)
+        } catch (walletErr) {
+          console.warn('[ATS run] Agent wallet init failed (non-fatal):', walletErr)
+        }
+
         const receipt = await runOrchestrator(
           {
             run_id,
             query,
-            ticker,
+            ticker: atsTicker,
             mode,
             userWallet,
             chainId,
@@ -272,10 +246,7 @@ export async function POST(req: NextRequest) {
         // ── 0G Storage: persist receipt blob (best-effort) ──────────────────
         if (receipt.id) {
           try {
-            const { rootHash } = await saveAgentMemory(
-              `ats_receipt_${run_id}`,
-              receipt,
-            )
+            const { rootHash } = await saveAgentMemory(`ats_receipt_${run_id}`, receipt)
             await supabase
               .from('ats_receipts')
               .update({ storage_root_hash: rootHash })
@@ -288,9 +259,8 @@ export async function POST(req: NextRequest) {
           }
         }
       } catch (err) {
-        // Top-level safety net — the orchestrator should have already emitted
-        // run.error internally, but we guard against any uncaught exception
-        // here so the stream always closes cleanly.
+        // Top-level safety net — orchestrator/lead emit run.error internally, but
+        // we guard against any uncaught exception so the stream closes cleanly.
         const msg = err instanceof Error ? err.message : String(err)
         send({
           type: 'run.error',
@@ -304,14 +274,102 @@ export async function POST(req: NextRequest) {
         controller.close()
       }
     },
-  })
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache, no-transform',
-      'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no', // Disable Nginx proxy buffering
+    cancel() {
+      // Client disconnected — detach the live subscription. The detached deep
+      // run keeps executing and persisting in the background.
+      detach()
     },
   })
+
+  return new Response(stream, { headers: SSE_HEADERS })
+}
+
+// ── GET: reconnect / replay a deep run ──────────────────────────────────────────
+
+export async function GET(req: NextRequest) {
+  const userWallet = requireWallet(req)
+  if (userWallet instanceof Response) return userWallet
+
+  const runId = req.nextUrl.searchParams.get('runId')?.trim()
+  if (!runId) return jsonError(400, '`runId` is required')
+
+  const rawAfter = parseInt(req.nextUrl.searchParams.get('afterSeq') ?? '0', 10)
+  const afterSeq = Number.isNaN(rawAfter) ? 0 : Math.max(0, rawAfter)
+
+  // Resolve the run from this process (live) or the persisted log (replay).
+  const snapshot = runManager.peek(runId)
+  const persisted = await runStore.loadRun(runId)
+  if (!snapshot && !persisted) return jsonError(404, 'Run not found')
+
+  // Authorize: a run may only be reconnected by the wallet that started it.
+  const owner = (snapshot?.userWallet ?? persisted?.user_wallet ?? '').toLowerCase()
+  if (owner && owner !== userWallet.toLowerCase()) return jsonError(403, 'Forbidden')
+
+  let detach: () => void = () => {}
+  let cancelled = false
+
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      const send = (evt: RunEvent) => {
+        try {
+          controller.enqueue(formatSSE(evt))
+        } catch {
+          // client disconnected mid-replay
+        }
+      }
+
+      try {
+        if (snapshot) {
+          // Held in this process → replay buffer past the cursor, then tail live.
+          let unsubscribe: () => void = () => {}
+          await new Promise<void>((resolve) => {
+            const timeout = setTimeout(resolve, MAX_RECONNECT_MS)
+            const finish = () => {
+              clearTimeout(timeout)
+              resolve()
+            }
+            const sub = runManager.subscribe(runId, afterSeq, (evt) => {
+              send(evt)
+              if (isTerminal(evt)) finish()
+            })
+            unsubscribe = sub.unsubscribe
+            detach = () => {
+              sub.unsubscribe()
+              finish()
+            }
+            if (sub.done) finish()
+          })
+          unsubscribe()
+        } else {
+          // Not in this process (finished, or another instance) → replay from the
+          // persisted log and poll for any late events until terminal/timeout.
+          let cursor = afterSeq
+          const startedAt = Date.now()
+          while (!cancelled) {
+            const rows = await runStore.loadEvents(runId, cursor)
+            let terminal = false
+            for (const r of rows) {
+              send(r.event)
+              cursor = Math.max(cursor, r.seq)
+              if (isTerminal(r.event)) terminal = true
+            }
+            if (terminal) break
+            // A finished run with no terminal event persisted (e.g. an aborted
+            // process) should not be polled forever.
+            if (persisted && persisted.status !== 'running' && rows.length === 0) break
+            if (Date.now() - startedAt > MAX_RECONNECT_MS) break
+            await sleep(POLL_INTERVAL_MS)
+          }
+        }
+      } finally {
+        controller.close()
+      }
+    },
+    cancel() {
+      cancelled = true
+      detach()
+    },
+  })
+
+  return new Response(stream, { headers: SSE_HEADERS })
 }
