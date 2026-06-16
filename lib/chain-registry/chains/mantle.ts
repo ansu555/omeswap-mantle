@@ -59,6 +59,13 @@ export const mantleSepoliaChain = defineChain({
   testnet: true,
 });
 
+// Backward-compatible exports used by existing research tooling.
+const USE_MANTLE_SEPOLIA = process.env.NEXT_PUBLIC_MANTLE_NETWORK === "sepolia";
+export const mantleChain = USE_MANTLE_SEPOLIA ? mantleSepoliaChain : mantleMainnetChain;
+export const MANTLE_RPC = USE_MANTLE_SEPOLIA
+  ? process.env.NEXT_PUBLIC_MANTLE_RPC_SEPOLIA?.trim() || "https://rpc.sepolia.mantle.xyz"
+  : process.env.NEXT_PUBLIC_MANTLE_RPC?.trim() || "https://rpc.mantle.xyz";
+
 // EIP-3085 Params for MetaMask
 export const MANTLE_MAINNET_PARAMS = {
   chainId: `0x${(5000).toString(16)}` as const,
