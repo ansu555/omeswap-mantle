@@ -5,6 +5,7 @@
  *   callLLM(opts)       — single-shot text completion
  *   callLLMJson<T>(opts) — single-shot JSON completion (parsed)
  *   streamLLM(opts)     — streaming text completion (async generator of delta chunks)
+ *   callLLMTools(opts)  — single turn of a tool-calling (ReAct) loop
  *
  * API key resolution order (highest priority first):
  *   1. User's key stored encrypted in `user_settings` (decrypted on-the-fly)
@@ -108,7 +109,7 @@ function buildClient(apiKey: string): OpenAI {
 }
 
 async function resolveKeyAndModel(
-  opts: LLMCallOptions,
+  opts: { userWallet?: string; model?: string },
 ): Promise<{ apiKey: string; model: string }> {
   let apiKey: string | null = null
   let model: string = opts.model ?? DEFAULT_MODEL
@@ -204,5 +205,90 @@ export async function* streamLLM(opts: LLMCallOptions): AsyncGenerator<string> {
   for await (const chunk of stream) {
     const delta = chunk.choices[0]?.delta?.content
     if (delta) yield delta
+  }
+}
+
+// ── Tool-calling (ReAct) primitive ──────────────────────────────────────────────
+//
+// The Deep Research subagent runtime (`lib/research/subagent-runtime.ts`) drives a
+// reason → call tool → observe loop. `callLLMTools` performs ONE turn of that loop:
+// it gives the model the running transcript + the available tools and returns the
+// assistant turn, surfacing any tool calls the model wants executed. The runtime
+// executes them, appends the observations, and calls again. Keeping the OpenAI
+// message/tool types behind this module preserves it as the single LLM boundary —
+// callers import these aliases instead of the `openai` package directly.
+
+/** OpenAI-compatible chat message (system | user | assistant | tool). */
+export type ChatMessage = OpenAITypes.Chat.ChatCompletionMessageParam
+/** OpenAI-compatible tool definition (function-calling). */
+export type ChatTool = OpenAITypes.Chat.ChatCompletionTool
+/** A single tool call requested by the model. */
+export type ChatToolCall = OpenAITypes.Chat.ChatCompletionMessageToolCall
+/** How the model is allowed to use tools this turn. */
+export type ChatToolChoice = OpenAITypes.Chat.ChatCompletionToolChoiceOption
+
+export interface LLMToolsOptions {
+  /** Full running transcript (system + user + prior assistant/tool turns). */
+  messages: ChatMessage[]
+  /** Tools the model may call this turn. */
+  tools: ChatTool[]
+  /** Override the resolved model. */
+  model?: string
+  /** Wallet address used to load the user's stored API key + model. */
+  userWallet?: string
+  temperature?: number
+  maxTokens?: number
+  /** Defaults to 'auto'. Pass 'none' to force a text-only turn. */
+  toolChoice?: ChatToolChoice
+}
+
+export interface LLMToolsResult {
+  /** The raw assistant message — append verbatim to the transcript before tool results. */
+  message: OpenAITypes.Chat.ChatCompletionMessage
+  /** Tool calls the model requested (empty when the model produced a final answer). */
+  toolCalls: ChatToolCall[]
+  /** Assistant text content (may be empty when the turn is only tool calls). */
+  content: string
+  /** Why the model stopped (e.g. 'tool_calls' | 'stop' | 'length'). */
+  finishReason: string
+  /** The resolved model id used for this turn. */
+  model: string
+}
+
+/**
+ * Run a single tool-calling turn. The caller owns the loop: execute any returned
+ * `toolCalls`, append the assistant `message` followed by one `{ role: 'tool',
+ * tool_call_id, content }` per call, then call again until `toolCalls` is empty.
+ *
+ * @example
+ *   const turn = await callLLMTools({ messages, tools, userWallet })
+ *   messages.push(turn.message)
+ *   for (const call of turn.toolCalls) {
+ *     const out = await runTool(call.function.name, JSON.parse(call.function.arguments))
+ *     messages.push({ role: 'tool', tool_call_id: call.id, content: out })
+ *   }
+ */
+export async function callLLMTools(opts: LLMToolsOptions): Promise<LLMToolsResult> {
+  const { apiKey, model } = await resolveKeyAndModel(opts)
+  const client = buildClient(apiKey)
+
+  const completion = await client.chat.completions.create({
+    model,
+    messages: opts.messages,
+    tools: opts.tools,
+    tool_choice: opts.toolChoice ?? 'auto',
+    temperature: opts.temperature ?? 0.2,
+    max_tokens: opts.maxTokens ?? 1200,
+  })
+
+  const choice = completion.choices[0]
+  const message = choice?.message ?? { role: 'assistant', content: '' }
+
+  return {
+    message,
+    toolCalls: message.tool_calls ?? [],
+    content: message.content ?? '',
+    finishReason: choice?.finish_reason ?? 'stop',
+    model,
   }
 }

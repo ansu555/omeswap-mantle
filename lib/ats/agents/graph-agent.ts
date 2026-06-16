@@ -71,7 +71,11 @@ const BTC_CORRELATIONS: Record<string, number> = {
   CRV:  0.58,
 }
 
-function lookupCorrelation(ticker: string): number {
+/**
+ * Static BTC correlation for a ticker (defaults to 0.60 for unknown assets).
+ * Exported for reuse by the Deep Research correlation tool (lib/research/tools).
+ */
+export function lookupCorrelation(ticker: string): number {
   return BTC_CORRELATIONS[ticker.toUpperCase()] ?? 0.60
 }
 
@@ -82,7 +86,7 @@ function lookupCorrelation(ticker: string): number {
  * and a synthetic "market return" (mean of last 7 candle-to-candle changes).
  * Degrades gracefully — returns the static value if candle data is thin.
  */
-function dynamicCorrelation(data: DataBundle, staticCorr: number): number {
+export function dynamicCorrelation(data: DataBundle, staticCorr: number): number {
   const candles = data.candles_daily.slice(-15)
   if (candles.length < 5) return staticCorr
 
