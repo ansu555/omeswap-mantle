@@ -20,6 +20,7 @@ import {
   Bell,
   Activity,
   ArrowUpRight,
+  KeyRound,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -330,6 +331,7 @@ export default function AgentSidebar() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
   const nodeIdMapRef = useRef<Record<string, string>>({});
   const apiHistoryRef = useRef<ApiMessage[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -350,6 +352,16 @@ export default function AgentSidebar() {
       ),
     );
   }, []);
+
+  useEffect(() => {
+    if (!address) return;
+    fetch("/api/user-settings", {
+      headers: { "x-wallet-address": address },
+    })
+      .then((r) => r.json())
+      .then((data: { hasApiKey?: boolean }) => setHasApiKey(!!data.hasApiKey))
+      .catch(() => setHasApiKey(false));
+  }, [address]);
 
   function getCanvasState() {
     return {
@@ -917,6 +929,17 @@ export default function AgentSidebar() {
         className="px-3 pb-3 pt-2.5"
         style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
       >
+        {hasApiKey === false && (
+          <a
+            href="/portfolio"
+            className="flex items-center gap-2 mb-2 px-3 py-2 rounded-xl text-[10px] text-amber-300/90 hover:text-amber-200 transition-colors"
+            style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.18)" }}
+          >
+            <KeyRound size={11} className="shrink-0" />
+            <span>Add an OpenRouter API key in <strong>Portfolio → Agent Settings</strong> to use the AI agent</span>
+            <ArrowUpRight size={10} className="ml-auto shrink-0 opacity-60" />
+          </a>
+        )}
         <div
           className="flex items-end gap-2 rounded-[18px] px-3 py-2.5 transition-colors focus-within:border-violet-400/30"
           style={{
@@ -929,14 +952,14 @@ export default function AgentSidebar() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={loading}
-            placeholder="Describe your trading strategy…"
+            disabled={loading || hasApiKey === false}
+            placeholder={hasApiKey === false ? "Add an API key to start chatting…" : "Describe your trading strategy…"}
             rows={2}
             className="flex-1 resize-none bg-transparent text-[11px] leading-relaxed text-white placeholder-white/25 focus:outline-none disabled:opacity-50"
           />
           <button
             onClick={() => sendMessage(input)}
-            disabled={!input.trim() || loading}
+            disabled={!input.trim() || loading || hasApiKey === false}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition hover:scale-105 disabled:opacity-25 disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300/40"
             style={{
               background:
