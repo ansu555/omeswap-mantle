@@ -1,7 +1,7 @@
 # Graph Report - omeswap-templet  (2026-06-15)
 
 ## Corpus Check
-- 500 files · ~358,254 words
+- 500 files · ~358,636 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
