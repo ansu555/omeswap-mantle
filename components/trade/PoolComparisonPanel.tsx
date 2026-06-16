@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Activity, Droplets, ExternalLink, Layers, Plus } from "lucide-react";
-import { useReadContract } from "wagmi";
+import { useReadContract, useChainId } from "wagmi";
 import { Address, formatUnits } from "viem";
 import { MultiTokenLiquidityPoolsABI } from "@/contracts/abis";
 import { CONTRACT_ADDRESSES, TOKENS } from "@/contracts/config";
-import { getDefaultChainId, getExplorerLink } from "@/lib/chain-registry";
+import { getChainConfig, getDefaultChainId, getExplorerLink } from "@/lib/chain-registry";
 import { DEFAULT_DEX_MARKET_ID } from "@/lib/dex/markets";
 import { cn } from "@/lib/utils";
 import type { DexMarket } from "@/lib/dex/types";
@@ -38,7 +38,15 @@ export function PoolComparisonPanel({ token0Symbol = "WMNT", token1Symbol = "USD
   const [isLoadingMarket, setIsLoadingMarket] = useState(true);
   const [marketError, setMarketError] = useState<string | null>(null);
 
-  const poolsAddress = CONTRACT_ADDRESSES.POOLS as Address;
+  const connectedChainId = useChainId();
+  // Use connected chain if it's supported, otherwise fall back to default
+  const activeChainId = (() => {
+    try { getChainConfig(connectedChainId); return connectedChainId; }
+    catch { return getDefaultChainId(); }
+  })();
+
+  const chainCfg = getChainConfig(activeChainId);
+  const poolsAddress = (chainCfg.omeswapPools ?? CONTRACT_ADDRESSES.POOLS) as Address;
   const isOmeSwapConfigured = poolsAddress.toLowerCase() !== ZERO_ADDRESS;
 
   const omegaToken0Cfg = TOKENS[token0Symbol] ?? TOKENS.WMNT;
@@ -61,7 +69,7 @@ export function PoolComparisonPanel({ token0Symbol = "WMNT", token1Symbol = "USD
     abi: MultiTokenLiquidityPoolsABI,
     functionName: "getPoolId",
     args: [token0Address, token1Address],
-    chainId: getDefaultChainId(),
+    chainId: activeChainId,
     query: {
       enabled: isOmeSwapConfigured,
       refetchInterval: REFRESH_MS,
@@ -73,7 +81,7 @@ export function PoolComparisonPanel({ token0Symbol = "WMNT", token1Symbol = "USD
     abi: MultiTokenLiquidityPoolsABI,
     functionName: "getPoolInfo",
     args: [poolId as bigint],
-    chainId: getDefaultChainId(),
+    chainId: activeChainId,
     query: {
       enabled: isOmeSwapConfigured && poolId != null,
       refetchInterval: REFRESH_MS,
@@ -262,7 +270,7 @@ export function PoolComparisonPanel({ token0Symbol = "WMNT", token1Symbol = "USD
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Pools Contract</span>
                 <a
-                  href={getExplorerLink(getDefaultChainId(), "address", poolsAddress)}
+                  href={getExplorerLink(activeChainId, "address", poolsAddress)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-primary hover:underline"

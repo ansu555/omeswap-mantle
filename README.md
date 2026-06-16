@@ -19,6 +19,7 @@ A decentralized exchange and agent-driven trading app built for the Mantle netwo
 
 ```bash
 npm install
+cd realtime-service && npm install && cd ..
 ```
 
 2. Create local env file
@@ -41,7 +42,24 @@ NEXT_PUBLIC_MANTLE_RPC=https://rpc.mantle.xyz
 NEXT_PUBLIC_MANTLE_WSS=wss://wss.mantle.xyz
 ```
 
-4. Start the app
+Realtime Service overrides (points the frontend to the realtime service cache server):
+
+```bash
+REALTIME_HTTP_URL=http://localhost:8080
+NEXT_PUBLIC_REALTIME_HTTP_URL=http://localhost:8080
+NEXT_PUBLIC_REALTIME_WS_URL=ws://localhost:8080
+```
+
+4. Start the services
+
+Start the realtime service (watches on-chain events, polls prices, and caches market data):
+
+```bash
+cd realtime-service
+npm run dev
+```
+
+Start the Next.js app (in a separate terminal):
 
 ```bash
 npm run dev
@@ -148,6 +166,33 @@ omeswap-templet/
 └── doc/
 ```
 
+## Deployment
+
+### Deploying Realtime Service on Render
+
+The `realtime-service` runs as a persistent Node process and is fully Dockerized. It consolidates both REST HTTP and WebSocket APIs onto a single port (`8080`), making it ideal for Render:
+
+1. **Blueprint Deployment (Recommended)**:
+   We provide a `render.yaml` Blueprint file in the repository root. Log in to Render, click **Blueprints**, connect your repository, and it will deploy the service with all default configurations automatically.
+
+2. **Manual Web Service Deployment**:
+   - Create a new **Web Service** on Render.
+   - Connect your repository.
+   - Set the **Root Directory** to `realtime-service`.
+   - Select **Docker** as the Runtime (Render will automatically detect the `Dockerfile` inside `realtime-service`).
+   - Choose a plan (e.g. Free or Starter).
+   - Add the following environment variables:
+     - `PORT`: `8080`
+     - `MANTLE_NETWORK`: `mainnet` (or `testnet`)
+     - `MANTLE_RPC`: (Mantle RPC URL)
+     - `MANTLE_WSS`: (Mantle WebSocket URL)
+   - Click **Deploy Web Service**.
+
+Once deployed, copy your Render web service URL (e.g., `https://omeswap-realtime.onrender.com`) and configure the Next.js app to use it:
+- `REALTIME_HTTP_URL=https://omeswap-realtime.onrender.com`
+- `NEXT_PUBLIC_REALTIME_HTTP_URL=https://omeswap-realtime.onrender.com`
+- `NEXT_PUBLIC_REALTIME_WS_URL=wss://omeswap-realtime.onrender.com` (note the `wss://` protocol for secure WebSockets).
+
 ## Security Note
 
 This project includes on-chain execution paths. Before production usage, perform:
@@ -161,4 +206,4 @@ This project includes on-chain execution paths. Before production usage, perform
 - Issues: GitHub Issues
 - Mantle Explorer: https://explorer.mantle.xyz
 
-Built for the Mantle ecosystem.
+Built for the Mantle ecosystem

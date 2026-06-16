@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 const SERVICE_URL =
   process.env.REALTIME_HTTP_URL?.trim() ||
   process.env.NEXT_PUBLIC_REALTIME_HTTP_URL?.trim() ||
-  "http://localhost:8081";
+  "http://localhost:8080";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

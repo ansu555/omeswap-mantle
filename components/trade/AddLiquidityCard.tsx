@@ -50,7 +50,11 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
 
   const handleAmount0Change = (value: string) => {
     setAmount0(value);
-    if (value && poolInfo) {
+    if (!value) {
+      setAmount1("");
+      return;
+    }
+    if (poolInfo) {
       const quoted = getQuote(value, true);
       setAmount1(quoted);
     }
@@ -58,7 +62,11 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
 
   const handleAmount1Change = (value: string) => {
     setAmount1(value);
-    if (value && poolInfo) {
+    if (!value) {
+      setAmount0("");
+      return;
+    }
+    if (poolInfo) {
       const quoted = getQuote(value, false);
       setAmount0(quoted);
     }
@@ -91,7 +99,7 @@ export function AddLiquidityCard({ onTokensChange }: AddLiquidityCardProps) {
       <div className="swap-card w-full max-w-md p-8 text-center">
         <h3 className="text-xl font-semibold mb-4 text-destructive">Wrong Network</h3>
         <p className="text-muted-foreground mb-6">
-          Please switch to Mantle Mainnet
+          Please switch to Mantle Sepolia Testnet
         </p>
       </div>
     );

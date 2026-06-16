@@ -127,6 +127,5 @@ export const V3_FEE_TIERS = [100, 500, 2500, 3000, 10000] as const;
 
 // ── Service ports ─────────────────────────────────────────────────────────────
 
-export const WS_PORT = Number(env("WS_PORT", "8080"));
-export const HTTP_PORT = Number(env("HTTP_PORT", "8081"));
+export const PORT = Number(env("PORT", "8080"));
 export const ALLOWED_ORIGINS = env("ALLOWED_ORIGINS", "*");

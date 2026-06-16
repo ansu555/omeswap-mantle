@@ -7,6 +7,7 @@
  * `price`, and `trade` deltas as swaps land.
  */
 
+import { Server as HttpServer } from "node:http";
 import { WebSocketServer, WebSocket } from "ws";
 import { v3VirtualReserves } from "./price-math.js";
 import { allPools, getPool, type PoolState } from "./price-state.js";
@@ -74,8 +75,8 @@ function toWireTrade(u: SwapUpdate, usd: UsdPrices): WireTrade {
 
 let wss: WebSocketServer | null = null;
 
-export function startWsServer(port: number): WebSocketServer {
-  wss = new WebSocketServer({ port });
+export function startWsServer(server: HttpServer): WebSocketServer {
+  wss = new WebSocketServer({ server });
 
   wss.on("connection", (socket) => {
     const snapshot: ServerMessage = {
@@ -87,7 +88,7 @@ export function startWsServer(port: number): WebSocketServer {
   });
 
   wss.on("error", (err) => console.error("[ws-server] error:", err.message));
-  console.log(`[ws-server] listening on ws://0.0.0.0:${port}`);
+  console.log("[ws-server] attached to HTTP server");
   return wss;
 }
 

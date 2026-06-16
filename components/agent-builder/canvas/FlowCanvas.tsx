@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ReactFlow,
   Background,
@@ -14,7 +14,14 @@ import "@xyflow/react/dist/style.css";
 
 import { useStore } from "@/store/agent-builder";
 import BaseNodeComponent from "@/components/agent-builder/nodes/BaseNodeComponent";
-import { LayoutTemplate, Bot, Play, Circle } from "lucide-react";
+import {
+  LayoutTemplate,
+  Bot,
+  Play,
+  Circle,
+  Workflow,
+  ArrowUpRight,
+} from "lucide-react";
 import clsx from "clsx";
 
 const nodeTypes: NodeTypes = {
@@ -91,13 +98,46 @@ export default function FlowCanvas() {
     return { label: "Complex", color: "text-orange-400" };
   }, [nodes.length]);
 
+  const reduceMotion = useReducedMotion();
+
+  // Empty-state quick-start actions — handlers unchanged, only presentation refined
+  const startActions = useMemo(
+    () => [
+      {
+        icon: LayoutTemplate,
+        label: "Browse Templates",
+        description: "Open a pre-built strategy",
+        onClick: () => setWorkflowsOpen(true),
+      },
+      {
+        icon: Bot,
+        label: "AI Build",
+        description: "Describe your strategy in words",
+        onClick: () => setAgentOpen(true),
+      },
+      {
+        icon: Play,
+        label: "Quick Start",
+        description: "Drop a Start node and build",
+        onClick: () => addNodeToCanvas("start", { x: 200, y: 200 }),
+      },
+    ],
+    [setWorkflowsOpen, setAgentOpen, addNodeToCanvas],
+  );
+
   return (
     <div
-      className="flex-1 relative bg-[#05050f] flex flex-col"
+      className="flex-1 relative bg-[#06070e] flex flex-col"
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
       <div className="flex-1 relative">
+        {/* Ambient depth — subtle gradient blobs (matches Research canvas) */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-40 -top-12 h-96 w-96 rounded-full bg-violet-500/[0.07] blur-3xl" />
+          <div className="absolute -right-24 top-16 h-80 w-80 rounded-full bg-cyan-400/[0.06] blur-3xl" />
+          <div className="absolute -bottom-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-amber-300/[0.05] blur-3xl" />
+        </div>
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -110,23 +150,24 @@ export default function FlowCanvas() {
           fitViewOptions={{ padding: 0.2 }}
           defaultEdgeOptions={{
             animated: true,
-            style: { stroke: "#5227FF40", strokeWidth: 1.5 },
+            style: { stroke: "rgba(139,92,246,0.35)", strokeWidth: 1.5 },
           }}
           proOptions={{ hideAttribution: true }}
+          style={{ background: "transparent" }}
         >
           <Background
             variant={BackgroundVariant.Dots}
-            color={botRunning ? "#5227FF50" : "#5227FF30"}
+            color={botRunning ? "rgba(139,92,246,0.30)" : "rgba(255,255,255,0.05)"}
             gap={24}
             size={1}
             className={botRunning ? "canvas-pulse" : ""}
           />
           <Controls
-            className="!bg-black/70 !backdrop-blur-xl !border-purple-500/15 !rounded-xl"
+            className="!bg-[#08091a]/85 !backdrop-blur-xl !border !border-white/10 !rounded-2xl !shadow-lg !shadow-black/30"
             showInteractive={false}
           />
           <MiniMap
-            className="!bg-black/70 !backdrop-blur-xl !border-purple-500/15 !rounded-xl"
+            className="!bg-[#08091a]/85 !backdrop-blur-xl !border !border-white/10 !rounded-2xl"
             nodeColor={(n) => {
               const cat = (n.data as Record<string, unknown>)
                 ?.category as string;
@@ -138,7 +179,7 @@ export default function FlowCanvas() {
                     ? "#22c55e"
                     : "#a855f7";
             }}
-            maskColor="#00000070"
+            maskColor="rgba(3,4,10,0.6)"
           />
         </ReactFlow>
 
@@ -146,78 +187,94 @@ export default function FlowCanvas() {
         <AnimatePresence>
           {nodes.length === 0 && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.3, delay: 0.15 }}
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, ease: [0, 0, 0.2, 1] }}
+              className="absolute inset-0 z-10 flex items-center justify-center p-4 pointer-events-none"
             >
-              <div className="text-center pointer-events-auto">
-                <p className="text-foreground/60 text-sm mb-1 font-medium">
-                  Start building your trading strategy
-                </p>
-                <p className="text-muted-foreground/50 text-xs mb-8">
-                  or drag a node from the left panel
-                </p>
-
-                <div className="flex items-stretch gap-3">
-                  {/* Browse Templates */}
-                  <button
-                    onClick={() => setWorkflowsOpen(true)}
-                    className="flex flex-col items-center gap-3 px-6 py-5 rounded-2xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/35 transition-all group w-36"
+              <div className="w-[440px] max-w-full pointer-events-auto">
+                {/* Hero card */}
+                <div
+                  className="rounded-[26px] p-6"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(139,92,246,0.11), rgba(255,255,255,0.025))",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl"
+                    style={{
+                      background: "rgba(139,92,246,0.14)",
+                      border: "1px solid rgba(139,92,246,0.18)",
+                    }}
                   >
-                    <LayoutTemplate
-                      size={22}
-                      className="text-primary/60 group-hover:text-primary transition-colors"
-                    />
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
-                        Browse Templates
-                      </p>
-                      <p className="text-[9px] text-muted-foreground/50 mt-0.5">
-                        Pre-built strategies
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* AI Build */}
-                  <button
-                    onClick={() => setAgentOpen(true)}
-                    className="flex flex-col items-center gap-3 px-6 py-5 rounded-2xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/35 transition-all group w-36"
-                  >
-                    <Bot
-                      size={22}
-                      className="text-primary/60 group-hover:text-primary transition-colors"
-                    />
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
-                        AI Build
-                      </p>
-                      <p className="text-[9px] text-muted-foreground/50 mt-0.5">
-                        Describe your strategy
-                      </p>
-                    </div>
-                  </button>
-
-                  {/* Quick Start */}
-                  <button
-                    onClick={() => addNodeToCanvas("start", { x: 200, y: 200 })}
-                    className="flex flex-col items-center gap-3 px-6 py-5 rounded-2xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/35 transition-all group w-36"
-                  >
-                    <Play
-                      size={22}
-                      className="text-primary/60 group-hover:text-primary transition-colors"
-                    />
-                    <div>
-                      <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
-                        Quick Start
-                      </p>
-                      <p className="text-[9px] text-muted-foreground/50 mt-0.5">
-                        Add Start node
-                      </p>
-                    </div>
-                  </button>
+                    <Workflow className="h-5 w-5 text-violet-100" />
+                  </div>
+                  <p className="mt-5 text-[10px] font-medium uppercase tracking-[0.24em] text-white/30">
+                    Agent Builder
+                  </p>
+                  <h2 className="mt-2 text-[22px] font-semibold leading-tight text-white/[0.94]">
+                    Design your trading strategy.
+                  </h2>
+                  <p className="mt-3 text-[13px] leading-relaxed text-white/[0.48]">
+                    Compose a bot from blocks — data feeds, logic, and on-chain
+                    actions wired into an automated flow you can backtest and run
+                    live.
+                  </p>
                 </div>
+
+                {/* Start fast */}
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-white/30">
+                      Start Fast
+                    </p>
+                    <span className="text-[10px] text-white/[0.28]">3 ways</span>
+                  </div>
+                  <div className="grid gap-2">
+                    {startActions.map((action) => {
+                      const Icon = action.icon;
+                      return (
+                        <button
+                          key={action.label}
+                          onClick={action.onClick}
+                          className="group flex w-full items-center justify-between gap-3 rounded-2xl px-3.5 py-3 text-left transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-violet-300/50"
+                          style={{
+                            background: "rgba(255,255,255,0.045)",
+                            border: "1px solid rgba(255,255,255,0.075)",
+                          }}
+                        >
+                          <span className="flex min-w-0 items-center gap-3">
+                            <span
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                              style={{
+                                background: "rgba(139,92,246,0.12)",
+                                border: "1px solid rgba(139,92,246,0.16)",
+                              }}
+                            >
+                              <Icon className="h-4 w-4 text-violet-200" />
+                            </span>
+                            <span className="min-w-0">
+                              <span className="block text-[12px] font-medium text-white/[0.88]">
+                                {action.label}
+                              </span>
+                              <span className="mt-0.5 block text-[10px] text-white/[0.38]">
+                                {action.description}
+                              </span>
+                            </span>
+                          </span>
+                          <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-white/[0.24] transition-colors group-hover:text-white/[0.64]" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <p className="mt-4 text-center text-[10px] text-white/[0.3]">
+                  or drag a block from the left panel onto the canvas
+                </p>
               </div>
             </motion.div>
           )}
@@ -225,7 +282,7 @@ export default function FlowCanvas() {
       </div>
 
       {/* Bottom status bar */}
-      <div className="h-7 shrink-0 border-t border-border/30 bg-background/50 flex items-center px-4 gap-4 text-xs font-mono text-muted-foreground/60">
+      <div className="h-7 shrink-0 border-t border-white/[0.06] bg-[#07080f]/70 flex items-center px-4 gap-4 text-xs font-mono text-white/45">
         {/* Node + edge count */}
         <div className="flex items-center gap-1.5">
           <Circle

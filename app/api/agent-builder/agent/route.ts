@@ -108,8 +108,25 @@ Nodes on canvas: ${canvasState.nodeCount}. Use this to understand what's already
   );
 
   if (!response.ok) {
-    const err = await response.text();
-    return new Response(JSON.stringify({ error: err }), { status: 500 });
+    const errText = await response.text();
+    let userMessage =
+      "Agent request failed. Add your OpenRouter API key in Portfolio → Agent Settings.";
+    try {
+      const parsed = JSON.parse(errText) as {
+        error?: { message?: string; code?: number };
+      };
+      const code = parsed?.error?.code;
+      if (code === 401 || code === 403) {
+        userMessage =
+          "Invalid or missing OpenRouter API key. Go to Portfolio → Agent Settings to add your own key, or contact the site admin.";
+      }
+    } catch {
+      // leave default message
+    }
+    return new Response(JSON.stringify({ error: userMessage }), {
+      status: 502,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   return new Response(response.body, {

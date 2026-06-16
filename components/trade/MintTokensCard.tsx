@@ -2,13 +2,46 @@
 
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { Coins, ExternalLink, RefreshCw } from "lucide-react";
-import { useBatchMint, useTokenMint } from "@/hooks/use-token-mint";
+import { useBatchMint, useTokenMint, MINTABLE_TOKENS } from "@/hooks/use-token-mint";
 import { useWallet } from "@/hooks/use-wallet";
 import { TOKENS } from "@/contracts/config";
 import WalletConnect from "@/components/features/wallet/wallet-connect";
 import { getChainConfig, getDefaultChainId, getExplorerLink } from "@/lib/chain-registry";
 
 const CHAIN_NAME = getChainConfig(getDefaultChainId()).chain.name;
+
+const TOKEN_LOGOS: Record<string, string> = {
+  WMNT: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3c3581f81395E199AF0FE71d5b37fED3210459FE/logo.png",
+  MNT: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x3c3581f81395E199AF0FE71d5b37fED3210459FE/logo.png",
+  USDC: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png",
+  USDT: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
+  WETH: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27ead9083C756Cc2/logo.png",
+  ETH: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27ead9083C756Cc2/logo.png",
+  OmE: "/logo.png",
+  USDO: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png",
+};
+
+function TokenIcon({ symbol, className = "w-8 h-8" }: { symbol: string; className?: string }) {
+  const [error, setError] = useState(false);
+  const logoUrl = TOKEN_LOGOS[symbol];
+
+  if (logoUrl && !error) {
+    return (
+      <img
+        src={logoUrl}
+        alt={symbol}
+        className={`${className} rounded-full object-cover shrink-0 bg-transparent`}
+        onError={() => setError(true)}
+      />
+    );
+  }
+
+  return (
+    <div className={`${className} rounded-full flex items-center justify-center text-xs font-bold shrink-0 bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20`}>
+      {symbol.charAt(0)}
+    </div>
+  );
+}
 
 interface TokenMintRowProps {
   tokenSymbol: string;
@@ -43,9 +76,7 @@ function TokenMintRow({
   return (
     <div className="flex items-center justify-between p-3 rounded-xl bg-secondary/20 hover:bg-secondary/30 transition-colors">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
-          {token.symbol.substring(0, 1)}
-        </div>
+        <TokenIcon symbol={token.symbol} className="w-10 h-10" />
         <div>
           <div className="font-semibold">{token.symbol}</div>
           <div className="text-xs text-muted-foreground">
@@ -146,7 +177,7 @@ export function MintTokensCard() {
         </div>
 
         <div className="space-y-2">
-          {Object.keys(TOKENS).map((key) => (
+          {MINTABLE_TOKENS.map((key) => (
             <TokenMintRow
               key={key}
               tokenSymbol={key}

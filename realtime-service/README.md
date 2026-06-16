@@ -33,7 +33,23 @@ trade lands on a tracked pool (within ~1-2s of the block).
 | `src/price-math.ts` | `sqrtPriceX96` → human price. |
 | `src/price-state.ts` | In-memory `Map<pool, PoolState>` — source of truth. |
 | `src/subscriber.ts` | One `eth_subscribe(logs)` for Swap; decode → update → emit. |
+| `src/markets-config.ts` | Curated market list. Mirrors `lib/dex/markets.ts` — keep in sync. |
+| `src/market-data.ts` | Polls GeckoTerminal (batched multi-pool) + Binance for the market list every 15s; caches ticker/candle/trade data shared across all clients. |
 | `src/index.ts` | Bootstrap. |
+
+## Market data REST API
+
+Beyond the swap-route endpoints, the service caches the curated market list
+(`src/markets-config.ts`, mirrors `lib/dex/markets.ts`) so the Next.js app
+doesn't hit GeckoTerminal/Binance directly on every request:
+
+- `GET /markets[?id=]` — curated market list, or one market
+- `GET /candles?market=&interval=` — OHLCV candles (cached 10s)
+- `GET /trades?market=` — recent trades (cached 10s)
+- `GET /depth?market=` — synthetic AMM depth derived from cached liquidity
+
+`lib/dex/geckoterminal.ts` in the main app tries these first and falls back to
+direct upstream fetches if the service is unreachable.
 
 ## Roadmap
 

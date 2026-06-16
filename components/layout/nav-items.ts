@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowLeftRight,
+  Coins,
   Compass,
   Cpu,
   Droplets,
@@ -15,6 +16,7 @@ export type AppNavChildItem = {
   name: string;
   url: string;
   icon: LucideIcon;
+  badge?: string;
 };
 
 export type AppNavItem = {
@@ -33,13 +35,14 @@ export const APP_NAV_ITEMS: AppNavItem[] = [
     icon: ArrowLeftRight,
     children: [
       { name: "Liquidity", url: "/liquidity", icon: Droplets },
+      { name: "Mint Tokens", url: "/mint", icon: Coins, badge: "test" },
       { name: "Terminal", url: "/terminal", icon: FlaskConical },
     ],
   },
   { name: "Research", url: "/research", icon: BookOpen },
   { name: "Builder", url: "/agent-builder", icon: Cpu },
   { name: "Marketplace", url: "/marketplace", icon: Store },
-  { name: "Txns", url: "/transactions", icon: Receipt },
+  { name: "Transactions", url: "/transactions", icon: Receipt },
   { name: "Portfolio", url: "/portfolio", icon: Wallet },
 ];
 

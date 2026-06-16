@@ -100,17 +100,19 @@ export function TokenList({
             <button
               key={market.id}
               onClick={() => onMarketSelect(market.id)}
-              className={`w-full grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 px-3 py-2.5 text-sm hover:bg-panel-hover transition-colors ${
+              className={`w-full grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 px-3 py-2.5 text-sm text-left hover:bg-panel-hover transition-colors ${
                 isActive ? "bg-panel" : ""
               }`}
             >
-              <TokenIcon symbol={market.symbol} color={market.color} />
-              <div className="min-w-0">
+              <TokenIcon symbol={market.symbol} color={market.color} size={28} />
+              <div className="min-w-0 text-left">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-medium truncate">{market.symbol}</span>
-                  <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">
-                    {market.kind === "perp" && market.leverage ? `${market.leverage}x` : market.networkName}
-                  </span>
+                  <span className="font-medium truncate">{market.pairLabel}</span>
+                  {market.kind === "perp" && market.leverage && (
+                    <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded shrink-0">
+                      {market.leverage}x
+                    </span>
+                  )}
                 </div>
                 <div className="text-[10px] text-muted-foreground truncate">{market.dex}</div>
               </div>

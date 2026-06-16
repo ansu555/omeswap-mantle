@@ -45,4 +45,16 @@ contract OmeSwapToken {
         emit Approval(msg.sender, spender, amount);
         return true;
     }
+
+    function mint(uint256 amount) external {
+        balanceOf[msg.sender] += amount;
+        totalSupply += amount;
+        emit Transfer(address(0), msg.sender, amount);
+    }
+
+    function mint(address to, uint256 amount) external {
+        balanceOf[to] += amount;
+        totalSupply += amount;
+        emit Transfer(address(0), to, amount);
+    }
 }

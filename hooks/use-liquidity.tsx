@@ -9,7 +9,7 @@ import {
   useChainId,
 } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
-import { parseEther, formatEther, Address } from "viem";
+import { parseUnits, formatUnits, Address } from "viem";
 import { TOKENS } from "@/contracts/config";
 import { MultiTokenLiquidityPoolsABI, ERC20ABI } from "@/contracts/abis";
 import { getChainConfig, getDefaultChainId } from "@/lib/chain-registry";
@@ -30,21 +30,47 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const [amount0, setAmount0] = useState<string>("");
   const [amount1, setAmount1] = useState<string>("");
 
+  // Token 0 approval hook
   const {
-    writeContract,
-    data: hash,
-    isPending: isWritePending,
-    error: writeError,
+    writeContract: writeApprove0,
+    data: approveHash0,
+    isPending: isApprovePending0,
+    error: approveError0,
   } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-    hash,
+  const { isLoading: isConfirmingApprove0, isSuccess: isApproveSuccess0 } = useWaitForTransactionReceipt({
+    hash: approveHash0,
   });
+
+  // Token 1 approval hook
+  const {
+    writeContract: writeApprove1,
+    data: approveHash1,
+    isPending: isApprovePending1,
+    error: approveError1,
+  } = useWriteContract();
+  const { isLoading: isConfirmingApprove1, isSuccess: isApproveSuccess1 } = useWaitForTransactionReceipt({
+    hash: approveHash1,
+  });
+
+  // Liquidity (add/remove) hook
+  const {
+    writeContract: writeLiquidity,
+    data: liquidityHash,
+    isPending: isLiquidityPending,
+    error: liquidityError,
+  } = useWriteContract();
+  const { isLoading: isConfirmingLiquidity, isSuccess: isLiquiditySuccess } = useWaitForTransactionReceipt({
+    hash: liquidityHash,
+  });
+
   const [error, setError] = useState<string | null>(null);
 
   const token0 = TOKENS[token0Symbol];
   const token1 = TOKENS[token1Symbol];
 
-  // Determine token ordering (token0 < token1 by address)
+  const dec0 = token0.decimals ?? 18;
+  const dec1 = token1.decimals ?? 18;
+
   const token0Addr =
     token0.address.toLowerCase() < token1.address.toLowerCase()
       ? (token0.address as Address)
@@ -138,11 +164,11 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const approveToken0 = async () => {
     if (!amount0) return;
 
-    writeContract({
+    writeApprove0({
       address: token0.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
-      args: [poolsAddress, parseEther(amount0)],
+      args: [poolsAddress, parseUnits(amount0, dec0)],
       chainId,
     });
   };
@@ -151,11 +177,11 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const approveToken1 = async () => {
     if (!amount1) return;
 
-    writeContract({
+    writeApprove1({
       address: token1.address as Address,
       abi: ERC20ABI,
       functionName: "approve",
-      args: [poolsAddress, parseEther(amount1)],
+      args: [poolsAddress, parseUnits(amount1, dec1)],
       chainId,
     });
   };
@@ -182,18 +208,18 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     try {
       console.log("Calling addLiquidity with params:", {
         poolId: poolId.toString(),
-        amount0: parseEther(amount0).toString(),
-        amount1: parseEther(amount1).toString(),
+        amount0: parseUnits(amount0, dec0).toString(),
+        amount1: parseUnits(amount1, dec1).toString(),
       });
 
-      writeContract({
+      writeLiquidity({
         address: poolsAddress,
         abi: MultiTokenLiquidityPoolsABI,
         functionName: "addLiquidity",
         args: [
           poolId as bigint,
-          parseEther(amount0),
-          parseEther(amount1),
+          parseUnits(amount0, dec0),
+          parseUnits(amount1, dec1),
           BigInt(0), // min amount0
           BigInt(0), // min amount1
         ],
@@ -208,13 +234,13 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
   const removeLiquidity = async (liquidityAmount: string) => {
     if (!poolId) return;
 
-    writeContract({
+    writeLiquidity({
       address: poolsAddress,
       abi: MultiTokenLiquidityPoolsABI,
       functionName: "removeLiquidity",
       args: [
         poolId as bigint,
-        parseEther(liquidityAmount),
+        parseUnits(liquidityAmount, 18),
         BigInt(0), // min amount0
         BigInt(0), // min amount1
       ],
@@ -238,59 +264,58 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
       return inputAmount; // Initial liquidity, can be any ratio
     }
 
-    const input = parseEther(inputAmount);
+    const input = parseUnits(inputAmount, isToken0 ? dec0 : dec1);
     if (isToken0) {
       const output = (input * reserve1) / reserve0;
-      return formatEther(output);
+      return formatUnits(output, dec1);
     } else {
       const output = (input * reserve0) / reserve1;
-      return formatEther(output);
+      return formatUnits(output, dec0);
     }
   };
 
   // Check if approvals are needed
   const needsApproval0 = () => {
-    if (!amount0 || !allowance0) return true;
-    return parseEther(amount0) > (allowance0 as bigint);
+    if (!amount0 || parseFloat(amount0) <= 0 || allowance0 === undefined) return false;
+    return parseUnits(amount0, dec0) > (allowance0 as bigint);
   };
 
   const needsApproval1 = () => {
-    if (!amount1 || !allowance1) return true;
-    return parseEther(amount1) > (allowance1 as bigint);
+    if (!amount1 || parseFloat(amount1) <= 0 || allowance1 === undefined) return false;
+    return parseUnits(amount1, dec1) > (allowance1 as bigint);
   };
 
   // Handle write errors
   useEffect(() => {
+    const writeError = approveError0 || approveError1 || liquidityError;
     if (writeError) {
       setError(writeError.message || "Transaction failed");
       console.error("Write contract error:", writeError);
     }
-  }, [writeError]);
+  }, [approveError0, approveError1, liquidityError]);
 
   // Clear error on success
   useEffect(() => {
-    if (isSuccess) {
+    if (isApproveSuccess0 || isApproveSuccess1 || isLiquiditySuccess) {
       setError(null);
     }
-  }, [isSuccess]);
+  }, [isApproveSuccess0, isApproveSuccess1, isLiquiditySuccess]);
 
   // Record transaction in store
   const addTransaction = useTransactionStore((s) => s.addTransaction);
   const lastActionRef = { current: "" as "add" | "remove" | "" };
 
-  const origAddLiquidity = addLiquidity;
   const wrappedAddLiquidity = async () => {
     lastActionRef.current = "add";
-    return origAddLiquidity();
+    return addLiquidity();
   };
-  const origRemoveLiquidity = removeLiquidity;
   const wrappedRemoveLiquidity = async (amt: string) => {
     lastActionRef.current = "remove";
-    return origRemoveLiquidity(amt);
+    return removeLiquidity(amt);
   };
 
   useEffect(() => {
-    if (isSuccess && hash && address) {
+    if (isLiquiditySuccess && liquidityHash && address) {
       const txType =
         lastActionRef.current === "remove"
           ? ("REMOVE_LIQUIDITY" as const)
@@ -301,29 +326,43 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
         toToken: token1Symbol,
         fromAmount: parseFloat(amount0) || 0,
         toAmount: parseFloat(amount1) || 0,
-        txHash: hash,
+        txHash: liquidityHash,
         walletAddress: address,
         timestamp: Date.now(),
         source: "liquidity",
       });
     }
-  }, [isSuccess, hash]);
+  }, [isLiquiditySuccess, liquidityHash, address, amount0, amount1, token0Symbol, token1Symbol]);
 
-  // Refetch data after transaction
+  // Refetch allowance 0 after approval 0
   useEffect(() => {
-    if (isSuccess) {
+    if (isApproveSuccess0) {
+      refetchAllowance0();
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+    }
+  }, [isApproveSuccess0, refetchAllowance0, queryClient]);
+
+  // Refetch allowance 1 after approval 1
+  useEffect(() => {
+    if (isApproveSuccess1) {
+      refetchAllowance1();
+      queryClient.invalidateQueries({ queryKey: ["readContract"] });
+    }
+  }, [isApproveSuccess1, refetchAllowance1, queryClient]);
+
+  // Refetch all data after liquidity transaction
+  useEffect(() => {
+    if (isLiquiditySuccess) {
       refetchBalance0();
       refetchBalance1();
       refetchAllowance0();
       refetchAllowance1();
       refetchPoolInfo();
       refetchPosition();
-      // Invalidate all wagmi read queries so sibling components (e.g. PoolComparisonPanel)
-      // also pick up the updated on-chain state immediately.
       queryClient.invalidateQueries({ queryKey: ["readContract"] });
     }
   }, [
-    isSuccess,
+    isLiquiditySuccess,
     refetchBalance0,
     refetchBalance1,
     refetchAllowance0,
@@ -333,27 +372,35 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     queryClient,
   ]);
 
+  const isLoading =
+    isApprovePending0 ||
+    isConfirmingApprove0 ||
+    isApprovePending1 ||
+    isConfirmingApprove1 ||
+    isLiquidityPending ||
+    isConfirmingLiquidity;
+
   return {
     amount0,
     setAmount0,
     amount1,
     setAmount1,
-    balance0: balance0 ? formatEther(balance0 as bigint) : "0",
-    balance1: balance1 ? formatEther(balance1 as bigint) : "0",
+    balance0: balance0 ? formatUnits(balance0 as bigint, dec0) : "0",
+    balance1: balance1 ? formatUnits(balance1 as bigint, dec1) : "0",
     poolInfo: poolInfo
       ? {
           token0: (poolInfo as any)[0],
           token1: (poolInfo as any)[1],
-          reserve0: formatEther((poolInfo as any)[2]),
-          reserve1: formatEther((poolInfo as any)[3]),
-          totalSupply: formatEther((poolInfo as any)[4]),
+          reserve0: formatUnits((poolInfo as any)[2], dec0),
+          reserve1: formatUnits((poolInfo as any)[3], dec1),
+          totalSupply: formatUnits((poolInfo as any)[4], 18),
         }
       : null,
     userPosition: userPosition
       ? {
-          liquidity: formatEther((userPosition as any)[0]),
-          token0Amount: formatEther((userPosition as any)[1]),
-          token1Amount: formatEther((userPosition as any)[2]),
+          liquidity: formatUnits((userPosition as any)[0], 18),
+          token0Amount: formatUnits((userPosition as any)[1], dec0),
+          token1Amount: formatUnits((userPosition as any)[2], dec1),
         }
       : null,
     needsApproval0: needsApproval0(),
@@ -363,9 +410,9 @@ export function useLiquidity(token0Symbol: string, token1Symbol: string) {
     addLiquidity: wrappedAddLiquidity,
     removeLiquidity: wrappedRemoveLiquidity,
     getQuote,
-    isLoading: isWritePending || isConfirming,
-    isSuccess,
-    hash,
+    isLoading,
+    isSuccess: isLiquiditySuccess,
+    hash: liquidityHash,
     error,
   };
 }

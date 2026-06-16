@@ -83,32 +83,22 @@ user: ansu555
 branch: ai
 changes: removed floating "Ask AI" chat toggle button; consolidated WalletProvider/ThemeProvider into root layout so wallet stays connected across all route groups
 
-[2026-06-16 10:47]
+[2026-06-15 10:34]
 user: ansu555
 branch: ai
-changes: P0 deep-research intake — replaced regex ticker gate with lib/research/{intake,stub,types}.ts (LLM understanding + regex fallback); free-form prompts now route single-asset deep dives to ATS, others to a graceful stub; build green
+changes: polished agent-builder UI to match Research page — redesigned empty state (hero + Start Fast preset cards), added canvas depth blobs, refined NodePalette chips/headers, made Run Bot dominant + receded secondary toolbar actions
 
-[2026-06-16 11:05]
+[2026-06-15 11:01]
 user: ansu555
 branch: ai
-changes: P1 deep-research tooling — added callLLMTools (tool-calling) to lib/ats/llm; lib/research/tools/* registry (price_snapshot, ohlcv, technical_indicators, crypto_news, asset_decision=ATS) normalized to Evidence; generic subagent-runtime ReAct loop → FindingsReport; new subagent/tool/evidence RunEvent types; tsc+lint green
+changes: applied Research radial-gradient background to agent-builder page; redesigned AgentSidebar chat (premium header/input, violet palette) + added clickable starter-prompt chips; fixed prompt-chip overflow (flex-col + concise descriptions)
 
-[2026-06-16 12:40]
+[2026-06-15 12:45]
 user: ansu555
-branch: ai
-changes: P2 deep-research brain — lib/research/lead.ts (plan→parallel subagents→eval gate→synthesis, frontier-model w/ graceful fallback) + 6 specialist subagents in lib/research/subagents/*; new plan.created/round.evaluated/synthesis.draft RunEvents; route now sends non-single-asset queries to runDeepResearch (removed stub.ts); build+tsc+lint green
+branch: main
+changes: integrated market-data poller & REST caching server into realtime-service, wired Next.js app geckoterminal.ts to hit cache with 2s timeout and graceful fallback, added root docs/env.example, verified end-to-end performance improvement from ~13s to ~26ms; added chart loading spinner overlay for fallback/loading state, updated TokenList to display full pair labels instead of just base token symbols, hid redundant Mantle network badges in spot markets list to prevent label truncation, explicitly aligned DEX names and labels to the left inside the grid column buttons, and increased the TokenIcon size slightly to 28px
 
-[2026-06-16 14:05]
+[2026-06-15 13:06]
 user: ansu555
-branch: ai
-changes: P3 hybrid retrieval — new tools web_search/read_url (provider-agnostic + injection sanitize), defillama (TVL/yields), onchain_reader+dex_liquidity (viem/FusionX quoter), token_audit (Kryll X-Ray), correlation (reuses graph-agent); lib/research/retrieval.ts RetrievalOrchestrator (dedupe/rank + LLM cross-verify w/ heuristic fallback) wired into lead synthesis; registered all tools; tsc+lint+build green
-
-[2026-06-16 15:53]
-user: ansu555
-branch: ai
-changes: P4 deep-research document — lib/research/citation.ts (claim→evidence mapping, LLM+heuristic) + report.ts (ResearchReport: recommendation/allocation/methodology) wired into lead (citation.attached/report.done events); P5 durability — run-manager.ts (detached background run + seq'd buffer/subscribe) + run-store.ts (Supabase research_runs/research_events) + route GET reconnect/replay + client resume-on-refresh; migration 20260616_research_runs.sql; build+lint green
-
-[2026-06-16 21:00]
-user: ansu555
-branch: ai
-changes: P6 deep-research — lib/research/attestation.ts (0G sealed ZK via computeInference sealed:true, sha256 fallback); lead.ts wired attestReport → proof_ref; store/research.ts deepRun slice (subagent/tool/evidence/plan/citation events, DeepPhase stepper, reportOpen); DeepResearchGraph.tsx + DeepNode.tsx dynamic React Flow graph; ResearchReportDrawer.tsx full cited report UI; ResearchChat.tsx wired drawer + Report button + empty-state copy; build green
+branch: main
+changes: compiled, tested (39/39 passing), and deployed custom OmeSwap AMM MultiTokenLiquidityPools and MultiHopSwapRouter contracts to local Hardhat node; seeded mock OmE/USDO pool with liquidity; updated Mantle Sepolia network configurations in Next.js registry with deployed contract addresses and mock token info

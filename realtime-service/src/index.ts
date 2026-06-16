@@ -10,12 +10,13 @@
  * routing on top of the same state + subscriber.
  */
 
-import { HTTP_PORT, MANTLE_CHAIN_ID, MANTLE_NETWORK, MANTLE_WSS, WS_PORT } from "./config.js";
+import { PORT, MANTLE_CHAIN_ID, MANTLE_NETWORK, MANTLE_WSS } from "./config.js";
 import { loadPools } from "./pool-registry.js";
 import { allPools } from "./price-state.js";
 import { startSubscriber, stopSubscriber, swapEvents, type SwapUpdate } from "./subscriber.js";
 import { publishSwap, startWsServer, stopWsServer } from "./ws-server.js";
 import { startRestServer, stopRestServer } from "./rest.js";
+import { startMarketDataPolling, stopMarketDataPolling } from "./market-data.js";
 
 function fmtPrice(p: number): string {
   if (p === 0 || !Number.isFinite(p)) return "—";
@@ -56,8 +57,9 @@ async function main(): Promise<void> {
   });
 
   startSubscriber();
-  startWsServer(WS_PORT);
-  startRestServer(HTTP_PORT);
+  const server = startRestServer(PORT);
+  startWsServer(server);
+  startMarketDataPolling();
 
   // Periodic resync: re-read pool state to correct any events missed during a
   // socket blip. slot0 only changes on swaps, so this is cheap belt-and-braces
@@ -75,6 +77,7 @@ function shutdown(signal: string): void {
   stopSubscriber();
   stopWsServer();
   stopRestServer();
+  stopMarketDataPolling();
   process.exit(0);
 }
 

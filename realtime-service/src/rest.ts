@@ -5,6 +5,10 @@
  *   GET /price[?symbol=WMNT]                      USD prices (all, or one)
  *   GET /pools                                    current pool snapshot
  *   GET /route?tokenIn=&tokenOut=&amountIn=       best in-memory route estimate
+ *   GET /markets[?id=]                            curated market list / one market
+ *   GET /candles?market=&interval=                OHLCV candles for a market
+ *   GET /trades?market=                           recent trades for a market
+ *   GET /depth?market=                            synthetic AMM depth for a market
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
@@ -13,6 +17,7 @@ import { allPools } from "./price-state.js";
 import { computeUsdPrices } from "./price-engine.js";
 import { quoteRoute } from "./router.js";
 import { clientCount, pricesObject, toWirePool } from "./ws-server.js";
+import { getCachedCandles, getCachedDepth, getCachedMarket, getCachedMarkets, getCachedTrades } from "./market-data.js";
 
 const startedAt = Date.now();
 
@@ -27,7 +32,10 @@ function send(res: ServerResponse, status: number, body: unknown): void {
   res.end(data);
 }
 
-function handle(req: IncomingMessage, res: ServerResponse): void {
+const allowedIntervals = ["1m", "5m", "15m", "1h", "4h", "1d"] as const;
+type AllowedInterval = (typeof allowedIntervals)[number];
+
+async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
   if (req.method === "OPTIONS") return send(res, 204, {});
   const url = new URL(req.url ?? "/", "http://localhost");
 
@@ -66,17 +74,50 @@ function handle(req: IncomingMessage, res: ServerResponse): void {
       return send(res, 200, route);
     }
 
+    case "/markets": {
+      const id = url.searchParams.get("id");
+      if (id) return send(res, 200, { market: getCachedMarket(id) });
+      return send(res, 200, { markets: getCachedMarkets() });
+    }
+
+    case "/candles": {
+      const market = url.searchParams.get("market");
+      const intervalParam = url.searchParams.get("interval");
+      const interval = allowedIntervals.includes(intervalParam as AllowedInterval) ? (intervalParam as AllowedInterval) : "5m";
+      const { candles, isFallback } = await getCachedCandles(market, interval);
+      return send(res, 200, { candles, isFallback });
+    }
+
+    case "/trades": {
+      const market = url.searchParams.get("market");
+      const trades = await getCachedTrades(market);
+      return send(res, 200, { trades });
+    }
+
+    case "/depth": {
+      const market = url.searchParams.get("market");
+      return send(res, 200, getCachedDepth(market));
+    }
+
     default:
       return send(res, 404, { error: "not found" });
   }
 }
 
+function handleSafe(req: IncomingMessage, res: ServerResponse): void {
+  handle(req, res).catch((err) => {
+    console.error("[rest] handler error:", err?.message ?? err);
+    if (!res.headersSent) send(res, 500, { error: "internal error" });
+  });
+}
+
 let server: ReturnType<typeof createServer> | null = null;
 
-export function startRestServer(port: number): void {
-  server = createServer(handle);
+export function startRestServer(port: number) {
+  server = createServer(handleSafe);
   server.listen(port, () => console.log(`[rest] listening on http://0.0.0.0:${port}`));
   server.on("error", (err) => console.error("[rest] error:", err.message));
+  return server;
 }
 
 export function stopRestServer(): void {
